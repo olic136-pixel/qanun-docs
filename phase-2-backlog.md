@@ -107,3 +107,50 @@ Example table shape:
 
 Both gates run; both matter; both have specific expected values.
 A failure at either is a halt-and-surface.
+
+---
+
+## Integration prompt drafting checklist — verification commands for sprint branches with non-master bases
+
+**Source:** C3 master integration merge, 2026-05-12.
+
+Use `git show <branch-sha>` to inspect the commit's own contribution,
+not `git diff master..branch` which shows the symmetric tree gap.
+The latter includes "what master has that branch doesn't" as
+foundation-cut artefacts, firing the hard rule on benign
+integration order.
+
+This is the third prompt-vs-reality mismatch caught this session:
+
+1. **Smoke-check import path** — `MultiCurrentInvariantError`
+   specified at `adgm_corpus.storage.db` (conceptually a storage
+   invariant); actually at `adgm_corpus.collection.scrapers.adgm_rulebooks`
+   (next to `write_rulebook`).
+2. **Sprint-branch arithmetic** — on-branch test count specified
+   relative to "current master" rather than "foundation base + own
+   delta".
+3. **Diff inspection target** — `git diff master..branch` flagged
+   benign foundation-cut artefacts; the right shape is
+   `git show <branch-sha>` to inspect the actual commit.
+
+**Common pattern:** prompt-author writes verification commands by
+analogy to expected outcomes rather than inspecting the actual
+code/tree state on the source branches.
+
+**Mitigation:** future integration prompts should be drafted
+against a representative branch checked out locally, with each
+verification command executed once before being written into the
+prompt. Specifically:
+
+- Check the actual location of any symbol named in a smoke check
+  (`git grep` on the sprint branch).
+- For sprint branches sharing a non-master base, compute the
+  on-branch test count = `base-baseline + own_delta`, and the
+  post-merge count = `current-master + own_delta`. Both belong in
+  the prompt's verification matrix.
+- For diff content checks, prefer `git show <sha>` over
+  `git diff master..branch`.
+
+CCD's halt-and-surface discipline caught all three cleanly without
+contaminating the merge state. Worth a dedicated section in the
+integration session report.
