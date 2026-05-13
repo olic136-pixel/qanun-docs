@@ -592,6 +592,21 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
+### A7.B23.INERT — A7-GLOBAL Buckets 2+3 mark-inert mechanism (69 rows across 2 category buckets)
+
+- **Status:** Open — proposal memo done at `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-mark-inert-mechanism.md`. Option decision pending interactive review (recommended Option B: hardcoded acknowledged-tuples list in the test).
+- **Size:** Quarter-day (Option B) / Half-day (Option A) / Day (Option C)
+- **Dependencies:** Decision on Option A vs B vs C
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-mark-inert-mechanism.md`
+- **Description:** Buckets 2 (`ADGM FSRA` / `ADGM-FSRA-F`, 37 rows) and 3 (`ADGM_RA` / `ADGM-RA-F`, 32 rows) are coherent FSRA Forms / RA Forms category buckets per Sprint 1 morning decision (leave-as-is). The defence-in-depth `test_global_single_current_invariant` will continue firing on these 69 rows unless a mark-inert mechanism is added. Three options surfaced in the proposal memo:
+  - **A** — `multi_current_acknowledged BOOLEAN` column on documents table (row-level granularity; schema migration; half-day)
+  - **B** — hardcoded `ACKNOWLEDGED_CATEGORY_BUCKETS` tuple set in the test file (tuple-level granularity; no schema change; quarter-day) — **recommended**
+  - **C** — separate `inert_documents` table with reason + acknowledged_at (row-level granularity + audit trail; day)
+- **Acceptance:** Chosen mechanism implemented; defence-in-depth test passes on master after the 69 Buckets 2+3 rows are excluded; regression test verifies the mechanism itself works (any new row breaking the invariant outside the acknowledged tuples still fires the test).
+- **Notes:** Cross-reference `A7.B1` (Bucket 1 reclassification) — both items together fully resolve the A7-GLOBAL-INVARIANT-FINDINGS scoping.
+
+---
+
 ### A7.B1 — A7-GLOBAL Bucket 1 (FSRA OTHER) per-bin reclassification (65 rows)
 
 - **Status:** Open — per-bin scoping memo done at `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`. Apply pending Bundle 3 authorisation.
