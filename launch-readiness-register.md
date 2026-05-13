@@ -1099,10 +1099,11 @@ Sprint sections not yet landed.
 
 ### E1 — API key rotation
 
-- **Status:** Open
-- **Size:** Half-day
+- **Status:** Open — user-action surfaced [2026-05-14]
+- **Size:** Half-day (user dashboard work ~15-20 min; CCD verification afterwards)
 - **Dependencies:** None
 - **Description:** Unchanged from v1.0 (overdue since 12 May per the 48-hour Section 0 spec).
+- **Sprint 2 Session 1 status:** CCD cannot generate provider keys via dashboards. User-action memo surfaced at `/tmp/qanun-overnight/sprint-2-session-1/E1-API-KEY-ROTATION-USER-ACTION.md` with step-by-step rotation instructions for Anthropic / OpenAI / Pinecone / Voyage. Hetzner rotation deferred to Sprint 10 per CLAUDE.md deploy procedure. Mark Done once user confirms rotation + CCD verifies local `.env` keys work.
 
 ---
 
@@ -1114,19 +1115,20 @@ Sprint sections not yet landed.
 
 ---
 
-### E3 — Empty ~/LLM-Legal-Council repo cleanup
+### E3 — Empty ~/LLM-Legal-Council repo cleanup — **DONE [2026-05-14]**
 
-- **Status:** Open
-- **Size:** ≤1 hour
-- **Description:** Unchanged from v1.0.
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block B
+- **Size:** ≤1 hour (actual: trivial — single rm -rf)
+- **Description:** Unchanged from v1.0. Sprint 2 Session 1: `~/LLM-Legal-Council/` contained only `.git/` with no HEAD per pre-deletion audit; deleted via `rm -rf`. Confirmed via post-delete `ls`: directory no longer exists.
 
 ---
 
-### E4 — Oliver OS git remote PAT removal
+### E4 — Oliver OS git remote PAT removal — **DONE [2026-05-14]** (PAT-revocation user-action pending)
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — CCD swapped remote to SSH; PAT revocation in GitHub UI is the remaining user-action.
 - **Size:** ≤1 hour
-- **Description:** Unchanged from v1.0.
+- **Description:** Sprint 2 Session 1 Block B: `~/Documents/Oliver OS/` origin remote changed from HTTPS-with-embedded-PAT (`https://olic136-pixel:ghp_<REDACTED>@github.com/.../oliver-os-vault.git`) to SSH (`git@github.com:olic136-pixel/oliver-os-vault.git`). Verified via `git fetch origin` returning exit 0 + origin/main resolving to a real commit SHA.
+- **Remaining user-action:** Revoke the leaked PAT in GitHub UI (https://github.com/settings/tokens) — the token (prefix `ghp_<REDACTED>`) was visible in clear text in the previous remote URL and may have been logged elsewhere. The CCD remote-swap closes the local leak vector; only GitHub UI revocation closes the credential's validity.
 
 ---
 
@@ -1320,25 +1322,27 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G4 — TopographyAgent
+### G4 — TopographyAgent — **DONE [2026-05-14]** (base + ADGM + VARA topology populated; DFSA/BVI/EL_SALVADOR completion = Sprint 3)
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A
 - **Size:** Day
 - **Dependencies:** G3
 - **Source:** UCIE v2 SOW Phase 2 §4
 - **Description:** Per jurisdiction: discover rulebooks listing, licence types, licence-to-rulebook matrix. Outputs `topology.json` for Oliver review gate before scraping commences.
 - **Acceptance:** TopographyAgent produces topology.json per jurisdiction; review gate produces human-readable summary; runs against VARA (12 rulebooks), El Salvador (existing 9 corpus codes + gap-fill list), DFSA (22 modules), BVI (further rulebook discovery), ADGM (validation against existing state).
+- **Sprint 2 Session 1 landing:** `ucie/agents/topography_agent.py` (base class) + `TopographyReport` Pydantic schema. Outputs at `ucie/jurisdictions/ADGM/topology.json` (source='corpus' — 9+ rulebooks read from corpus.db FSRA/is_current=1 distinct rulebook_codes, excluding category buckets) and `ucie/jurisdictions/VARA/topology.json` (source='manifest' — 12 corpus_codes with rulebook_slugs from manifest). DFSA/BVI/EL_SALVADOR topology generation defers to Sprint 3 per-jurisdiction adapter work. Merge commit `a839db6`.
 
 ---
 
-### G5 — ScraperAgent base + per-jurisdiction adapters
+### G5 — ScraperAgent base + per-jurisdiction adapters — **PARTIAL-DONE [2026-05-14]** (base class landed; adapters = Sprint 2 Session 2)
 
-- **Status:** Open
-- **Size:** Multi-day (parallel adapter work)
+- **Status:** Partial-Done [2026-05-14] — base class landed; per-jurisdiction adapters deferred to Sprint 2 Session 2
+- **Size:** Multi-day (parallel adapter work) — base portion ~half-day done
 - **Dependencies:** G3, G4
 - **Source:** UCIE v2 SOW Phase 2 §5 + per-jurisdiction differences noted in §2.1
 - **Description:** Base ScraperAgent with rate-limiting, retry, ETag caching, manifest recording. Adapters: VARA (HTML, rulebooks.vara.ae structure), El Salvador (HTML + PDF; uses standard adapters), BVI (PDF, FSC source paths), DFSA (Drupal — leverages existing scraper work), ADGM (Thomson Reuters — existing).
 - **Acceptance:** Each adapter scrapes its jurisdiction's primary rulebooks cleanly; rate limits respected; ETag-based incremental updates work; results recorded in manifest.
+- **Sprint 2 Session 1 landing:** `RulebookScraperBase` added to `ucie/agents/scraper_agent.py` — abstract `scrape_rulebook(rulebook, target_dir) -> ScrapeResult`; base class handles topology.json consumption (reads G4 output), per-rulebook iteration with rate-limit between calls, retry-with-exponential-backoff (1s/2s/4s capped at 60s), gate logic (PASS/WARN/HALT). Per-jurisdiction adapter subclasses (VARAScraper, ElSalvadorScraper, BVIScraper, DFSAScraper, ADGMScraper) defer to Sprint 2 Session 2. Merge commit `a839db6`.
 
 ---
 
@@ -1353,14 +1357,15 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G7 — VerificationAgent
+### G7 — VerificationAgent — **DONE [2026-05-14]** (folded into G15 verification_agent.py)
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A (folded into G15)
 - **Size:** Half-day
 - **Dependencies:** G3
 - **Source:** UCIE v2 SOW Phase 6
 - **Description:** Shared verification framework with T1 100% / T2 95% section-ref coverage thresholds, content-hash integrity, citation-extractor sanity. Same agent for all jurisdictions.
 - **Acceptance:** VerificationAgent runs against any jurisdiction's post-scrape corpus; produces verification report; gates downstream embedding step.
+- **Sprint 2 Session 1 landing:** During G15 migration of `ucie/agents/verification_agent.py` to the v2 contract, extended the agent with the T1/T2 threshold semantics: PASS when coverage ≥ T1 (1.0); WARN between T1 and T2 (0.95); HALT below T2. Reads source_entity from manifest (Pydantic-typed access), queries corpus.db, computes coverage as fraction of Tier 1/2 docs with at least one section. Merge commit `a839db6`.
 
 ---
 
@@ -1375,14 +1380,15 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G9 — ObsidianAgent (per-jurisdiction vault structure)
+### G9 — ObsidianAgent (per-jurisdiction vault structure) — **DONE [2026-05-14]** (base class landed)
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A
 - **Size:** Half-day
 - **Dependencies:** G3
 - **Source:** UCIE v2 SOW Phase 4 + §4.2 (El Salvador vault structure)
 - **Description:** ObsidianAgent creates per-jurisdiction folder structure in vault (ADGM/, VARA/, ElSalvador/, DFSA/, BVI/) following identical sub-structure (Legislation/, Regulations/, Guidance/, Case Law/, Cross-Reference Map/). launchd incremental sync timer covers all five jurisdictions.
 - **Acceptance:** Vault structure exists for all 5 jurisdictions; notes use canonical corpus codes as rule_ref frontmatter; launchd timer runs incremental sync without conflicts.
+- **Sprint 2 Session 1 landing:** `ucie/agents/obsidian_agent.py` base class. Reads `vault_path` (= work_dir) + `root_folder` from `manifest.obsidian_config`; HALTs cleanly when manifest lacks obsidian_config (VARA's pre-v2 manifest case). Default sub-folder layout (Legislation, Regulations, Guidance, Case Law, Cross-Reference Map). `write_note(relative_path, frontmatter, body)` renders YAML frontmatter (with list-value support) + body. Idempotent — pre-existing notes preserved unless `force=True` (Memory #26 applied to vault paths). Skipped paths tracked. Subclasses override per-jurisdiction note-shape helpers. launchd timer + per-jurisdiction subclasses defer to Sprint 3. Merge commit `a839db6`.
 
 ---
 
@@ -1397,14 +1403,15 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G11 — corpus.db schema additions
+### G11 — corpus.db schema additions — **DONE [2026-05-14]** (local; Hetzner deferred to Sprint 10)
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A (canonical local); Hetzner deferred to Sprint 10 per CLAUDE.md deploy procedure
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** UCIE v2 SOW §9.3
 - **Description:** Add `document_suites` table (suite_id, jurisdiction_code, licence_type, tier, tier_name, estimated_draft_time_mins). Add `suite_documents` table (suite_id, template_id, doc_order, is_mandatory, applies_to_activities). Harden `rulebook_code` column on documents (NOT NULL with default ''). Migration applied to canonical local + Hetzner.
 - **Acceptance:** Schema migrations applied idempotently; existing data preserved; new tables empty initially; foreign keys correct.
+- **Sprint 2 Session 1 landing:** `CREATE TABLE IF NOT EXISTS` for both `document_suites` (8 cols + tier CHECK 1..5) and `suite_documents` (5 cols + FK to document_suites). Both empty post-migration. Existing `documents` table untouched (is_current=1 count unchanged at 2254 pre/post). `rulebook_code` NOT NULL hardening deferred — SQLite ALTER TABLE limitations require table-recreate; surface as follow-up if needed. corpus.db sha: `7971eadd…26e0` → `08192874…292e`. Backup at `backups/corpus.db.pre-G11-20260513-220914`. WAL checkpoint (0,0,0) clean post-migration. Hetzner deploy = Sprint 10. Merge commit `a839db6`.
 
 ---
 
@@ -1441,12 +1448,12 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G15 — Concrete-agent migration to v2 BaseAgent contract
+### G15 — Concrete-agent migration to v2 BaseAgent contract — **DONE [2026-05-14]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A
 - **Size:** Half-day
 - **Dependencies:** G3 (v2 BaseAgent landed on master)
-- **Trigger:** Sprint 3 corpus work — first time the orchestrator needs to actually invoke agents
+- **Trigger:** Sprint 3 corpus work — first time the orchestrator needs to actually invoke agents (achieved earlier than originally projected)
 - **Source:** Sprint 1 follow-up morning review, 14 May 2026 — Path A-with-v2-foundation preserved v1 concrete agents in `ucie/agents/` untouched; migration deferred to this item
 - **Description:** Migrate 6 concrete agent files from v1 BaseAgent (`ucie/agents/base_agent.py`) to v2 BaseAgent (`ucie/core/base.py`) contract:
   - `ucie/agents/scraper_agent.py`
@@ -1458,6 +1465,7 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
   
   Includes implementing full lifecycle methods (prepare/run/verify/close — currently `run()`-only stubs).
 - **Acceptance:** All 6 concrete agents extend `ucie.core.base.BaseAgent`. New orchestrator (G2) can invoke each agent end-to-end against a manifest. v1 `ucie/agents/base_agent.py` deletable post-migration. Existing test suite green.
+- **Sprint 2 Session 1 landing:** All 6 agents refactored. Domain logic preserved (not stubs — full corpus-DB-touching logic). Contract changes: inheritance → `ucie.core.base.BaseAgent`; constructor → `(manifest: JurisdictionManifest, work_dir: Path)`; `run()` → `(self) -> None`; gate-emission moved from `state.results + pass_gate/fail_gate` to `self.results + self._gate_*` attributes; new `verify() -> GateReport` per agent. v1 `ucie/agents/base_agent.py` deleted; no remaining consumers (verified via grep). 32 smoke tests in `tests/ucie/test_concrete_agents.py` confirm contract shape. Merge commit `a839db6`.
 
 ---
 
