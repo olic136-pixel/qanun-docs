@@ -1227,34 +1227,37 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ### G1 — Jurisdiction manifest schema
 
-- **Status:** Open
+- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed (HEAD `e655aea`); awaiting merge review
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** UCIE v2 SOW §3.2
 - **Description:** Define `manifest.json` contract per jurisdiction with: jurisdiction_code, jurisdiction_name, base_url, source_entity, starting_mode (cold-start | enrichment), source_tier_map, licence_types[], corpus_codes[], scraper_config, embedding_config (pinecone_namespace, chroma_collection, voyage_model, openai_model), obsidian_config (vault_path, root_folder, index_note), enrichment_targets[] (for partial-starting-state jurisdictions like El Salvador), case_law_sources[].
 - **Acceptance:** Schema documented; validator + loader implemented; ADGM, VARA, El Salvador, DFSA, BVI manifests all parse cleanly. Schema-rev versioning in place for future evolution.
+- **Sprint 1 follow-up landing (14 May 2026):** Pydantic `JurisdictionManifest` model in `ucie/core/manifest_loader.py` with `load_manifest(code)` + `load_all_manifests()`. Compat accommodations: `starting_mode` normalises underscore↔hyphen so existing VARA `cold_start` JSON loads; `obsidian_config` Optional so VARA's pre-v2 JSON without that field validates; `extra='allow'` preserves VARA's `rulebook_slugs`. 3 new manifest JSONs added: `ADGM`, `DFSA`, `BVI` (with TBD-fields surfaced for licence taxonomy + rulebook index URLs). All 5 manifests load cleanly.
 
 ---
 
 ### G2 — OrchestratorAgent with multi-jurisdiction support
 
-- **Status:** Open
+- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed; awaiting merge review. **Skeleton-only** until G15 migrates concrete agents from v1 contract.
 - **Size:** Half-day
 - **Dependencies:** G1
 - **Source:** UCIE v2 SOW §3.1 + extension noted in §3
 - **Description:** `python -m ucie.core.orchestrator --jurisdiction VARA EL_SALVADOR --all` spawns independent agent chains per jurisdiction and coordinates only at shared gates (corpus.db schema migration, MCP server restart, deploy steps). Accepts `--jurisdiction` flag with multiple values.
 - **Acceptance:** Orchestrator launches parallel chains; per-jurisdiction logs separated; shared gates synchronise correctly; failure in one jurisdiction does not halt the others (unless gate-level).
+- **Sprint 1 follow-up landing (14 May 2026):** `ucie/core/orchestrator.py` rewritten from the v1 `run_chain` shape. argparse CLI with `--jurisdiction nargs='+'`, `--all`, phase flags (`--topography`/`--scrape`/`--structure`/`--verify`/`--embed`/`--obsidian`), `--verbose`. Skeleton dry-run prints per-jurisdiction × per-phase matrix; does NOT invoke agents (the v1 ucie/agents/* are on the old contract — migration tracked under G15).
 
 ---
 
 ### G3 — BaseAgent contract + gate framework
 
-- **Status:** Open
+- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed; awaiting merge review
 - **Size:** Half-day
 - **Dependencies:** G1
 - **Source:** UCIE v2 SOW §3.4
 - **Description:** Abstract base class defining the agent lifecycle: prepare() → run() → verify() → close(). Gate framework with pass / warn / halt outcomes; halt-and-surface to Oliver via gate report file.
 - **Acceptance:** BaseAgent importable from `ucie.core.base`. All Phase G-H agents extend it. Gate framework has unit tests for the three outcomes.
+- **Sprint 1 follow-up landing (14 May 2026):** `ucie/core/base.py` (abstract `BaseAgent` with `prepare()`/`run()`/`verify()`/`close()` lifecycle; constructor takes `JurisdictionManifest` + work_dir; defaults for `prepare`/`close`). `ucie/core/gate.py` (`GateOutcome` enum PASS/WARN/HALT, Pydantic `GateReport` with `extra='forbid'`, `write_gate_report()`, `GateHaltException` that validates HALT-only construction). v1 `ucie/agents/base_agent.py` left intact for the G15 migration; top-of-file comment marks it as superseded. Test coverage: 42 tests across `tests/ucie/` (test_manifest_loader.py 11, test_orchestrator.py 16, test_base_agent.py 5, test_gate.py 10) — all pass.
 
 ---
 
@@ -2421,8 +2424,8 @@ Plus working artefacts:
 
 Comprehensively revised from v1.2 to reflect the scope expansion to Full UCIE v2 + DFSA + BVI. The 5-7 week timeline from v1.2 was for the ADGM-shape v1; the expanded 5-jurisdiction v1 requires a 10-sprint plan spanning ~10-14 weeks calendar time.
 
-**Status of canonical branches (13 May 2026, post-Bundle-2):**
-- adgm-corpus master @ `94ce23d` (post-Bundle-2 test-file unxfail + register updates) — 684P / 1S / 14XF
+**Status of canonical branches (14 May 2026, post-Sprint-1-follow-up):**
+- adgm-corpus master @ `94ce23d` (post-Bundle-2 test-file unxfail + register updates) — **610P / 1S / 14XF** (625 collected). The earlier "684P" claim was a stale baseline that did not survive verification — Sprint 1 close-out reported 625P live on the recovery branch and the Sprint 1 follow-up pre-flight collected 625 on master via the canonical `python -m pytest tests/` invocation. **Baseline canonicalised to 610P / 1S / 14XF on 14 May 2026.** Sprint branches push beyond this: `sprint/G1-G3-ucie-foundation-2026-05-14` HEAD `e655aea` adds +42 (652P); `sprint/B1-parser-redesign-GEN-2026-05-14` HEAD `ce36325` adds +15 (625P); `recovery/cloudflare-proxy-2026-05-13` HEAD `305ed9e` adds +15 (625P). None merged to master.
 - qanun-api main @ `805f50f` (post-Bundle-1 F2-TRADEDAR) — 42P / 1S / 3XF / 0F
 - qanun main @ `4aaf8dc` (post-Bundle-1 F1) — 5 vitest smoke tests passing
 - corpus.db sha256: `6728a3dbd05a4f7b72fbeed13fb5be333e58e48f48c3469daa872fc6773c9c13` (modified during Bundle 2 — Hetzner re-sync deferred per CLAUDE.md deploy procedure)
