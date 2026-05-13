@@ -1,9 +1,31 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.3
-**Date:** 13 May 2026 (morning, post-Bundle-1 merge session)
+**Version:** 1.4
+**Date:** 13 May 2026 (evening, Phase 2 prioritisation session — full v1 scope expansion)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.4 changes from v1.3 (Phase 2 prioritisation session):**
+
+**Scope decision: Full UCIE v2 + DFSA + BVI expansion.** v1 launch now requires fully-functional product across **five jurisdictions** (ADGM/FSRA, VARA, DIFC/DFSA, BVI/FSC, El Salvador/CNAD) with **both product modes** (single-document drafting + 5-tier governance suite mode). Vanta-layer (Phase 10-18) explicitly deferred to v2.
+
+**Within-v1 prioritisation collapsed.** All items in this register are launch-blocking — there is no "Phase 1 / Phase 2" split within v1. The product ships only when all v1 items are Done. Items previously in "Beyond Launch — Post-Launch Roadmap" that are now in scope have been migrated to new categories G-L below.
+
+**Six new categories added** (G-L) covering the scope expansion:
+- **G — UCIE Framework & Cross-Jurisdiction Infrastructure** (14 items): jurisdiction manifest schema, orchestrator multi-jurisdiction, base agents, parallel execution, MCP multi-jurisdiction
+- **H — Per-Jurisdiction Corpus & Case Law** (22 items): VARA corpus + case law, El Salvador enrichment + case law, DFSA full completion + case law, BVI expansion + case law, case law pipeline infrastructure
+- **I — Governance Suite Mode** (17 items): DocumentSuite + AppendixSpec models, cross-tier context, suite UI + API, multi-jurisdiction selector, per-jurisdiction questionnaires
+- **J — Per-Jurisdiction Templates & Suites** (20 items): template discovery per jurisdiction (5 gates), per-jurisdiction Tier 1-5 templates, FATCA/CRS + ES + ADGM Returns sections, 6 Stark appendices
+- **K — Commercial Readiness** (10 items): billing flow, onboarding, account creation, law firm/FIRM_ADMIN activation, pricing, ToS/privacy, customer support
+- **L — End-to-End Validation** (8 items): anti-hallucination per jurisdiction, full draft per licence type, defence-in-depth across 5 jurisdictions, customer-shape acceptance, launch checklist
+
+**Net register growth: 77 → 168 items.** Status table refreshed; sprint plan revised to 10-sprint structure spanning ~12 weeks calendar time.
+
+**Vanta layer formally scoped OUT of v1.** Phase 10-18 (Control Register, Evidence Collection, Board Sign-off, Approved Persons Register, Staff Training Tracker, Vendor Risk Register, Incident Register, Policy Acknowledgment, Regulatory Examination Mode) — these become v2.
+
+**DFSA/BVI partial content in scope to expand.** Existing DFSA work (22 modules from 11 May bulk) and BVI work (BCA + REGS from Bundle 2) is foundation; full coverage requires significant additional ingestion and template work.
+
+**Today's Achievements section appended** for the 13 May 2026 Phase 2 prioritisation session.
 
 **v1.3 changes from v1.2:**
 - **Bundle 1 merge session complete.** Four sprint branches from the 12-13 May overnight merged across two repos (adgm-corpus: 3 merges — A7-diag, flake-perf, A5C1; qanun-api: 1 merge — F2-TRADEDAR). First-parent topology preserved; sprint branches retained on origin; no force-pushes; 8 gate test counts (4 on-branch + 4 post-merge) all matched projection exactly.
@@ -64,13 +86,27 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 17 | 1 | 10 | 28 |
+| A — Data Integrity | 9 | 1 | 18 | 28 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **48** | **7** | **22** | **77** |
+| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 14 | 0 | 0 | 14 |
+| **H — Per-Jurisdiction Corpus & Case Law** | 22 | 0 | 0 | 22 |
+| **I — Governance Suite Mode** | 17 | 0 | 0 | 17 |
+| **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
+| **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
+| **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
+| **Total** | **131** | **7** | **30** | **168** |
+
+**Reclassifications in v1.4 (within Category A):** A2, A7.B, A7.C, A7.D, A7.E, A7.F, A7.G, A7.H all moved Open → Done (Bundle 2 — 13 May 2026). Plus A7 audit + A5 audit + A6 idempotence test infra + A1 invariant already Done in v1.3.
+
+**Net register movement from v1.3 to v1.4:**
+- 8 items closed via Bundle 2 (A2, A7.B-A7.H) — all flip-only applies, section cleanups deferred
+- 91 new items added (G-L) — scope expansion to Full UCIE v2 + DFSA + BVI
+- 7 items opened during Bundle 2 already in v1.3: A7.B.SECTIONS, A7.F.SECTIONS, A7.G.SECTIONS, A7-BVI-title-extraction-audit (these remain in Category A); A7-FUNDS-doc-199-mislabel, A7-FSRA-pipeline-size-sanity, A7-GLOBAL-INVARIANT-FINDINGS (these were noted in Bundle 2 close but not given discrete entries; added in v1.4 for tracking)
+- Total: 77 → 168 items (+91 net)
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
@@ -476,6 +512,44 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 - **Source:** A7 audit cross-cutting finding, 12 May 2026
 - **Description:** The orphan pattern clusters around two dates: 28 April (stub-shaped captures) and 2 May (duplicate captures). Investigate what ingestion process ran on those dates, why the existing safeguards didn't catch the duplicates, what changed. Document so it doesn't recur once the A1 invariant is in place.
 - **Acceptance:** Memo in `~/qanun-docs/` identifying the offending ingestion path(s), confirming the A1 invariant would have prevented recurrence (or proposing additional safeguards if not).
+
+---
+
+### A7-FUNDS-doc-199-mislabel — PRU-content-in-FUNDS-row systematic mislabel
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** None (A7.C Done; doc 199 is now is_current=0)
+- **Source:** Bundle 2 A7-FUNDS forensic, 13 May 2026
+- **Description:** Systematic PRU-content-in-FUNDS-tagged-row mislabel affecting four docs (64, 121, 189, 199) — all share `Adgm1547_11092_VerNN<date>` slug pattern and contain Prudential Rulebook (PRU) body text. Scraper-side routing bug, not isolated. PRU's canonical chain (doc 15 → 2795) does not include any VER19 entry — doc 199's PRU VER19 may be an off-chain capture or genuinely separate version-line.
+- **Acceptance:** rulebook_code corrected to PRU on all four; superseded_by chain decided in a focused follow-up (e.g., off-chain or fold into PRU canonical with explicit precedence). Scraper routing fix lands so no future FUNDS-tagged row contains PRU body text. Regression test verifies body-text-vs-rulebook-code consistency on insert.
+- **Notes:** Cross-reference `/tmp/qanun-overnight/a7/A7-FUNDS.md` forensic surface from Bundle 2. Related to A7-FSRA-pipeline-size-sanity (the size-sanity guard would have caught the original mislabel earlier).
+
+---
+
+### A7-FSRA-pipeline-size-sanity — Fail-loud size-floor scraper guard
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Bundle 2 A7-FUNDS forensic memo §9, 13 May 2026
+- **Description:** The FSRA scraper currently accepts captures of any size, including the 340-byte and 7,828-byte stubs that surfaced as Bundle 2 noise (docs 2784, 2783, 2767, 2770, 2772). Add a fail-loud size-floor guard: if a fresh capture is < 50KB or < 50% of the prior capture's size, halt-and-alert rather than insert silently. Catches future ingestion-pipeline regressions early.
+- **Acceptance:** Size-floor guard implemented in write_rulebook or fresh-capture pipeline. Configurable per source_entity. Regression test verifies guard fires on undersize input.
+
+---
+
+### A7-GLOBAL-INVARIANT-FINDINGS — Three new multi-current buckets surfaced by defence-in-depth test
+
+- **Status:** Open
+- **Size:** Day (investigation) + per-bucket apply work (varies by bucket size)
+- **Dependencies:** None (A7-diag tests on master)
+- **Source:** Bundle 2 close-out, 13 May 2026 — `test_global_single_current_invariant` surfaced 134 rows across 3 buckets the A7 audit didn't characterise
+- **Description:** With all 8 KNOWN_VIOLATIONS reconciled, the global defence-in-depth test ran against the full corpus and surfaced three previously-unknown multi-current buckets:
+  - **FSRA OTHER**: 65 rows with source_entity='FSRA' and rulebook_code='OTHER' (legacy pre-K7 sections still flagged is_current=1)
+  - **ADGM_FSRA-F**: 37 rows with source_entity='ADGM' and rulebook_code='FSRA-F' (possibly K16-migration adjacent; or a separate convention-drift bucket)
+  - **ADGM_RA-F**: 32 rows with source_entity='ADGM_RA' and rulebook_code='RA-F' (ADGM Registration Authority filings — separate from FSRA scope)
+- **Acceptance:** Per-bucket scoping memo identifies whether each affects customer-facing rulebooks for any of the 5 v1 jurisdictions. Buckets that affect customer-facing rulebooks get reconciliation applies (like Bundle 2 A7.X). Buckets that don't affect customer-facing rulebooks get explicit "known but inert" status. test_global_single_current_invariant flips to passing once all buckets are resolved or marked inert.
+- **Notes:** The defence-in-depth test paid for itself on first run — surfacing 134 rows the focused audit missed validates the A7 cluster overview §6 recommendation. Worth a thank-you in retrospect to whoever proposed the test.
 
 ---
 
@@ -1005,18 +1079,1057 @@ Sprint sections not yet landed.
 
 ---
 
-# Beyond Launch — Post-Launch Roadmap
+# Category G — UCIE Framework & Cross-Jurisdiction Infrastructure
 
-Unchanged from v1.0. Not in the register; forward product work explicitly post-launch:
+The agent framework and orchestration layer that makes five-jurisdiction operation tractable. Builds on UCIE v2 SOW Phase 1. Foundation for H, I, J — gates per-jurisdiction corpus ingestion at parity.
 
-- Phases 10-18 Vanta layer
-- Qanun Monitor (compliance calendar add-on)
-- Law firm account type
-- Progressive automation thresholds
-- DFSA/DIFC coverage expansion
-- Seed fundraise (technical narrative in SOW v4.0)
-- UCIE v2.0 El Salvador work (Phases 8-10)
-- Qanun governance suite Tier 1-5 model
+---
+
+### G1 — Jurisdiction manifest schema
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** UCIE v2 SOW §3.2
+- **Description:** Define `manifest.json` contract per jurisdiction with: jurisdiction_code, jurisdiction_name, base_url, source_entity, starting_mode (cold-start | enrichment), source_tier_map, licence_types[], corpus_codes[], scraper_config, embedding_config (pinecone_namespace, chroma_collection, voyage_model, openai_model), obsidian_config (vault_path, root_folder, index_note), enrichment_targets[] (for partial-starting-state jurisdictions like El Salvador), case_law_sources[].
+- **Acceptance:** Schema documented; validator + loader implemented; ADGM, VARA, El Salvador, DFSA, BVI manifests all parse cleanly. Schema-rev versioning in place for future evolution.
+
+---
+
+### G2 — OrchestratorAgent with multi-jurisdiction support
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G1
+- **Source:** UCIE v2 SOW §3.1 + extension noted in §3
+- **Description:** `python -m ucie.core.orchestrator --jurisdiction VARA EL_SALVADOR --all` spawns independent agent chains per jurisdiction and coordinates only at shared gates (corpus.db schema migration, MCP server restart, deploy steps). Accepts `--jurisdiction` flag with multiple values.
+- **Acceptance:** Orchestrator launches parallel chains; per-jurisdiction logs separated; shared gates synchronise correctly; failure in one jurisdiction does not halt the others (unless gate-level).
+
+---
+
+### G3 — BaseAgent contract + gate framework
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G1
+- **Source:** UCIE v2 SOW §3.4
+- **Description:** Abstract base class defining the agent lifecycle: prepare() → run() → verify() → close(). Gate framework with pass / warn / halt outcomes; halt-and-surface to Oliver via gate report file.
+- **Acceptance:** BaseAgent importable from `ucie.core.base`. All Phase G-H agents extend it. Gate framework has unit tests for the three outcomes.
+
+---
+
+### G4 — TopographyAgent
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G3
+- **Source:** UCIE v2 SOW Phase 2 §4
+- **Description:** Per jurisdiction: discover rulebooks listing, licence types, licence-to-rulebook matrix. Outputs `topology.json` for Oliver review gate before scraping commences.
+- **Acceptance:** TopographyAgent produces topology.json per jurisdiction; review gate produces human-readable summary; runs against VARA (12 rulebooks), El Salvador (existing 9 corpus codes + gap-fill list), DFSA (22 modules), BVI (further rulebook discovery), ADGM (validation against existing state).
+
+---
+
+### G5 — ScraperAgent base + per-jurisdiction adapters
+
+- **Status:** Open
+- **Size:** Multi-day (parallel adapter work)
+- **Dependencies:** G3, G4
+- **Source:** UCIE v2 SOW Phase 2 §5 + per-jurisdiction differences noted in §2.1
+- **Description:** Base ScraperAgent with rate-limiting, retry, ETag caching, manifest recording. Adapters: VARA (HTML, rulebooks.vara.ae structure), El Salvador (HTML + PDF; uses standard adapters), BVI (PDF, FSC source paths), DFSA (Drupal — leverages existing scraper work), ADGM (Thomson Reuters — existing).
+- **Acceptance:** Each adapter scrapes its jurisdiction's primary rulebooks cleanly; rate limits respected; ETag-based incremental updates work; results recorded in manifest.
+
+---
+
+### G6 — StructureAgent (multi-jurisdiction parser)
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** G3, G5, **B1** (parser redesign — gates this for ADGM/FSRA-shape content)
+- **Source:** UCIE v2 SOW Phase 2 §6 + §2.1 (parse patterns differ per jurisdiction)
+- **Description:** Extend `parse_rulebook()` to handle: VARA `Rule N.N.N` format, El Salvador `Art.N(subpara)` Spanish-language structure, BVI `Reg.N` UK-statute format, DFSA `X.Y.Z` dot format (existing), DFSA `X-Y-Z` hyphenated format (RPP), DFSA chapter-only inline format (CMC). Strategy pattern per per-format parser variant.
+- **Acceptance:** Each jurisdiction's primary content parses to expected section count (T1 100% / T2 95% per UCIE v2 §6.3). Strategy pattern is extensible. Parser-non-determinism (B-cluster pattern from Bundle 2) addressed via deterministic ordering.
+
+---
+
+### G7 — VerificationAgent
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G3
+- **Source:** UCIE v2 SOW Phase 6
+- **Description:** Shared verification framework with T1 100% / T2 95% section-ref coverage thresholds, content-hash integrity, citation-extractor sanity. Same agent for all jurisdictions.
+- **Acceptance:** VerificationAgent runs against any jurisdiction's post-scrape corpus; produces verification report; gates downstream embedding step.
+
+---
+
+### G8 — EmbeddingAgent
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G3, G6, G7
+- **Source:** UCIE v2 SOW Phase 2 §6.5
+- **Description:** Shared embedding logic. Pinecone (Voyage Law-2) + ChromaDB (OpenAI text-embedding-3-small). Per-jurisdiction Pinecone namespace (default for ADGM, vara, el_salvador, dfsa, bvi). Handles Voyage IP-block on Hetzner via E9.PROXY when available.
+- **Acceptance:** EmbeddingAgent embeds any jurisdiction's verified corpus into both indexes; namespace separation works; idempotent upserts; vector count matches section count.
+
+---
+
+### G9 — ObsidianAgent (per-jurisdiction vault structure)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G3
+- **Source:** UCIE v2 SOW Phase 4 + §4.2 (El Salvador vault structure)
+- **Description:** ObsidianAgent creates per-jurisdiction folder structure in vault (ADGM/, VARA/, ElSalvador/, DFSA/, BVI/) following identical sub-structure (Legislation/, Regulations/, Guidance/, Case Law/, Cross-Reference Map/). launchd incremental sync timer covers all five jurisdictions.
+- **Acceptance:** Vault structure exists for all 5 jurisdictions; notes use canonical corpus codes as rule_ref frontmatter; launchd timer runs incremental sync without conflicts.
+
+---
+
+### G10 — TemplateDiscoveryAgent
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G3, G6, G7, G8
+- **Source:** UCIE v2 SOW Phase 5 + §6.1 (VARA template discovery example)
+- **Description:** Per jurisdiction: enumerate templates from corpus + licence matrix; produce `<JURISDICTION>_template_review.md` + SectionSpec skeleton stubs + coverage check CSV. Gates Oliver review before activation.
+- **Acceptance:** TemplateDiscoveryAgent runs per jurisdiction; produces 3 deliverables (review.md + skeleton.py + coverage.csv); Oliver gate review on each.
+
+---
+
+### G11 — corpus.db schema additions
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** UCIE v2 SOW §9.3
+- **Description:** Add `document_suites` table (suite_id, jurisdiction_code, licence_type, tier, tier_name, estimated_draft_time_mins). Add `suite_documents` table (suite_id, template_id, doc_order, is_mandatory, applies_to_activities). Harden `rulebook_code` column on documents (NOT NULL with default ''). Migration applied to canonical local + Hetzner.
+- **Acceptance:** Schema migrations applied idempotently; existing data preserved; new tables empty initially; foreign keys correct.
+
+---
+
+### G12 — MCP server multi-jurisdiction filtering
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G11, G8
+- **Source:** UCIE v2 SOW Phase 7 §9.2
+- **Description:** Extend MCP server `search_corpus`, `get_rule`, `corpus_status` tools to accept `jurisdiction` parameter and filter accordingly. `corpus_status` returns per-jurisdiction document + section + vector counts.
+- **Acceptance:** Tools accept jurisdiction filter; per-jurisdiction status visible; backward-compatible default (no jurisdiction filter = current behaviour).
+
+---
+
+### G13 — Parallel execution coordination
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G2, G3
+- **Source:** UCIE v2 SOW Phase 10
+- **Description:** Coordinator that runs VARA + El Salvador + DFSA + BVI ingestion in parallel where deliverables are jurisdiction-agnostic (per UCIE v2 §2.1 table). Per-jurisdiction logs + per-shared-gate synchronisation.
+- **Acceptance:** 5-jurisdiction parallel run completes; logs separated; shared gates fire only when all branches reach them; per-jurisdiction failures don't crash the orchestrator.
+
+---
+
+### G14 — Cross-jurisdiction MCP server tool naming
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G12
+- **Source:** Implied by multi-jurisdiction extension
+- **Description:** Decide MCP server tool naming: keep single adgm-corpus MCP that filters by jurisdiction (current architecture); or split per-jurisdiction MCP servers. Document the call pattern and trade-offs; implement chosen approach.
+- **Acceptance:** MCP architecture decided + documented; tool calls work for all 5 jurisdictions; Claude Desktop config + Qanun backend MCPClientManager both updated.
+
+---
+
+# Category H — Per-Jurisdiction Corpus & Case Law
+
+Corpus content per jurisdiction. Builds on G framework. Most items parallelisable across jurisdictions.
+
+---
+
+### H1 — VARA corpus ingestion (12 rulebooks)
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** G4, G5, G6, G7, G8
+- **Source:** UCIE v2 SOW Phase 2 §6.1
+- **Description:** Scrape, structure, verify, embed all 12 VARA rulebooks: VARA-COMP (Company), VARA-CRM (Compliance & Risk Management), VARA-TI (Technology & Information), VARA-MC (Market Conduct), VARA-ADV (Advisory), VARA-BD (Broker-Dealer), VARA-CUST (Custody), VARA-EX (Exchange), VARA-LB (Lending & Borrowing), VARA-MGMT (VA Management), VARA-TRS (Transfer & Settlement), VARA-ISS (Issuance).
+- **Acceptance:** All 12 rulebooks in corpus.db with is_current=1; section coverage ≥95% (T2); embeddings in `vara` Pinecone namespace; `get_rule('VARA-COMP 3.1.1')` returns rule text; `search_corpus(jurisdiction='VARA')` returns relevant results.
+
+---
+
+### H2 — VARA case law pipeline
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** H1, H20
+- **Source:** UCIE v2 SOW Phase 3 (extended in §4.1)
+- **Description:** Case law sources: VARA enforcement decisions (rulebooks.vara.ae enforcement section), DIFC Court for VARA-adjacent matters. SHA-256 fingerprinted, T2-classified.
+- **Acceptance:** VARA enforcement decisions in case_law_documents; passages indexed; CaseLawVerifier validates fingerprints; citations to case law distinguishable from rulebook citations in drafted documents.
+
+---
+
+### H3 — El Salvador corpus enrichment (rulebook_code population)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G11
+- **Source:** UCIE v2 SOW Phase 8 §7.3 (CorpusEnrichmentAgent)
+- **Description:** Existing El Salvador docs in corpus.db have empty rulebook_code. CorpusEnrichmentAgent populates standardised SV-* codes (SV-LEAD, SV-DASP, SV-ISS, SV-STBL, SV-AML, SV-LSSF, SV-LBAN, SV-AML-GUIDE) per UCIE v2 §7.2 mapping.
+- **Acceptance:** All SV documents have non-empty rulebook_code matching the canonical table; section_ref consistency check passes; backup taken pre-enrichment.
+
+---
+
+### H4 — El Salvador section_ref consistency
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3, G6
+- **Source:** UCIE v2 SOW Phase 8 §7.3 (SectionRefAgent)
+- **Description:** Many SV sections have empty or inconsistent section_ref. Re-run StructureAgent against stored full_text to generate `SV-CODE Art.N(subpara)` format consistently. Update sections.section_ref + rebuild FTS5 index entries.
+- **Acceptance:** Section ref coverage ≥80% on all SV T1 documents; FTS5 search works; canonical format applied throughout.
+
+---
+
+### H5 — El Salvador gap fill: SV-LEAD24 (August 2024 reform)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3
+- **Source:** UCIE v2 SOW Phase 8 §7.1 + §7.4
+- **Description:** LEAD was amended in August 2024 — reform text not currently in corpus. Source: diariooficial.gob.sv or asamblea.gob.sv. Critical gap because drafts may otherwise cite superseded provisions.
+- **Acceptance:** SV-LEAD24 corpus entry with reform text; `get_rule('SV-LEAD24 Art.1')` returns amendment text; cross-references with SV-LEAD updated.
+
+---
+
+### H6 — El Salvador gap fill: SV-BTC (Bitcoin Law Decreto 57)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3
+- **Source:** UCIE v2 SOW Phase 8 §7.1
+- **Description:** Bitcoin Law (Decreto 57, 2021) is foundational legislation for BSP services. Currently not in corpus. Source: diariooficial.gob.sv.
+- **Acceptance:** SV-BTC corpus entry; `get_rule('SV-BTC Art.1')` returns Bitcoin Law text; cross-references with SV-LEAD and SV-AML mapped.
+
+---
+
+### H7 — El Salvador gap fill: CNAD procedural docs
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3
+- **Source:** UCIE v2 SOW Phase 8 §7.1 + §7.4
+- **Description:** Scrape cnad.gob.sv/downloads-3/ for: SV-PROC-DASP (DASP registration procedure), SV-REQ-DASP (DASP registration requirements), SV-TECH (technology/cybersecurity regulation if published), SV-COND (consumer protection regulation if published).
+- **Acceptance:** All available procedural docs ingested; missing-but-unpublished docs explicitly tracked.
+
+---
+
+### H8 — El Salvador gap fill: UIF AML instructions
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3
+- **Source:** UCIE v2 SOW Phase 8 §7.1 + §7.4
+- **Description:** UIF (Unidad de Investigación Financiera, AML financial intelligence unit) publishes AML instructions applicable to DASPs. Currently not in corpus. Source: fgr.gob.sv or uif.gob.sv (may require manual sourcing).
+- **Acceptance:** SV-UIF corpus entry with AML instructions; cross-references with SV-AML-GUIDE mapped.
+
+---
+
+### H9 — El Salvador case law pipeline
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** H3, H20
+- **Source:** UCIE v2 SOW §4.1 (extended Phase 3 sources)
+- **Description:** Sources: CNAD enforcement decisions, UIF AML enforcement (via FGR), El Salvador Supreme Court Sala de lo Contencioso (for digital asset / CNAD matters). Lower volume expected vs ADGM/DFSA enforcement.
+- **Acceptance:** Enforcement decisions ingested; case_law_passages indexed; CaseLawVerifier validates; per-decision metadata complete (date, parties, ruling summary).
+
+---
+
+### H10 — El Salvador Pinecone embedding
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H3, H4, H5, H6, H7, H8, G8
+- **Source:** UCIE v2 SOW Phase 8 §7.3
+- **Description:** Re-embed all SV documents (existing + new gap-fill content) into Pinecone `el_salvador` namespace. Use upsert to avoid duplicates. Metadata consistent (rulebook_code, section_ref populated).
+- **Acceptance:** Pinecone `el_salvador` namespace vector count matches sections.count where source_entity='EL_SALVADOR'; sample queries return relevant results.
+
+---
+
+### H11 — DFSA full corpus completion
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** G4, G5, G6 (incl. B2 sourcebook handler), G7, G8
+- **Source:** v1.3 register's B2 + B3 + post-launch roadmap migrated into v1
+- **Description:** Beyond existing B2 sourcebook handler design and B3 inventory: scrape, structure, verify, embed all 22 DFSA modules. Sourcebooks (PRU, CMC, RPP, FPR, PRS, RAR) need their parser variants per B2 strategy pattern. Full DFSA corpus parity with ADGM.
+- **Acceptance:** All 22 DFSA modules in corpus.db is_current=1; sourcebooks use correct parser variant; section coverage ≥95% per module; embeddings in `dfsa` namespace; `get_rule('DFSA-GEN 3.1.1')` and equivalents resolve.
+
+---
+
+### H12 — DFSA case law pipeline
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** H11, H20
+- **Source:** v1 scope expansion (DFSA → full coverage)
+- **Description:** DFSA enforcement decisions + DIFC Court (CFI / Court of Appeal) for financial services matters. Higher volume than VARA — DFSA has active enforcement publication.
+- **Acceptance:** DFSA enforcement decisions ingested; passages indexed; CaseLawVerifier validates.
+
+---
+
+### H13 — BVI further rulebook ingestion
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** G4, G5, G6, G7, G8
+- **Source:** v1 scope expansion (BVI → full coverage)
+- **Description:** Beyond existing BVI-BCA + BVI-REGS: ingest BVI Anti-Money Laundering Regulations (AML), Money Laundering Regulations (MLR), BVI Insurance Act, Banks and Trust Companies Act (BTCA), Securities and Investment Business Act (SIBA), Financing and Money Services Act (FMSA), Proceeds of Criminal Conduct Act (PCCA). Title hygiene (A7-BVI-title-extraction-audit findings) applied during ingestion.
+- **Acceptance:** All BVI rulebook corpus entries with proper titles + source_url provenance; section coverage ≥80% (lower threshold for legislation-shape content with sparser internal numbering); embeddings in `bvi` namespace.
+
+---
+
+### H14 — BVI case law pipeline
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** H13, H20
+- **Source:** v1 scope expansion
+- **Description:** Sources: BVI Financial Services Commission enforcement decisions, BVI Commercial Court (Eastern Caribbean Supreme Court — BVI division) for financial services matters.
+- **Acceptance:** BVI enforcement + court decisions ingested; passages indexed; CaseLawVerifier validates.
+
+---
+
+### H15 — VARA Obsidian vault structure
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G9, H1
+- **Source:** UCIE v2 SOW Phase 4
+- **Description:** Vault folder `VARA/` with sub-structure: _Index.md, _Licence Types.md, Legislation/, Regulations/, Case Law/, Cross-Reference Map/.
+- **Acceptance:** Vault structure populated; notes use VARA-* corpus codes; index note links to all rulebooks.
+
+---
+
+### H16 — El Salvador Obsidian vault structure
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G9, H3-H10
+- **Source:** UCIE v2 SOW Phase 4 §4.2 (explicit folder structure)
+- **Description:** Vault folder `ElSalvador/` with sub-structure per §4.2: _Index.md, _Licence Types.md, Legislation/, Regulations/, Guidance/, Case Law/, Cross-Reference Map/.
+- **Acceptance:** Vault structure populated; notes use SV-* corpus codes; defined terms map populated.
+
+---
+
+### H17 — DFSA Obsidian vault structure
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G9, H11
+- **Source:** v1 scope expansion
+- **Description:** Vault folder `DFSA/` separated from existing adgm-corpus folder. Per-module organisation matching ADGM/ structure.
+- **Acceptance:** DFSA vault structure populated; notes use DFSA-* corpus codes.
+
+---
+
+### H18 — BVI Obsidian vault structure
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G9, H13
+- **Source:** v1 scope expansion
+- **Description:** Vault folder `BVI/` with per-rulebook organisation. Title hygiene applied to note titles (no malformed "Bvi" → "BVI" patterns).
+- **Acceptance:** BVI vault structure populated; titles well-formed.
+
+---
+
+### H19 — DFSA inline citation maps (B8 reframed)
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** H11
+- **Source:** v1.3 register B8 (reframed under H for v1 scope)
+- **Description:** Build `_CANONICAL_TARGET_MAP` and `_SHORTHAND_MAP` in citation_extractor.py for each of the 22 DFSA modules. Affects "see also" cross-reference UX in Quick Lookup and citation map output for DFSA content.
+- **Acceptance:** Inline citation maps populated for all 22 DFSA modules; re-run citation extraction shows non-trivial citation count per doc.
+
+---
+
+### H20 — Case law schema + tables
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G11
+- **Source:** UCIE v2 SOW Phase 3
+- **Description:** Add `case_law_documents` table (id, jurisdiction_code, source_type, citation, date, parties, ruling_summary, content_hash, source_url, full_text). Add `case_law_passages` table (id, case_id, passage_text, fingerprint_sha256, paragraph_ref).
+- **Acceptance:** Schema migrations applied; tables empty initially; foreign keys correct; full_text + passage indexes work.
+
+---
+
+### H21 — CaseLawVerifier implementation
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** H20
+- **Source:** UCIE v2 SOW Phase 3 + Phase 6
+- **Description:** Verifier that takes a citation to a case-law passage in drafted output and verifies the passage exists with the claimed fingerprint. Layer-4 anti-hallucination defence for case law citations (parallel to citation map for rulebook citations).
+- **Acceptance:** Verifier strips case-law citations whose fingerprints don't match; integration test with deliberate hallucinated citation passes (citation gets stripped).
+
+---
+
+### H22 — Case law citation distinguishable in drafted output
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** H21
+- **Source:** Bundle 2 finding — anti-hallucination needs case-law-shape handling
+- **Description:** Anti-hallucination prompts must distinguish rulebook citations (resolved via corpus search) from case law citations (resolved via case_law_passages + fingerprint match). DOCX scrub Layer 3 must scrub both kinds correctly.
+- **Acceptance:** Test drafts citing case law produce verified citations or stripped placeholders. Rulebook + case law citations both pass anti-hallucination scrub.
+
+---
+
+# Category I — Governance Suite Mode
+
+The 5-tier governance suite as an additive product mode alongside single-document drafting. UCIE v2 Phase 5 architecture + Phase 7 frontend integration.
+
+---
+
+### I1 — DocumentSuite Pydantic model
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G11
+- **Source:** UCIE v2 SOW Phase 5 §5.3
+- **Description:** Model: `suite_id`, `jurisdiction_code`, `licence_type`, `tier` (1-5), `tier_name`, `documents` (ordered list of DocumentTemplate), `dependencies` (list of prior-tier suite_ids), `applies_to_activities`, `is_mandatory`, `estimated_draft_time_mins`.
+- **Acceptance:** Model defined in `services/drafting_templates.py`; registered in TEMPLATE_REGISTRY alongside DocumentTemplate; instances can be loaded and queried.
+
+---
+
+### I2 — AppendixSpec model (original SOW Phase F)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Original Qanun SOW Phase F §8.1 + UCIE v2 (extended across jurisdictions)
+- **Description:** Model: `appendix_id`, `title`, `letter`, `render_mode` (TABLE / TWO_COLUMN / BULLET_LIST), `is_static`, `table_spec`, `drafting_instructions`, `min_word_count`. Add `appendices: list[AppendixSpec]` field to DocumentTemplate.
+- **Acceptance:** Model in `services/structural_spec.py`; integrates with DocumentTemplate; renders correctly through exporter.
+
+---
+
+### I3 — Cross-tier context propagation
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I1
+- **Source:** UCIE v2 SOW Phase 5 §5.4
+- **Description:** When a higher-tier document is drafted, drafting_service passes `context_summary` extracted from all prior-tier drafted sections to the prompt. Entity facts confirmed in Tier 1 questionnaire are available as `[CONFIRMED BY ENTITY]` facts to all subsequent tiers. Avoids the "answer once, populate everywhere" problem.
+- **Acceptance:** Tier 3 Board Charter references same governance structure as Tier 1 Business Plan without contradiction; integration test with full suite draft validates consistency.
+
+---
+
+### I4 — Suite orchestration in drafting_service
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I1, I3
+- **Source:** UCIE v2 SOW Phase 5 §5.3
+- **Description:** Suite dispatch: iterate per tier (1→5), per document order within tier; handle dependencies; propagate context per I3; report progress; support per-document redraft without re-running full suite.
+- **Acceptance:** Full-suite draft for one jurisdiction-licence-type completes; per-document status persisted; partial-suite drafts work (subset of tiers).
+
+---
+
+### I5 — API endpoint: POST /api/drafting/suite
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I4
+- **Source:** UCIE v2 SOW §9.2
+- **Description:** Initiate a governance suite draft. Body: `{entity_id, jurisdiction, licence_type, tiers[]}`. Returns `suite_job_id`. Enqueues per-document drafting jobs internally.
+- **Acceptance:** Endpoint accepts valid requests; rejects invalid combinations (e.g., licence_type not in jurisdiction); persists suite_job + per-document jobs.
+
+---
+
+### I6 — API endpoint: GET /api/drafting/suite/{job_id}/status
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I5
+- **Source:** UCIE v2 SOW §9.2
+- **Description:** Returns per-document status for all documents in the suite (queued / drafting / drafted / exporting / complete / failed). Used by frontend dashboard polling.
+- **Acceptance:** Status endpoint returns expected schema; reflects in-flight job state accurately.
+
+---
+
+### I7 — API endpoint: GET /api/drafting/suite/{job_id}/download
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I5
+- **Source:** UCIE v2 SOW §9.2
+- **Description:** ZIP download of all completed DOCX files in the suite, with MANIFEST.md cover listing all documents + tier mapping + applicable activities. Streams as binary response.
+- **Acceptance:** ZIP downloads cleanly; MANIFEST.md present; all DOCX files included and valid.
+
+---
+
+### I8 — API endpoint: POST /api/drafting/suite/{job_id}/redraft/{doc_id}
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I5
+- **Source:** UCIE v2 SOW §9.2 + product requirement (single-doc-within-suite redraft)
+- **Description:** Redraft a single document within an existing suite without re-running the whole suite. Preserves cross-tier context from other documents.
+- **Acceptance:** Redraft endpoint produces fresh document; existing other docs unchanged; cross-tier context preserved.
+
+---
+
+### I9 — API endpoint: GET /api/corpus/jurisdiction
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G12
+- **Source:** UCIE v2 SOW §9.2
+- **Description:** Returns list of jurisdictions with document counts and corpus health indicators (last update, vector count, days since last update). Used by frontend jurisdiction selector.
+- **Acceptance:** Endpoint returns expected schema for all 5 jurisdictions; health indicators accurate.
+
+---
+
+### I10 — Governance Suite Mode UI (new frontend flow)
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** I5-I9
+- **Source:** UCIE v2 SOW §9.1
+- **Description:** New page `app/(dashboard)/compliance/governance-suite/page.tsx`. Flow: jurisdiction selection → licence type selection → tier selection → entity questionnaire → suite preview → start drafting → progress dashboard. Distinct from existing single-document mode (which remains unchanged).
+- **Acceptance:** End-to-end flow works for one jurisdiction-licence-type; UI handles error states; progress polling works smoothly; visual design matches existing CEE/Studio aesthetic.
+
+---
+
+### I11 — Suite progress dashboard component
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I10
+- **Source:** UCIE v2 SOW §9.1
+- **Description:** `components/suite/SuiteDashboard.tsx` — shows all documents in the suite with per-document status rings (matches existing Corporate Governance Framework dashboard pattern from CEE). Per-document drill-down for individual progress + redraft action.
+- **Acceptance:** Dashboard renders correctly for active + complete suites; status updates in real-time; redraft action works.
+
+---
+
+### I12 — Tier selector component
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I10
+- **Source:** UCIE v2 SOW §9.1
+- **Description:** `components/suite/TierSelector.tsx` — allows user to select all tiers, subset (e.g., Tiers 1-2 only), or individual tier. Per-tier description + estimated time.
+- **Acceptance:** Selector works for all combinations; selected tiers passed correctly to API.
+
+---
+
+### I13 — Per-jurisdiction entity questionnaire UI
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I10
+- **Source:** UCIE v2 SOW §9.1 + §8.3 (SV questionnaire example)
+- **Description:** Per-jurisdiction questionnaire modules: SvQuestionnaire.tsx, VaraQuestionnaire.tsx, DfsaQuestionnaire.tsx, BviQuestionnaire.tsx (ADGM uses existing). Each captures jurisdiction-specific questions per UCIE v2 §8.3 (SV) and equivalent per jurisdiction.
+- **Acceptance:** Each questionnaire validates inputs; questions match jurisdiction's regulatory requirements; data flows to entity profile.
+
+---
+
+### I14 — Cross-jurisdiction selector
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I9, I10
+- **Source:** UCIE v2 SOW §9.1
+- **Description:** Frontend selector showing all 5 jurisdictions with health indicators (from I9). Selection drives downstream licence type + template options.
+- **Acceptance:** All 5 jurisdictions visible; selection persisted; downstream UI adapts.
+
+---
+
+### I15 — DocumentSuite-DocumentTemplate registry
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I1
+- **Source:** Implied by I1 + per-jurisdiction template work
+- **Description:** Central registry mapping each (jurisdiction, licence_type, tier) to its DocumentSuite. Lookup interface for API + frontend. Loaded from data files or DB on startup.
+- **Acceptance:** Registry covers all 5 jurisdictions × all licence types × 5 tiers (~150-200 suites total); lookup is O(1); registry validation runs at startup.
+
+---
+
+### I16 — Suite-level coverage validator
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** I4, coverage_validator.py
+- **Source:** Extension of existing coverage validator to suite-level
+- **Description:** Beyond per-document coverage, validate at suite level: every Tier-1 confirmed fact propagates correctly to Tier 2-5; cross-document citations are consistent; no contradictions between same-tier documents.
+- **Acceptance:** Suite-level validator catches deliberately-introduced contradictions; integration test verifies validator firing.
+
+---
+
+### I17 — Suite-level test fixture
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** F2.TRADEDAR pattern
+- **Source:** Test coverage need for suite mode
+- **Description:** Per-jurisdiction test fixtures (autouse session-scoped) seed demo entities for each jurisdiction. Pattern matches F2.TRADEDAR (existing ADGM TradeDar fixture).
+- **Acceptance:** Fixtures seed correctly; suite tests can run against any jurisdiction's demo entity.
+
+---
+
+# Category J — Per-Jurisdiction Templates & Suites
+
+Template content per jurisdiction × licence type × tier. The largest single category by item count because of the 5-jurisdiction × per-licence × 5-tier matrix.
+
+---
+
+### J1 — ADGM template discovery + activation gate
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G10, H (ADGM corpus complete)
+- **Source:** UCIE v2 SOW Phase 5
+- **Description:** TemplateDiscoveryAgent run for ADGM. Produces `ADGM_template_review.md` + skeletons + coverage check. Oliver gate review. Activate after approval.
+- **Acceptance:** ADGM template set defined per licence type (Cat 1, 2, 3A, 3B, 3C, 4, 5); Oliver-approved; activated in TEMPLATE_REGISTRY.
+
+---
+
+### J2 — VARA template discovery + activation gate
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G10, H1
+- **Source:** UCIE v2 SOW Phase 5 §6.1 (VARA suite mapping table)
+- **Description:** TemplateDiscoveryAgent run for VARA. ~35 template documents per UCIE v2 §6.1 (across BD, EX, CUST, MGMT, TRS, ISS, LB, ADV licence types). Oliver gate review.
+- **Acceptance:** VARA template set per licence type per tier; Oliver-approved; activated.
+
+---
+
+### J3 — El Salvador template discovery + activation gate
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G10, H3-H10
+- **Source:** UCIE v2 SOW Phase 9 §8.2 (full 5-tier governance suite table)
+- **Description:** TemplateDiscoveryAgent run for El Salvador. ~50 template documents per UCIE v2 §8.2 across 10 SV licence categories (SV-DASP-EX/CUST/PLAT/STR/XFER/INV, SV-BSP, SV-ISSU, SV-STBL-ISS, SV-CERT). Oliver gate review.
+- **Acceptance:** El Salvador template set per licence type per tier; Oliver-approved; activated.
+
+---
+
+### J4 — DFSA template discovery + activation gate
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G10, H11
+- **Source:** v1 scope expansion
+- **Description:** TemplateDiscoveryAgent for DFSA. DFSA licence categories (Cat 1-5 per DFSA framework). 5-tier suite per category. Oliver gate review.
+- **Acceptance:** DFSA template set per licence type per tier; Oliver-approved; activated.
+
+---
+
+### J5 — BVI template discovery + activation gate
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** G10, H13
+- **Source:** v1 scope expansion
+- **Description:** TemplateDiscoveryAgent for BVI. BVI licence categories (Investment Business Approved Manager, Restricted Manager, Business Companies, Mutual Funds Manager, etc.). 5-tier suite per category. Oliver gate review.
+- **Acceptance:** BVI template set per licence type per tier; Oliver-approved; activated.
+
+---
+
+### J6 — ADGM s25b: ADGM Returns template section
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** J1
+- **Source:** Original Qanun SOW Phase E §7.2
+- **Description:** New section in ADGM compliance manual: ADGM Registration Authority returns, notices, and registers (separate from FSRA returns). Render mode PROSE, ~500 words, vault_hint stark_compliance_manual_s25b_adgm_returns.
+- **Acceptance:** SectionSpec defined; drafted output covers RA returns correctly; included in compliance manual TEMPLATE_REGISTRY entry.
+
+---
+
+### J7 — ADGM s27b: FATCA/CRS template section
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** J1, B1 (parser redesign so COBS 17.4.1 etc. resolve)
+- **Source:** Original Qanun SOW Phase E §7.3
+- **Description:** FATCA + CRS chapter. Covers ADGM FATCA Regulations 2022, CRS Regulations 2017 (as amended 2023), US person identification, IGA Model 1 reporting, due diligence procedures, 30 June annual deadline. Render mode MIXED (prose + obligations table). Required provisions: COBS 17.4.1 (verify exists post-B1).
+- **Acceptance:** SectionSpec defined; drafted output covers FATCA + CRS obligations; table renders correctly with headers (Obligation / Regulation / Deadline / Responsible Person).
+
+---
+
+### J8 — ADGM s27c: Economic Substance template section
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** J1
+- **Source:** Original Qanun SOW Phase E §7.4
+- **Description:** Economic Substance Regulations chapter. UAE federal (Cabinet Resolution 57/2020, Ministerial Decision 100/2020). Nine relevant activities, Economic Substance Test, annual notification to ADGM RA. Render mode PROSE, ~600 words.
+- **Acceptance:** SectionSpec defined; drafted output covers ES regime correctly.
+
+---
+
+### J9 — 6 Stark appendices (original SOW Phase F)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** I2 (AppendixSpec model)
+- **Source:** Original Qanun SOW Phase F §8.3
+- **Description:** Define and render 6 appendices: sA Conflicts Register (TABLE), sB Contact Details (TWO_COLUMN), sF1 Order Records (TABLE), sF2 Confirmation Notes (TABLE), sG Third Party Form (TABLE), sH Marketing Checklist (BULLET_LIST). All `is_static=True`. Exporter renders empty form templates.
+- **Acceptance:** All 6 appendices in compliance_manual.appendices; rendered DOCX has correct headings + form templates; placeholders are clear.
+
+---
+
+### J10 — VARA per-licence-type Tier 1 templates
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J2
+- **Source:** UCIE v2 SOW §6.1 Tier 1 rows
+- **Description:** Per-licence-type Tier 1 (Registration Pack) templates: VARA Pre-Registration Questionnaire, Business Plan, Corporate Structure + UBO, Fit & Proper Declarations, Technology Architecture Statement, AML/CFT Programme Summary, Initial Capital Evidence, Proposed Fee Schedule (where applicable).
+- **Acceptance:** Templates defined; each drafts to non-trivial output; Oliver-approved per J2 gate.
+
+---
+
+### J11 — VARA per-licence-type Tier 2 templates (Mandatory Compliance Framework)
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J10
+- **Source:** UCIE v2 SOW §6.1 Tier 2 rows
+- **Description:** AML/CFT Manual, KYC/CDD, Travel Rule (BD/EX/TRS only), Market Conduct, Conflicts, Consumer Protection, Custody Policy (CUST/EX/BD only), Complaints, Cybersecurity, Outsourcing.
+- **Acceptance:** All Tier 2 templates defined; drafting verified.
+
+---
+
+### J12 — VARA per-licence-type Tier 3 templates (Corporate Governance)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** J10
+- **Source:** UCIE v2 SOW §6.1 Tier 3 rows
+- **Description:** Board Charter, Audit Committee ToR, Risk Committee ToR, Senior Mgmt Map, Delegation Matrix, Remuneration Policy, Whistleblowing.
+- **Acceptance:** All Tier 3 templates defined; cross-tier context from Tier 1 + 2 propagates.
+
+---
+
+### J13 — VARA per-licence-type Tier 4 templates (Operational Procedures)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** J10
+- **Source:** UCIE v2 SOW §6.1 Tier 4 rows
+- **Description:** Onboarding, Order Execution (BD/EX/MGMT), Custody Operations (CUST/EX/BD), Incident Response, BCP, Data Protection.
+- **Acceptance:** All Tier 4 templates defined; activity-specific tailoring works.
+
+---
+
+### J14 — VARA per-licence-type Tier 5 templates (Filings & Monitoring)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** J10
+- **Source:** UCIE v2 SOW §6.1 Tier 5 rows
+- **Description:** Compliance Monitoring Programme, Internal Audit Plan, MLRO Annual Report, Annual Compliance Report to Board, Regulatory Examination Pack.
+- **Acceptance:** All Tier 5 templates defined; reporting templates render correctly.
+
+---
+
+### J15 — El Salvador per-licence-type Tier 1-5 templates
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J3
+- **Source:** UCIE v2 SOW §8.2 (40+ rows)
+- **Description:** 5-tier templates per the 10 SV licence categories. Spanish-language considerations (LEAD is the operative legislation; key documents need bilingual support consideration). MLRO/Compliance Officer role per UIF requirements distinctly handled.
+- **Acceptance:** All SV templates defined per §8.2; drafting verified per category.
+
+---
+
+### J16 — DFSA per-licence-type Tier 1-5 templates
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J4
+- **Source:** v1 scope expansion
+- **Description:** 5-tier templates per DFSA licence categories. Leverages existing DFSA module corpus.
+- **Acceptance:** DFSA templates per category × tier; drafting verified.
+
+---
+
+### J17 — BVI per-licence-type Tier 1-5 templates
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J5
+- **Source:** v1 scope expansion
+- **Description:** 5-tier templates per BVI licence categories. Approved Manager / Restricted Manager / BCA companies / Mutual Fund Manager etc.
+- **Acceptance:** BVI templates per category × tier; drafting verified.
+
+---
+
+### J18 — Per-jurisdiction questionnaire content
+
+- **Status:** Open
+- **Size:** Half-day per jurisdiction (×5)
+- **Dependencies:** J1-J5
+- **Source:** UCIE v2 SOW §8.3 (SV example)
+- **Description:** Per-jurisdiction questionnaire question content. Includes registration numbers, licence category specifics, jurisdiction-specific compliance officer requirements, capital adequacy framing per regulator, etc.
+- **Acceptance:** Each questionnaire's questions are drafted, validated, mapped to template variables.
+
+---
+
+### J19 — Category tailoring per template per licence type
+
+- **Status:** Open
+- **Size:** Multi-day
+- **Dependencies:** J1-J5
+- **Source:** Original Qanun SOW §7.5 (ADGM category tailoring example)
+- **Description:** Per-template `category_tailoring` dictionary entries per licence category. E.g., FATCA/CRS for Cat 3A vs Cat 3C; capital adequacy framing per BVI Approved Manager vs Restricted Manager.
+- **Acceptance:** Tailoring drives differentiated drafted output per licence type; integration tests verify per-category differences.
+
+---
+
+### J20 — Structural specs (data/structural_specs.json) per jurisdiction
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** J1-J5
+- **Source:** Existing pattern + per-jurisdiction extension
+- **Description:** Per-document rendering specifications for each template's DOCX output: render_mode, table_specs, font settings, page-break rules.
+- **Acceptance:** Each new template has a corresponding structural spec entry; structural-spec-match test (currently failing in v1.3 — see F2 follow-ups) passes for all.
+
+---
+
+# Category K — Commercial Readiness
+
+The commercial layer: billing, onboarding, accounts, pricing, terms. Required for a first paying customer flow. Most of these are gaps not previously tracked in the register.
+
+---
+
+### K1 — Billing integration (payment provider selection + integration)
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** K2, K3
+- **Source:** v1 scope expansion — first paying customer requirement
+- **Description:** Decide payment provider (Stripe most likely; alternatives: GoCardless for direct debit, Adyen for enterprise). Integrate checkout flow, subscription management, invoicing, receipt generation. Currency support (GBP, AED, USD at minimum).
+- **Acceptance:** Customer can pay; subscription persisted; invoices generated; payment failures handled; UAE VAT considerations addressed.
+
+---
+
+### K2 — User onboarding flow
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** K3
+- **Source:** v1 scope expansion (currently hardcoded demo user per memory)
+- **Description:** Full onboarding: account signup → email verification → entity profile creation (jurisdiction selection, licence category, entity details) → first-document or first-suite walkthrough. Replaces hardcoded `DEMO_USER_EMAIL` / `DEMO_USER_PASSWORD_HASH`.
+- **Acceptance:** New user can sign up, verify, create entity profile, draft first document without intervention; demo user retained for development.
+
+---
+
+### K3 — Account creation flow with verification
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** None (JWT auth already exists)
+- **Source:** v1 scope expansion
+- **Description:** Email verification (with verification token email, expiry, resend); password reset flow; account deletion request handling (GDPR-adjacent).
+- **Acceptance:** Email verification works; password reset works; account deletion soft-delete with retention.
+
+---
+
+### K4 — Law firm account type (FIRM_ADMIN) activation
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** K2, K3
+- **Source:** Memory: "Law firm account type with elevated FIRM_ADMIN permissions (designed, partially scaffolded)"
+- **Description:** Full FIRM_ADMIN role flow: firm onboarding, multi-entity tenancy under one firm, examiner access controls (per existing Firm/FirmEntity/ExaminerAccess scaffolding from Stream 5). Pricing tier differentiation (per-entity vs per-firm).
+- **Acceptance:** Law firm can onboard, add entities, manage examiner access; billing differentiated per tier; existing scaffolding activated end-to-end.
+
+---
+
+### K5 — Firm tenancy: Firm → FirmEntity → ExaminerAccess workflow
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** K4
+- **Source:** Memory: existing scaffolding
+- **Description:** UI + backend flow for firm-level operations: add/remove entities, grant/revoke examiner access, view firm-level activity log.
+- **Acceptance:** All firm-level operations work; permission scoping correct.
+
+---
+
+### K6 — Pricing tiers definition + UI
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** K1
+- **Source:** v1 scope expansion
+- **Description:** Define pricing tiers (per-document, per-suite, per-firm). Display pricing on marketing pages + within product. Currency display. Trial vs paid distinction.
+- **Acceptance:** Pricing visible; selection drives billing flow correctly.
+
+---
+
+### K7 — Customer support flow
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** v1 scope expansion
+- **Description:** Decide support channel (email, ticket system like Intercom/Zendesk, or simple contact form). Implement chosen channel. Auto-acknowledgment + SLA messaging.
+- **Acceptance:** Customer can reach support; tickets are tracked; response SLA documented.
+
+---
+
+### K8 — Terms of service + privacy policy + acceptable use
+
+- **Status:** Open
+- **Size:** Half-day (drafting time + legal review)
+- **Dependencies:** None
+- **Source:** v1 scope expansion
+- **Description:** Draft ToS, Privacy Policy, AUP for the product. UAE/UK jurisdiction considerations. GDPR + UAE PDPL compliance. Cookie policy.
+- **Acceptance:** Documents drafted, legally reviewed (Oliver as KC may self-review or use external counsel), published, linked from product footer.
+
+---
+
+### K9 — Refund policy + cancellation flow
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** K1
+- **Source:** v1 scope expansion
+- **Description:** Refund policy (e.g., 14-day cooling-off for new subscriptions; pro-rated for cancellations mid-period). Cancellation flow in-product. Retention of customer data per ToS.
+- **Acceptance:** Policy documented; cancellation flow works end-to-end; refunds process correctly via K1's payment provider.
+
+---
+
+### K10 — Audit log / compliance event log
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** K2, K4
+- **Source:** v1 scope expansion + regulatory product context (customers may need to demonstrate what changed when)
+- **Description:** Per-customer compliance event log: what was drafted, when, by whom, with what entity profile state, what citations. Customer-visible (downloadable for their records).
+- **Acceptance:** Audit log captures all relevant events; customer can view + export their log.
+
+---
+
+# Category L — End-to-End Validation
+
+Pre-launch validation that all five jurisdictions produce regulator-credible output through the full pipeline. This is the "are we actually ready to ship" category.
+
+---
+
+### L1 — Anti-hallucination end-to-end test per jurisdiction
+
+- **Status:** Open
+- **Size:** Day per jurisdiction (×5 = Week total)
+- **Dependencies:** All H + J items per jurisdiction
+- **Source:** v1 readiness criterion (anti-hallucination is the product's whole premise)
+- **Description:** Per jurisdiction: end-to-end draft test that introduces deliberate hallucinations (fake rule numbers, fabricated case citations, made-up provisions) and verifies all three layers strip them. Test includes rulebook citations + case law citations (H22).
+- **Acceptance:** All hallucinations stripped before drafted output reaches user; coverage_validator catches missing citations; Layer 3 DOCX scrub final-strips any remaining issues; zero `[NOT IN CORPUS]` markers in final output.
+
+---
+
+### L2 — Full draft test per licence type per jurisdiction (representative sample)
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** L1
+- **Source:** v1 readiness criterion
+- **Description:** For each jurisdiction × representative licence types (not all combinations — pick the most-common 2-3 per jurisdiction): full governance suite draft (all 5 tiers) for a fictional but realistic entity. Verify regulator-credibility: every section drafted, every citation verified, every appendix rendered, cross-tier context consistent.
+- **Acceptance:** ~15 full-suite drafts produced (ADGM Cat 3A/3B/3C; VARA EX/CUST/BD; SV DASP-EX/CUST/PLAT; DFSA Cat 3/4; BVI Approved Manager/Restricted Manager). Each passes Oliver's eyeball review for regulator-credibility.
+
+---
+
+### L3 — corpus_status across 5 jurisdictions
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G12, H (all jurisdictions corpus complete)
+- **Source:** Corpus Authority Protocol — session-open check
+- **Description:** `corpus_status()` returns per-jurisdiction document + section + vector counts + days_since_last_update. Healthy state: each jurisdiction's days_since_last_update < 14 (or similar threshold). Alerts when stale.
+- **Acceptance:** corpus_status returns expected schema for all 5 jurisdictions; staleness alerts fire correctly.
+
+---
+
+### L4 — Defence-in-depth test passes across 5 jurisdictions
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** A7-GLOBAL-INVARIANT-FINDINGS resolved
+- **Source:** Bundle 2 lesson: test_global_single_current_invariant earned its keep
+- **Description:** Run defence-in-depth tests against full 5-jurisdiction corpus. Expect zero multi-current cases. Run regularly (CI on every corpus change).
+- **Acceptance:** test_global_single_current_invariant passes (currently xfail with 134 outstanding rows); per-jurisdiction equivalents also pass.
+
+---
+
+### L5 — Per-jurisdiction MCP tool verification
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G12
+- **Source:** Operational hygiene check
+- **Description:** From a fresh CCD session: corpus_status → search_corpus per jurisdiction → get_rule per jurisdiction. Verify expected results returned. Confirms MCP-corpus.db alignment isn't broken.
+- **Acceptance:** Each MCP tool returns expected results per jurisdiction; no stale-MCP-process issues per Operational Hygiene §3.
+
+---
+
+### L6 — Customer-shape acceptance (5 jurisdictions × fictional customer)
+
+- **Status:** Open
+- **Size:** Week
+- **Dependencies:** L2
+- **Source:** v1 readiness criterion — "customer can actually use this"
+- **Description:** Per jurisdiction: a fictional customer (representative entity for that jurisdiction) walks through the product from onboarding → entity profile → suite selection → questionnaire → suite drafting → download. Identifies UX friction, regulatory inaccuracies, missing edge cases.
+- **Acceptance:** 5 walkthroughs documented; each surfaced friction points addressed; product feels regulator-credible from the customer's perspective.
+
+---
+
+### L7 — Tester onboarding kit per jurisdiction
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** L6
+- **Source:** v1.3 register D12 (Tester onboarding) extended for 5 jurisdictions
+- **Description:** Per-jurisdiction tester kit: representative entity profile, test scenarios (most-common licence applications), expected output samples for verification, known limitations document.
+- **Acceptance:** Tester kits per jurisdiction; sample drafts attached; testers know what good looks like.
+
+---
+
+### L8 — Launch checklist + go/no-go criteria
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** L1-L7
+- **Source:** v1 readiness criterion
+- **Description:** Explicit go/no-go criteria for launch: register status (all v1 items Done, no Open or Blocked), test suite green, corpus health green across 5 jurisdictions, billing flow tested, support flow ready, ToS/privacy published, customer-shape acceptance passed. Final checklist before public availability.
+- **Acceptance:** Checklist documented; all items pass before any external customer is invited.
+
+---
+
+# Beyond Launch — v2 Roadmap
+
+Explicitly out of v1 scope. Reserved for future explicitly-scoped releases.
+
+**v2 product features (formerly partial-launch nice-to-haves now fully deferred):**
+
+- **Phases 10-18 Vanta layer** — Control Register, Evidence Collection Framework, Board Sign-off Workflow, Approved Persons Register, Staff Training Tracker, Vendor Risk Register, Incident Register, Policy Acknowledgment System, Regulatory Examination Mode. Substantial ongoing-compliance product category beyond initial document drafting.
+- **Qanun Monitor** — Compliance calendar as separately priced add-on module.
+- **Progressive automation threshold increases** — As model accuracy improves, reduce human-gate requirements (currently every template list requires Oliver approval; v2 may let some automate).
+- **Seed fundraise narrative refinement** — Technical narrative for SOW v5.0 / pitch deck refinement (not product work but adjacent).
+
+**Operational v2 work:**
+
+- Phase 2 backlog items currently tracked in `qanun-docs/phase-2-backlog.md` (C11 + integration prompt-drafting + others as they accumulate).
 
 ---
 
@@ -1144,64 +2257,272 @@ Plus working artefacts:
 
 ---
 
-# Sequencing Recommendation (Revised in v1.2)
+# Sequencing Recommendation (Revised in v1.4 — 10-Sprint Plan for Full UCIE v2)
 
-Significantly revised from v1.1 to reflect that D10 master integration is complete. Most first-wave items have lost their "A1 on master" or "D10" dependency and can now proceed in parallel.
+Comprehensively revised from v1.2 to reflect the scope expansion to Full UCIE v2 + DFSA + BVI. The 5-7 week timeline from v1.2 was for the ADGM-shape v1; the expanded 5-jurisdiction v1 requires a 10-sprint plan spanning ~10-14 weeks calendar time.
 
-**Status of canonical branches (12 May 2026 evening):**
-- adgm-corpus master @ `95d925d` — 675P / 1S / 5XF
-- qanun-api main @ `b179bd2` — 41P / 1S / 4XF / 0F
-- qanun main @ post-F1 — 5 vitest smoke tests passing
-
-**First wave — current (independent items, ≤half-day each, parallelisable across CCD sessions and overnight):**
-- **A7-cluster** (9 half-day reconciliation items — A2 + A7.B–A7.I) — all now unblocked. Ideal overnight workload due to structural similarity and parallelism.
-- **A5.C.1** — DFSA scraper source_url population fix (half-day, scoped).
-- **E1** — API key rotation (overdue, half-day).
-- **E3** — LLM-Legal-Council cleanup (≤1 hour).
-- **E4** — Oliver OS PAT removal from git remote (≤1 hour).
-- **F2.TRADEDAR** — TradeDar fixture rebuild (half-day).
-- **C11** — Flake investigation diagnostic phase (half-day).
-- **C12** — Integration prompt-drafting checklist drafting (half-day).
-
-**Second wave — foundational + investigations (day-scale work):**
-- **E9.PROXY** — high priority, preserve unique Cloudflare proxy work before any deletion (day, own session).
-- **A5.A, A5.B** — refactor convention-dependent lookups (day + half-day).
-- **A5.D** — content_hash pre-compute on INSERT (half-day).
-- **C8.APPENDIX** — SOW schema reference appendix (half-day).
-- **A7.ROOT** — ingestion-path root-cause investigation (day, depends on A7 cluster reconciliations giving fuller evidence).
-- **A6.LIVE** — live idempotence exercise (half-day, own authorisation; sandbox already clean).
-- **A3** — K7 retag carry-forward for OTHER X.Y section_refs (day, can run alongside A2).
-- **F2.CONTENT** — Section content authoring for 3 xfail-strict template tests (day).
-
-**Third wave — multi-day work (each is its own focused session or multi-session sprint):**
-- **B1** — Parser redesign (week, biggest single item).
-- **B2** — DFSA sourcebook handler implementation (5-6 days per memo).
-- **A5.C** — Source-URL backfill at 2,099-row scale (multi-day).
-- **B8** — DFSA inline citation maps (multi-day).
-- **B5** — DIFC primary legislation ingestion (week).
-- **D9** — D-section frontend (multi-day).
-
-**Fourth wave — integration + after-bulk (depends on third wave landing):**
-- **B4** — FSRA bulk refresh (after B1 lands).
-- **A5.C completion** — using fresh fetches from B4.
-- **B6** — Voyage re-embedding (after B2 + B4 + B5; E9.PROXY may simplify by allowing Hetzner-side execution).
-- **B7** — Portability seeding (after B6).
-- **C1** — extract_citations hook implementation (FSRA first, then DFSA after B8).
-- **D1-D8** — Sprint section completion.
-- **E8** — Lowercase qanun-api deletion (after authorisation).
-- **E9** — Lowercase adgm-corpus deletion (after E9.PROXY recovery).
-
-**Final wave — launch:**
-- Master integration sessions for later branches (analogous to D10's discipline)
-- **D11** — G1 smoke run against api.qanun.io.
-- **F3, F4, F5** — Test coverage completion.
-- F1 expansion (frontend test coverage beyond smoke).
-- **D12** — Tester onboarding.
-
-**Revised total estimate: 5-7 weeks** at ~1 CCD session/day pace (unchanged from v1.1). Master integration session was the foundation step that unblocked the first wave; subsequent waves should compress slightly with more parallelism available. Could compress further with parallel CCD sessions across different repos (different worktrees per Operational Hygiene rule 7) — first-wave items in particular benefit from this.
-
-**Next-session recommendation:** Phase 2 prioritisation session itself (~half-day interactive) to walk the 67 + audit-surfaced entries and confirm the sequencing above is right. Or, if confidence is high in the sequencing, go directly to attacking first-wave items via overnight sprint (most are well-scoped enough to be overnight-suitable).
+**Status of canonical branches (13 May 2026, post-Bundle-2):**
+- adgm-corpus master @ `94ce23d` (post-Bundle-2 test-file unxfail + register updates) — 684P / 1S / 14XF
+- qanun-api main @ `805f50f` (post-Bundle-1 F2-TRADEDAR) — 42P / 1S / 3XF / 0F
+- qanun main @ `4aaf8dc` (post-Bundle-1 F1) — 5 vitest smoke tests passing
+- corpus.db sha256: `6728a3dbd05a4f7b72fbeed13fb5be333e58e48f48c3469daa872fc6773c9c13` (modified during Bundle 2 — Hetzner re-sync deferred per CLAUDE.md deploy procedure)
 
 ---
 
-*End of register v1.3. Next update: when Bundle 2 (A7-cluster reconciliation apply) lands, when overnight produces new findings, or when next major batch moves Open → Done.*
+## Critical Path Analysis
+
+The longest dependency chain runs:
+
+```
+UCIE Phase 1 Core Framework (G1-G14)  →  Per-jurisdiction corpus (H1-H22, parallel across 5)
+       ↓                                                  ↓
+       └─→  TemplateDiscoveryAgent (G10)  ←──────────────┘
+                       ↓
+       Per-jurisdiction Oliver gates (J1-J5)
+                       ↓
+       Per-jurisdiction template content (J6-J20)
+                       ↓
+       Governance Suite Mode UI (I1-I17)
+                       ↓
+       Commercial Readiness (K1-K10)
+                       ↓
+       End-to-End Validation (L1-L8)
+                       ↓
+                    LAUNCH
+```
+
+Parallel branches off the critical path:
+- **B1 parser redesign** runs parallel to G1-G14; gates G6 (StructureAgent) for ADGM/FSRA-shape content
+- **A-category data integrity items** mostly resolve in Sprint 1-2 with bulk-3 + section cleanups deferred to post-B1
+- **E-category operational hygiene** runs continuously across all sprints
+- **C-category code quality** completes by Sprint 3
+
+---
+
+## Sprint Plan (10 Sprints, ~12 Weeks)
+
+### Sprint 1 — Foundation (Week 1)
+
+**Theme: Unblock everything downstream.**
+
+- **B1** — Parser redesign (interactive design session day 1; implementation parallel)
+- **G1, G2, G3** — UCIE manifest schema + orchestrator + BaseAgent contract
+- **E9.PROXY** — Cloudflare proxy preservation (HIGH PRIORITY, day, own session)
+- **E1** — API key rotation (overdue, half-day)
+- **E3, E4** — ≤1hr cleanups (LLM-Legal-Council, PAT removal)
+- **Bundle 3 prep** — A7.I (UNKNOWN reconciliation), A7.ROOT (ingestion path investigation), A7-FUNDS-doc-199-mislabel widened scope
+- **A5.C.1 APPLY** — DFSA scraper backfill (pending Bundle-1 authorisation)
+- **A7-GLOBAL-INVARIANT-FINDINGS** — Per-bucket scoping (which of the 3 buckets affect customer-facing rulebooks?)
+
+**Sprint 1 exit gate:** B1 designed (implementation may continue into Sprint 2); UCIE manifest schema validated; E9.PROXY recovered; A-category open count drops by ~3-4.
+
+### Sprint 2 — UCIE Core + ADGM Refresh (Week 2)
+
+**Theme: UCIE framework usable; ADGM corpus re-baselined.**
+
+- **G4-G10** — Remaining UCIE base agents (TopographyAgent, ScraperAgent, StructureAgent, VerificationAgent, EmbeddingAgent, ObsidianAgent, TemplateDiscoveryAgent)
+- **G11, G12, G13** — Schema additions, MCP multi-jurisdiction, parallel coordination
+- **B1** implementation completion + test against FSRA GEN/PRU/COBS
+- **B4** FSRA bulk refresh (now B1 has landed)
+- **A5.C** Source-URL backfill (2,099 rows; uses B4 fresh fetches)
+- **A3** K7 retag (130-row OTHER → GEN on doc 206; broader audit)
+- **A5.A, A5.B, A5.D, A5.E** Convention normalisation
+- **A5.F** source_key naming
+- **A6.LIVE** Live idempotence exercise
+
+**Sprint 2 exit gate:** UCIE framework complete; ADGM corpus fresh + provenance-complete; A-category open count drops to <5.
+
+### Sprint 3 — Multi-Jurisdiction Corpus Ingestion (Weeks 3-4)
+
+**Theme: All 5 jurisdictions ingested in parallel.**
+
+Parallel work across 5 jurisdictions:
+- **H1, H2, H15** — VARA corpus + case law + vault structure
+- **H3-H10, H16** — El Salvador enrichment + gap fill + case law + Pinecone + vault
+- **H11, H12, H17, H19** — DFSA full completion + case law + vault + inline citation maps (B8 → H19)
+- **H13, H14, H18** — BVI expansion + case law + vault
+- **H20, H21, H22** — Case law schema + verifier + citation distinguishability (cross-jurisdiction)
+- **G14** — MCP server multi-jurisdiction tool naming decision
+
+**Sprint 3 exit gate:** All 5 jurisdictions have current corpus with ≥95% T2 coverage (≥80% for BVI legislation-shape); case law pipeline working; `corpus_status` reports all 5 jurisdictions healthy.
+
+### Sprint 4 — Phase 5 Governance Suite Architecture (Week 5)
+
+**Theme: DocumentSuite model + cross-tier propagation + suite API.**
+
+- **I1, I2** — DocumentSuite + AppendixSpec Pydantic models
+- **I3** — Cross-tier context propagation in drafting_service
+- **I4** — Suite orchestration
+- **I5-I9** — All API endpoints (suite POST/status/download/redraft + jurisdiction GET)
+- **I15** — DocumentSuite-DocumentTemplate registry
+- **I16** — Suite-level coverage validator
+
+**Sprint 4 exit gate:** Backend supports suite-mode drafting end-to-end via API; integration test with one jurisdiction-licence-type full suite passes.
+
+### Sprint 5 — Frontend Governance Suite Mode (Week 6)
+
+**Theme: New product mode in UI.**
+
+- **I10** — Governance Suite Mode UI (new page, full flow)
+- **I11, I12** — Suite progress dashboard + Tier selector components
+- **I13** — Per-jurisdiction questionnaire UI scaffolding
+- **I14** — Cross-jurisdiction selector
+- **I17** — Suite-level test fixtures (per jurisdiction)
+- **D9** — D-section frontend (multi-day; in parallel)
+- **D11** — G1 smoke run against api.qanun.io (still requires existing dependencies satisfied)
+
+**Sprint 5 exit gate:** Suite mode UI complete; user can flow from jurisdiction → licence → tier → questionnaire → suite draft → download.
+
+### Sprint 6 — Per-Jurisdiction Template Discovery + Oliver Gates (Week 7)
+
+**Theme: 5 template review gates.**
+
+- **J1, J2, J3, J4, J5** — TemplateDiscoveryAgent runs for ADGM, VARA, El Salvador, DFSA, BVI in parallel
+- Each produces review.md + skeleton.py + coverage.csv
+- **5 Oliver review gates** (one per jurisdiction); can be sequenced or batched as Oliver prefers
+- Activate per-jurisdiction templates after each gate
+- **J18** — Per-jurisdiction questionnaire content (Half-day per jurisdiction)
+
+**Sprint 6 exit gate:** All 5 jurisdictions have Oliver-approved template sets activated.
+
+### Sprint 7 — Per-Jurisdiction Template Content Authoring (Week 8)
+
+**Theme: Template content drafted for all licence types × tiers.**
+
+- **J6, J7, J8** — ADGM s25b (ADGM Returns), s27b (FATCA/CRS), s27c (Economic Substance)
+- **J9** — 6 Stark appendices
+- **J10-J14** — VARA per-licence-type Tiers 1-5
+- **J15** — El Salvador per-licence-type Tiers 1-5
+- **J16** — DFSA per-licence-type Tiers 1-5
+- **J17** — BVI per-licence-type Tiers 1-5
+- **J19** — Category tailoring per template per licence
+- **J20** — Structural specs per jurisdiction
+- **F2.CONTENT** — 3 xfail-strict template tests content
+- **C1** — extract_citations hook implementation (FSRA + DFSA)
+- **C6** — DFSA MODULE_URLS refresh script
+- **C8.APPENDIX** — SOW schema reference appendix
+- **B5** — DIFC primary legislation ingestion (week-sized, parallel)
+
+**Sprint 7 exit gate:** All template content authored; per-jurisdiction full-suite drafts produce non-trivial complete output.
+
+### Sprint 8 — Commercial Readiness + Operational Hardening (Week 9)
+
+**Theme: Customer-ready commercial layer + hardening.**
+
+- **K1** — Billing integration (Stripe likely)
+- **K2** — User onboarding flow
+- **K3** — Account creation + verification
+- **K4, K5** — Law firm / FIRM_ADMIN activation + firm tenancy
+- **K6** — Pricing tiers
+- **K7** — Customer support flow
+- **K8** — ToS + Privacy + AUP
+- **K9** — Refund + cancellation
+- **K10** — Audit log
+- **E2** — Tier 0 wip-branch triage
+- **E5** — Three-way vault drift
+- **E6** — b5a5fcc orphan branch
+- **E7** — MKT section-parsing (may resolve via DFSA bulk; verify)
+- **E8** — `~/qanun-api` lowercase delete (with authorisation)
+- **E9** — `~/adgm-corpus` lowercase delete (after E9.PROXY)
+- **E10** — Playwright cadence
+- **C11.A** — Flake test redesign (post-mitigation; mock-network split)
+- **C12** — Integration prompt-drafting checklist
+- **D1-D8** — Remaining sprint section completions (M, Q, C-section synthesis, etc.)
+
+**Sprint 8 exit gate:** Commercial flow tested end-to-end; operational hygiene Open count → 0; C-category complete.
+
+### Sprint 9 — End-to-End Validation (Weeks 10-11)
+
+**Theme: Anti-hallucination + customer-shape acceptance per jurisdiction.**
+
+- **L1** — Anti-hallucination end-to-end test per jurisdiction (Day per jurisdiction = Week total)
+- **L2** — Full draft test per licence type per jurisdiction (representative sample)
+- **L3, L4, L5** — corpus_status / defence-in-depth / MCP verification across 5 jurisdictions
+- **L6** — Customer-shape acceptance (5 jurisdictions × fictional customer walkthroughs)
+- **F3, F4, F5** — Test coverage completion (A1 regression, DFSA sourcebook tests, G1 expansion)
+- **A7.B.SECTIONS, A7.F.SECTIONS, A7.G.SECTIONS** — Section cleanups (now B1 has landed, the parser-dependency is satisfied)
+- **A7-FUNDS-doc-199-mislabel** completion — rulebook_code corrections + scraper routing fix
+- **A7-FSRA-pipeline-size-sanity** — size-floor guard implementation
+
+**Sprint 9 exit gate:** All 5 jurisdictions pass anti-hallucination + customer-shape acceptance; defence-in-depth tests green; section cleanups complete.
+
+### Sprint 10 — Launch Prep (Week 12)
+
+**Theme: Tester onboarding → launch.**
+
+- **L7** — Tester onboarding kit per jurisdiction
+- **L8** — Launch checklist + go/no-go criteria
+- **D12** — Tester onboarding (formally, per L7's kits)
+- **Hetzner re-sync** — Local-Hetzner reconciliation per CLAUDE.md deploy procedure (deferred Bundle 2 item)
+- Final verification pass: register all Done or Blocked-on-v2 only; test suite green; corpus health green; commercial flow tested
+- Documentation pass
+- Beta cohort sourcing → first paying customer outreach
+
+**Sprint 10 exit gate:** Launch checklist all green; testers onboarded; first paying customer can be invited.
+
+---
+
+## Risk + Mitigation Summary
+
+1. **B1 parser redesign single-point-of-failure for ADGM-side work.** If it takes 2 weeks instead of 1, Sprint 2 + Sprint 3 ADGM thread slip. Mitigation: B1 interactive design session in Sprint 1 Day 1; fallback regex-tweak interim if redesign hits walls.
+
+2. **UCIE Phase 1 scope creep.** Mitigation: time-box G1-G14 to 1.5 weeks; ship minimum agent set; defer optional optimisations.
+
+3. **Per-jurisdiction Oliver gates serialise (Sprint 6).** 5 × ~1-2 days review = potentially 5-10 days. Mitigation: pre-review during Sprints 3-5 corpus work via partial template skeletons; Sprint 6 becomes confirmation not full review.
+
+4. **A7-GLOBAL-INVARIANT-FINDINGS unscoped (134 rows in 3 buckets).** If they affect customer-facing rulebooks → cannot-ship. Mitigation: scoping pass in Sprint 1.
+
+5. **DFSA expansion is largely greenfield.** Mitigation: confirm DFSA licence type map early in Sprint 3; this drives J4 template count.
+
+6. **Commercial readiness (Category K) is novel.** No prior register tracking; risk of underestimating Stripe integration + UAE VAT + GDPR/PDPL considerations. Mitigation: scope K1 design memo in Sprint 1; identify external dependencies (payment provider account creation) early.
+
+7. **Test-suite contamination risk grows with corpus size.** Five-jurisdiction integration tests are slow + flaky-prone. Mitigation: mocked tests for fast feedback; live tests gated behind env vars (A6 pattern); CI runs subset, full suite on schedule.
+
+---
+
+## Total Estimate
+
+**12 weeks calendar time** at sustained pace. With memory #22 calibration (CCD ~5x faster than human estimates for apply-shape work), most overnight items will land faster than item-sizes suggest. The Week-sized items (B1, B5, UCIE Phase 1, Phase 5 architecture, Phase 7 frontend, K1 billing) are rate-limiters — these need interactive design work that doesn't compress.
+
+If parallel CCD sessions across worktrees stay disciplined, and Oliver gates run smoothly, **plausible range is 10-14 weeks**.
+
+**Next-session recommendation:** Begin Sprint 1. The natural opening move is either (a) B1 parser redesign interactive design session, or (b) UCIE Phase 1 G1-G3 scaffolding. Both can start immediately. Tactical sub-items (E1 API key rotation, E3 + E4 ≤1hr cleanups) can drop in any time as filler.
+
+---
+
+*End of register v1.4. Next update: when Sprint 1 items begin moving Open → Done, when scope decisions evolve, or when new findings surface.*
+
+---
+
+# Today's Achievements (13 May 2026 — Phase 2 Prioritisation Session)
+
+**Wall-clock: ~60-90 min interactive (estimate to be confirmed at session close).**
+
+**Scope decision: Full UCIE v2 + DFSA + BVI expansion.** v1 launch now defined as fully-functional product across five jurisdictions in both product modes. Vanta-layer formally scoped to v2.
+
+**Framework reframe: Within-v1 prioritisation collapsed.** Earlier three-tier "cannot-ship / should-ship / nice-to-ship" framing replaced by two-state "in v1 scope / out of v1 scope". All v1 items launch-blocking.
+
+**Register expansion:**
+
+- **6 new categories added** (G, H, I, J, K, L) covering:
+  - UCIE Framework & Cross-Jurisdiction Infrastructure (14 items)
+  - Per-Jurisdiction Corpus & Case Law (22 items)
+  - Governance Suite Mode (17 items)
+  - Per-Jurisdiction Templates & Suites (20 items)
+  - Commercial Readiness (10 items)
+  - End-to-End Validation (8 items)
+- **3 Bundle 2 items added as discrete A-category entries**: A7-FUNDS-doc-199-mislabel (widened scope to 4 docs), A7-FSRA-pipeline-size-sanity, A7-GLOBAL-INVARIANT-FINDINGS (134 rows in 3 buckets)
+- **"Beyond Launch — Post-Launch Roadmap" narrowed** to v2-only items (Vanta layer, Qanun Monitor, progressive automation, seed fundraise narrative)
+- **Net register movement: 77 → 168 items** (+91 net)
+
+**Sprint plan: 10 sprints over ~12 weeks** spanning Foundation (Sprint 1), UCIE Core + ADGM Refresh (2), Multi-Jurisdiction Corpus (3), Phase 5 Architecture (4), Frontend Governance Suite Mode (5), Template Discovery + Oliver Gates (6), Template Content Authoring (7), Commercial Readiness + Operational Hardening (8), End-to-End Validation (9), Launch Prep (10).
+
+**Critical path identified:** UCIE Phase 1 → per-jurisdiction corpus → Phase 5 architecture → Phase 7 frontend → templates activated → operational hardening → tester onboarding → launch. B1 parser redesign runs parallel; A/E/C categories complete by Sprint 3-8.
+
+**Risk register surfaced:** B1 SPOF, UCIE scope creep, Oliver gate serialisation, A7-GLOBAL-INVARIANT-FINDINGS unscoped, DFSA greenfield extent, commercial readiness novelty, test suite contamination at 5-jurisdiction scale.
+
+**Output deliverable:** This register (v1.4) — commit-ready for qanun-docs main as the planning artifact for the rest of the project.
+
+---
+
+*End of register v1.4. Phase 2 prioritisation session complete; Sprint 1 ready to begin.*
