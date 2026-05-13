@@ -64,19 +64,21 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 13 | 1 | 9 | 23 |
+| A — Data Integrity | 15 | 1 | 10 | 26 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **44** | **7** | **21** | **72** |
+| **Total** | **46** | **7** | **22** | **75** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS); A7.F (FSRA GLO, sections deferred to A7.F.SECTIONS); A7.H (BVI-REGS, Path (b) inverted — older 2589 retained for sections + provenance). 7 of 8 A7-cluster reconciliations applied this session. Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **New register items added: A7.B.SECTIONS, A7.F.SECTIONS** (both Open) covering archived-section + citation cleanup post-flip.
+**Done in Bundle 2 (13 May 2026 A7-cluster reconciliation session — all 8 known A7 cases applied):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA); A7.B (FSRA COBS); A7.F (FSRA GLO); A7.H (BVI-REGS, Path (b) inverted); A7.C (FSRA FUNDS, Path A — memo §4 size-drop hypothesis invalidated; doc-199 PRU/FUNDS mislabel carved out). 8 of 8 known A7 reconciliations applied. Each flip-only; doc-level metadata + section cleanup deferred per item.
+
+**New register items opened in Bundle 2:** A7.B.SECTIONS, A7.F.SECTIONS (COBS + GLO archived-section cleanup); A7-FUNDS-doc-199-mislabel (PRU content in FUNDS row); A7-FSRA-pipeline-size-sanity (size-floor scraper guard); **A7-GLOBAL-INVARIANT-FINDINGS** (3 new multi-current cases surfaced by defence-in-depth test — FSRA OTHER 65 rows, ADGM FSRA ADGM-FSRA-F 37 rows, ADGM_RA ADGM-RA-F 32 rows).
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -289,14 +291,60 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.C — FSRA FUNDS orphan reconciliation
+### A7.C — FSRA FUNDS orphan reconciliation — **DONE [2026-05-13, Path A]**
+
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2; Path A flip-only). Mislabel-of-doc-199 carved out as separate item.
+- **Size:** Half-day
+- **Dependencies:** None (A1 now on master)
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-FUNDS.md` + Bundle 2 in-session forensic
+- **Description:** Pre-apply state: 3 is_current=1 rows. Memo §4 framed the case as a 67% size-drop investigation (199 at 873 KB vs 2789 at 283 KB) requiring portal verification. **In-session investigation overturned the framing entirely:** first-300-chars of doc 199's body reads "Prudential – Investment, Insurance Intermediation and Banking Rulebook (PRU) (VER19.010126)" — doc 199 is PRU content mislabeled as FUNDS in the documents.rulebook_code column. Its `VER19.010126` value doesn't fit FUNDS's actual version chain (VER10 / VER11 / VER12); it fits a hypothetical PRU VER19 (also not present in PRU's chain VER02→VER13). Doc 2789's body reads "Fund Rulebook (FUNDS) (VER12.290426)" — legitimate 29 April 2026 re-issuance of FUNDS VER12. The memo's size-drop premise was comparing two unrelated regulations. Path A applied: 199 + 2784 (340-byte stub) → `is_current=0, superseded_by=2789`; 2789 retained canonical FUNDS. Doc 199's `rulebook_code='FUNDS'` mislabel persists on the is_current=0 row — carved out to A7-FUNDS-doc-199-mislabel below.
+- **Acceptance:** ✓ Rows-affected = 2; invariant count = 1 (doc 2789). `FUNDS 1.1.1` resolves to doc 2789. PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[FSRA-FUNDS]` flipped from xfail-strict to passing. Full-suite delta: 683P/1S/15XF → 684P/1S/14XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_FUNDS_20260513_091106.db` (sha256 `0be275a0…`, integrity ok).
+- **Memo §4 outcome:** Hypothesis invalidated. The 67% size-drop reading was apples-vs-oranges. No actual content reduction in FUNDS; current 2789 (283 KB) is the genuine current state, no missing larger doc.
+- **Deferred follow-ups:** A7-FUNDS-doc-199-mislabel (correct rulebook_code on doc 199); A7-FSRA-pipeline-size-sanity (memo §9 — fail-loud on <50% size fetches); doc 2789 metadata (A5.C/E).
+
+---
+
+### A7-FUNDS-doc-199-mislabel — Correct rulebook_code on doc 199
 
 - **Status:** Open
 - **Size:** Half-day
-- **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** Same pattern as A7.B applied to FSRA FUNDS.
-- **Acceptance:** Single is_current=1 row for FSRA FUNDS.
+- **Dependencies:** Forensic decision on what to do with mislabeled-but-historic PRU content
+- **Source:** Bundle 2 A7-FUNDS investigation, 2026-05-13
+- **Description:** Doc 199 has `rulebook_code='FUNDS'` but its full_text body identifies as the Prudential Rulebook (PRU) VER19.010126. Likely an upsert bug in pre-A1 FSRA ingestion that wrote PRU content to a FUNDS-tagged row. The doc is currently is_current=0 with superseded_by=2789 (from A7.C apply) — so it's inert for `is_current=1` joins. Correction options: (a) `UPDATE documents SET rulebook_code='PRU' WHERE id=199` plus appropriate `superseded_by` chain-fix; (b) `UPDATE documents SET rulebook_code='PRU', superseded_by=<some-PRU-doc>` plus citation/section re-pointing; (c) leave as-is with a documented annotation. PRU's chain doesn't include a VER19, so option (b)'s `superseded_by` value is non-obvious.
+- **Acceptance:** Doc 199 either has correct `rulebook_code`, or has a documented annotation explaining the mislabel persistence and downstream-query implication. Any forward-looking integrity-check that asserts body-vs-label consistency catches this case.
+- **Notes:** A1 invariant doesn't catch this class of bug (count-by-rulebook-code doesn't verify content matches label). Cross-reference to register item that audits body-vs-label invariants would close the integrity gap.
+
+---
+
+### A7-FSRA-pipeline-size-sanity — Fail-loud size-floor for FSRA ingestion
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** A7-FUNDS memo §9, 2026-05-13
+- **Description:** When the FSRA scraper fetches a rulebook whose full_text length is < 50% of the prior is_current=1 row's full_text length, the pipeline should fail-loud (raise + abort the write), not silent-commit. The 28-April + 2-May FSRA pipeline's stub-shaped captures (340-byte FUNDS, 4.7-KB GEN, 1.5-KB MIR, etc.) all passed unconditionally because no size-sanity floor existed. A1 invariant covers the count side; this addition covers the size side.
+- **Acceptance:** FSRA scraper raises `SizeFloorError` (or equivalent) when fetched full_text < 0.5 × prior_full_text. Test covers both the floor-trigger and the floor-pass cases. Register entry A1.h.SIZE-FLOOR or similar.
+- **Notes:** Pairs with the existing A1 pre-flight invariant. Defence-in-depth: A1 catches multi-current count; A7-FSRA-pipeline-size-sanity catches partial-fetch silent-commits.
+
+---
+
+### A7-GLOBAL-INVARIANT-FINDINGS — Three multi-current cases beyond the A7 audit
+
+- **Status:** Open
+- **Size:** Half-day (investigation) + tbd (remediation, depending on outcome)
+- **Dependencies:** None
+- **Source:** Bundle 2 close-out, 2026-05-13 — `test_global_single_current_invariant` defence-in-depth test surfaced these
+- **Description:** After all 8 known A7 reconciliations applied (MIR, PRU, GEN, BVI-BCA, COBS, GLO, BVI-REGS, FUNDS), the `test_global_single_current_invariant` test still xfails because the defence-in-depth query returns 3 multi-current cases the A7 audit did not catch:
+  - `FSRA` + `OTHER` — **65 is_current=1 rows**
+  - `ADGM FSRA` + `ADGM-FSRA-F` — **37 is_current=1 rows**
+  - `ADGM_RA` + `ADGM-RA-F` — **32 is_current=1 rows**
+- **Hypotheses:**
+  1. **Legitimate category-bucket cases.** `rulebook_code` here is being used as a *category* (OTHER catch-all; ADGM-FSRA-F = "FSRA Forms"; ADGM-RA-F = "RA Forms") rather than a canonical-rulebook identifier. If so, each row is a distinct document (different form / different consultation paper) that's correctly is_current=1 in its own right, and the A1 single-current invariant doesn't apply. Remediation: refine the global query to exclude category buckets; document the bucket pattern in a new schema-conventions memo.
+  2. **Genuine multi-current violations.** Like the A7 cluster but missed by the audit because the audit might have been scoped to "canonical rulebook codes" only. Each bucket would need its own A7-like reconciliation.
+  3. **Mix.** Some rows in each bucket are genuine duplicates, others are distinct documents.
+- **Acceptance:** First, the investigation that resolves which hypothesis holds (likely Hypothesis 1 based on the bucket naming). Then either query refinement + bucket-pattern memo (if H1), or per-bucket reconciliation items A7.J / A7.K / A7.L (if H2/H3).
+- **Notes:** Surfaced via the highest-value regression test working exactly as the A7 cluster overview §6 anticipated ("catches **any** new violation, not just the 8 known ones"). This is the test paying for itself on its first full pass.
 
 ---
 
