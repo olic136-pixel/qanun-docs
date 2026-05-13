@@ -521,14 +521,45 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.I — UNKNOWN source_entity truncated rulebook code reconciliation
+### A7.I — UNKNOWN source_entity reconciliation — **SUPERSEDED BY A7.I.1 / A7.I.2 / A7.I.3**
+
+- **Status:** Superseded — split into 3 discrete sub-bundles per Sprint 1 follow-up overnight (14 May 2026). See `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`.
+- **Size:** Originally Day (scoped to 11 rows); actual scope is **57 rows** across 3 distinct sub-patterns.
+- **Original Description:** "11 docs in source_entity='UNKNOWN' share truncated rulebook_code values." This was correct for the COMP-LAW subset (now A7.I.1) but missed the larger 46-row population: 34 FSRA-form duplicates of content already in the corpus (now A7.I.2) and 12 VARA rulebook 77-byte shell rows from failed VARA ingestion (now A7.I.3).
+- **Superseded by:** A7.I.1 (COMP-LAW, 11 rows), A7.I.2 (FSRA-form duplicates, 34 rows), A7.I.3 (VARA shells, 12 rows). All three are Open; sub-bundle apply order TBD per Bundle 3.
+
+---
+
+### A7.I.1 — UNKNOWN COMP-LAW truncated rulebook codes (11 rows)
 
 - **Status:** Open
-- **Size:** Day
+- **Size:** Half-day
 - **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** 11 docs in source_entity='UNKNOWN' share truncated rulebook_code values. These were ingested with insufficient metadata to classify properly. Investigation: identify the real source entity per doc, reclassify or remove.
-- **Acceptance:** All UNKNOWN docs either reclassified to a real source_entity or removed with documented reason. UNKNOWN source_entity count drops to whatever's truly unclassifiable (ideally zero).
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md` widened-scope investigation
+- **Description:** The original 11 UNKNOWN rows surfaced by the A7 audit — all with `rulebook_code` truncated to a length of 16 characters ('COMP-LAW-FOUNDATI', 'COMP-LAW-BRANCH_F', 'COMP-LAW-PRIVATE_', etc.) and content that's clearly classifiable as ADGM Companies Regulations material. Investigation per memo identifies the real source entity per doc; reclassify or remove with documented reason.
+- **Acceptance:** 11 rows reclassified (likely to source_entity='ADGM' with proper rulebook_code) or removed with documented reason. UNKNOWN COMP-LAW row count drops to 0.
+
+---
+
+### A7.I.2 — UNKNOWN FSRA-form duplicates (34 rows)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`
+- **Description:** 34 rows in source_entity='UNKNOWN' that are duplicates of FSRA application forms already present elsewhere in the corpus under their proper source_entity. Likely deletion candidates after uniqueness verification (content_hash match against the proper-source row). The duplicate origin appears to be the same multi-URL-same-PDF pattern documented in A7.ROOT — the FSRA forms were ingested via two portal entry points, one classifying correctly and one defaulting to UNKNOWN.
+- **Acceptance:** 34 rows deleted (if duplicate confirmed) or reclassified (if genuinely unique). UNKNOWN-source-FSRA-form row count drops to 0. Defence-in-depth global invariant test passes for the UNKNOWN bucket once this sub-bundle and A7.I.1 are both applied.
+
+---
+
+### A7.I.3 — UNKNOWN VARA 77-byte shells (12 rows)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** May be naturally resolved by VARA Phase 2 H1 (VARA canonical re-scrape) — if H1 lands first the shells get overwritten with proper VARA content
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`
+- **Description:** 12 rows of 77-byte VARA-shaped content (placeholder rows from failed VARA ingestion attempts where the scraper produced near-empty captures). Either delete (clean slate; H1 re-acquires) or leave for H1 to overwrite via canonical scrape. The 77-byte size is the diagnostic — it's the byte-shape of an HTML "no content" response stub from the VARA portal.
+- **Acceptance:** 12 rows resolved (deleted or replaced via H1). UNKNOWN-source VARA shell row count drops to 0.
 
 ---
 
