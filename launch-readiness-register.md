@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 16 | 1 | 3 | 20 |
+| A — Data Integrity | 15 | 1 | 4 | 20 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **47** | **7** | **15** | **69** |
+| **Total** | **46** | **7** | **16** | **69** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only, metadata to A5.C/E).
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only); A7.D (FSRA PRU — flip-only). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -284,14 +284,16 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.D — FSRA PRU orphan reconciliation
+### A7.D — FSRA PRU orphan reconciliation — **DONE [2026-05-13]**
 
-- **Status:** Open
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; 2795 metadata backfill deferred to A5.C / A5.E.
 - **Size:** Half-day
 - **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** Same pattern as A7.B applied to FSRA PRU.
-- **Acceptance:** Single is_current=1 row for FSRA PRU.
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-PRU.md`
+- **Description:** Three is_current=1 rows reconciled: 15 (legitimate VER13.181223 prior, 864 KB, 1279 sections) and 2772 (28-April ingestion stub, 4.9 KB, 4 sections) flipped to `is_current=0, superseded_by=2795`; 2795 (May 2026 VER14 candidate, 875 KB, 1296 sections — +1.3% section delta from 15) retained as canonical current. Doc 15 section-ref convention is 100% `PRU` prefix (zero `OTHER` — A3 K7 carry-forward concern from memo §10 verified not-applicable).
+- **Acceptance:** ✓ Invariant query `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='PRU' AND is_current=1` = 1 (doc 2795). `PRU 1.1.1` resolves to doc 2795 on the is_current=1 join. PRAGMA integrity_check ok post-COMMIT. Test `test_single_current_invariant_per_rulebook[FSRA-PRU]` flipped from xfail-strict to passing. Full-suite delta: 677P/1S/21XF → 678P/1S/20XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_PRU_20260513_080421.db` (sha256 `3bfb2dbc…`, integrity ok).
+- **Deferred follow-up:** doc 2795 `version_str` / `version_num` / `source_url` remain empty — tracked under A5.C and A5.E. Memo §6 portal lookup for VER14.<minor> + URL is input for that follow-up.
 
 ---
 
