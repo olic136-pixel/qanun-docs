@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 13 | 1 | 8 | 22 |
+| A — Data Integrity | 13 | 1 | 9 | 23 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **44** | **7** | **20** | **71** |
+| **Total** | **44** | **7** | **21** | **72** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS); A7.F (FSRA GLO, sections deferred to A7.F.SECTIONS). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — investigation underway. **New register items added: A7.B.SECTIONS, A7.F.SECTIONS** (both Open) covering archived-section + citation cleanup post-flip.
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS); A7.F (FSRA GLO, sections deferred to A7.F.SECTIONS); A7.H (BVI-REGS, Path (b) inverted — older 2589 retained for sections + provenance). 7 of 8 A7-cluster reconciliations applied this session. Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **New register items added: A7.B.SECTIONS, A7.F.SECTIONS** (both Open) covering archived-section + citation cleanup post-flip.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -366,13 +366,17 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.H — BVI_FSC REGS duplicate reconciliation
+### A7.H — BVI_FSC REGS duplicate reconciliation — **DONE [2026-05-13, Path (b) inverted]**
 
-- **Status:** Open
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). **Path (b) inverted** from memo §5 prescription.
 - **Size:** Half-day
 - **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** Same pattern as A7.G applied to BVI_FSC REGS.
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-BVI-REGS.md` + Bundle 2 in-session investigation
+- **Description:** Pre-apply state: 2 is_current=1 rows (2589 from 1 Apr, 25,931 bytes, 18 sections, source_url populated, formal S.I. title; 2664 from 3 Apr, 25,944 bytes, 0 sections, empty source_url, malformed-normalised title). Memo §5 prescribed flipping 2589 (the "older convention"), but in-session investigation showed: (a) first 500 chars byte-identical between the two — 13-byte delta is whitespace/footer noise, not a regulatory update; (b) 2589 carries source_url provenance while 2664 has empty source_url; (c) 2589 has 18 parsed `BVI-REGS Reg.N` sections while 2664 has zero — flipping per memo would have left BVI-REGS with zero queryable sections; (d) 2589's title is the formal "Investment Business (Approved Managers) Regulations 2012 (S.I. 2012 No. 54)" while 2664's is the malformed "Bvi Investment Business Approved Managers Regs". Memo §3's "newer convention is better" rationale was based on title-cleanliness alone; deeper evidence inverted the call. **Apply: flip 2664, retain 2589 as canonical.**
+- **Acceptance:** ✓ Rows-affected = 1; invariant count = 1 (doc 2589). `BVI-REGS Reg.1` (one of 18) resolves to doc 2589 on the is_current=1 join. PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[BVI_FSC-BVI-REGS]` flipped from xfail-strict to passing. Full-suite delta: 682P/1S/16XF → 683P/1S/15XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_BVI_REGS_20260513_090242.db` (sha256 `d39135ae…`, integrity ok).
+- **Why memo was wrong here:** Memo §3 evaluated "newer scraper run = better" on title-convention surface only. The actual scraper-run-quality evidence (provenance + sections) points the other way: 2664 looks like a partial re-ingestion that lost source path and parser output. The title-cleanliness preference is a separate concern from canonical-version selection.
+- **Deferred follow-ups:** Title hygiene — the malformed "Bvi Investment Business…" pattern is the seed for the **A7-BVI-title-extraction-audit** register item (proposed by memo §9 and now opened below). NULL `updated_at` on 2589 from memo §6 — superseded by Bundle 2 setting `updated_at = datetime('now')` on the touched docs (2664), so 2589 still has its empty `updated_at`; tracked as part of A5.E hygiene scope.
 
 ---
 
