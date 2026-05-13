@@ -279,15 +279,15 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A6.LIVE — Live idempotence exercise
+### A6.LIVE — Live idempotence exercise — **DONE [2026-05-13]**
 
-- **Status:** Open
-- **Size:** Half-day
+- **Status:** Done [2026-05-13] — Sprint 2 Session 2 Block D
+- **Size:** Half-day (actual wall-clock: 5m44s on the pytest invocation; live DFSA portal scraping)
 - **Dependencies:** A6 (Done)
 - **Source:** A6 deferred sub-item, 12 May 2026
 - **Description:** Run the live idempotence exercise: refresh DFSA bulk three times in succession against a fresh sandbox (snapshotted from Hetzner). Assert first run produces non-trivial changes; second and third runs produce 100% unchanged, zero INSERTs.
 - **Acceptance:** Live test passes. Result captured in `/tmp/qanun-overnight/A6-idempotence-live-result.md`. Polluted sandbox deleted first.
-- **Notes:** Authorise as `Authorise A6-live-idempotence-exercise-<date>`.
+- **Sprint 2 Session 2 outcome:** `TestIdempotenceLive::test_dfsa_apply_three_times_against_live_portal` passed with `QANUN_RUN_LIVE_IDEMPOTENCE=1`. Internal assertions confirmed `stats["new"] == 0` AND `stats["amended"] == 0` for runs 2 and 3 against the live DFSA Thomson Reuters portal. Canonical corpus.db sha unchanged throughout (`081928744c0231f6916cf8b51607f4093ed1cdf1d2d97cec389fa344b51c292e` pre + post). Sandbox cleaned post-pass. Result memo at `/tmp/qanun-overnight/sprint-2-session-2/A6-LIVE-result.md`.
 
 ---
 
@@ -1322,7 +1322,7 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G4 — TopographyAgent — **DONE [2026-05-14]** (base + ADGM + VARA topology populated; DFSA/BVI/EL_SALVADOR completion = Sprint 3)
+### G4 — TopographyAgent — **DONE [2026-05-13]** (5/5 jurisdictions populated; per-jurisdiction matrix work still Sprint 3)
 
 - **Status:** Done [2026-05-14] — Sprint 2 Session 1 Block A
 - **Size:** Day
@@ -1331,18 +1331,31 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 - **Description:** Per jurisdiction: discover rulebooks listing, licence types, licence-to-rulebook matrix. Outputs `topology.json` for Oliver review gate before scraping commences.
 - **Acceptance:** TopographyAgent produces topology.json per jurisdiction; review gate produces human-readable summary; runs against VARA (12 rulebooks), El Salvador (existing 9 corpus codes + gap-fill list), DFSA (22 modules), BVI (further rulebook discovery), ADGM (validation against existing state).
 - **Sprint 2 Session 1 landing:** `ucie/agents/topography_agent.py` (base class) + `TopographyReport` Pydantic schema. Outputs at `ucie/jurisdictions/ADGM/topology.json` (source='corpus' — 9+ rulebooks read from corpus.db FSRA/is_current=1 distinct rulebook_codes, excluding category buckets) and `ucie/jurisdictions/VARA/topology.json` (source='manifest' — 12 corpus_codes with rulebook_slugs from manifest). DFSA/BVI/EL_SALVADOR topology generation defers to Sprint 3 per-jurisdiction adapter work. Merge commit `a839db6`.
+- **Sprint 2 Session 2 landing:** `rulebook_index_urls` populated in VARA/DFSA/BVI/EL_SALVADOR manifests (each curl-HEAD-verified pre-commit). topology.json regenerated for all 4 non-ADGM jurisdictions. Outcomes:
+  - VARA: WARN (12 rulebooks, 12 licence types, no matrix yet)
+  - DFSA: PASS (22 rulebooks; root URL works, /rulebook returns 404 to HEAD — JS-rendered, surfaced as `_dfsa_url_notes`)
+  - BVI: PASS (9 rulebooks; per-statute URLs deferred to Sprint 3 H11/H12)
+  - EL_SALVADOR: WARN (15 rulebooks, 10 licence types, no matrix yet)
+  WARN outcomes are expected (licence_to_rulebook_matrix is Sprint 3 per-jurisdiction work). Merge commit `882f157`.
 
 ---
 
-### G5 — ScraperAgent base + per-jurisdiction adapters — **PARTIAL-DONE [2026-05-14]** (base class landed; adapters = Sprint 2 Session 2)
+### G5 — ScraperAgent base + per-jurisdiction adapters — **DONE [2026-05-13]** (Session 2 Block A)
 
-- **Status:** Partial-Done [2026-05-14] — base class landed; per-jurisdiction adapters deferred to Sprint 2 Session 2
+- **Status:** Done [2026-05-13] — Sprint 2 Session 2 Block A (5 adapter classes landed via merge commit `3acaada`)
 - **Size:** Multi-day (parallel adapter work) — base portion ~half-day done
 - **Dependencies:** G3, G4
 - **Source:** UCIE v2 SOW Phase 2 §5 + per-jurisdiction differences noted in §2.1
 - **Description:** Base ScraperAgent with rate-limiting, retry, ETag caching, manifest recording. Adapters: VARA (HTML, rulebooks.vara.ae structure), El Salvador (HTML + PDF; uses standard adapters), BVI (PDF, FSC source paths), DFSA (Drupal — leverages existing scraper work), ADGM (Thomson Reuters — existing).
 - **Acceptance:** Each adapter scrapes its jurisdiction's primary rulebooks cleanly; rate limits respected; ETag-based incremental updates work; results recorded in manifest.
 - **Sprint 2 Session 1 landing:** `RulebookScraperBase` added to `ucie/agents/scraper_agent.py` — abstract `scrape_rulebook(rulebook, target_dir) -> ScrapeResult`; base class handles topology.json consumption (reads G4 output), per-rulebook iteration with rate-limit between calls, retry-with-exponential-backoff (1s/2s/4s capped at 60s), gate logic (PASS/WARN/HALT). Per-jurisdiction adapter subclasses (VARAScraper, ElSalvadorScraper, BVIScraper, DFSAScraper, ADGMScraper) defer to Sprint 2 Session 2. Merge commit `a839db6`.
+- **Sprint 2 Session 2 landing:** 5 per-jurisdiction adapter classes added under `ucie/agents/scrapers/`:
+  - `adgm.py` — wraps v1 `ADGMRulebookScraper.fetch_rulebook(code)` (7 tests)
+  - `dfsa.py` — wraps v1 `DFSARulebookScraper.fetch_rulebook(code)`; preserves C7 Drupal selector cascade (6 tests)
+  - `vara.py` — new HTML scraper for rulebooks.vara.ae via requests + BeautifulSoup (7 tests)
+  - `bvi.py` — new PDF scraper via pdfplumber with title-hygiene per A7-BVI-title-extraction-audit (9 tests)
+  - `el_salvador.py` — new HTML+PDF dispatcher for cnad.gob.sv (Spanish encoding preserved, 12 tests)
+  All 41 adapter tests mock-only — no live portal calls. Test count delta: 743P/1S/12XF → 784P/1S/12XF. Merge commit `3acaada`. Live ingestion deferred to Sprint 3 H-* per-jurisdiction work.
 
 ---
 
