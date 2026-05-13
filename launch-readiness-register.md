@@ -64,17 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 17 | 1 | 2 | 20 |
+| A — Data Integrity | 16 | 1 | 3 | 20 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **48** | **7** | **14** | **69** |
+| **Total** | **47** | **7** | **15** | **69** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
+
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only, metadata to A5.C/E).
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -293,14 +295,16 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.E — FSRA MIR orphan reconciliation
+### A7.E — FSRA MIR orphan reconciliation — **DONE [2026-05-13]**
 
-- **Status:** Open
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; 2793 metadata backfill deferred to A5.C / A5.E.
 - **Size:** Half-day
 - **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** Same pattern as A7.B applied to FSRA MIR.
-- **Acceptance:** Single is_current=1 row for FSRA MIR.
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-MIR.md`
+- **Description:** Three is_current=1 rows reconciled: 326 (legitimate VER08.110724 prior, 247 KB) and 2770 (28-April ingestion stub, 1.5 KB) flipped to `is_current=0, superseded_by=2793`; 2793 (May 2026 VER09 candidate, 249 KB) retained as canonical current. Section-ref convention identical between 326 and 2793 (both `MIR x.y.z`); A3 K7 OTHER-prefix concern from memo §10.2 verified not-applicable.
+- **Acceptance:** ✓ Invariant query `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='MIR' AND is_current=1` = 1 (doc 2793). `MIR 1.1.1` resolves to doc 2793 on the is_current=1 join. PRAGMA integrity_check ok post-COMMIT. Test `test_single_current_invariant_per_rulebook[FSRA-MIR]` flipped from xfail-strict to passing. Full-suite delta: 676P/1S/22XF → 677P/1S/21XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_MIR_20260513_075740.db` (sha256 `08f02382…`, integrity ok).
+- **Deferred follow-up:** doc 2793 `version_str` and `source_url` remain empty — tracked under A5.C (provenance backfill at 2,099-row scale) and A5.E (version_str validator). Memo §10.1 portal lookup (correct VER number for May 2026 MIR) is the input for this follow-up.
 
 ---
 
