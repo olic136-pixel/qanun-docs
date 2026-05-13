@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 13 | 1 | 6 | 20 |
+| A — Data Integrity | 13 | 1 | 7 | 21 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **44** | **7** | **18** | **69** |
+| **Total** | **44** | **7** | **19** | **70** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA, B-cluster parser determinism observation captured). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — deferred to its own decision before Bundle 2 close.
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA, B-cluster observation); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — investigation underway. **New register items added: A7.B.SECTIONS** (Open) covering COBS archived-section + citation cleanup post-flip.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -264,14 +264,28 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.B — FSRA COBS orphan reconciliation
+### A7.B — FSRA COBS orphan reconciliation — **DONE [2026-05-13]**
+
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; section + citation cleanup tracked as A7.B.SECTIONS.
+- **Size:** Half-day
+- **Dependencies:** None (A1 now on master at `2863b79`)
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-COBS.md`
+- **Description:** Worst case in the FSRA cluster pre-apply: 5 is_current=1 rows. State: 184 (VER21.010126 legitimate prior, 426 KB, 1871 sections), 2767 (28-Apr stub, 21 KB, 90 sections), 2783 (2-May stub, 7.8 KB, 27 sections), 2787 (2-May duplicate-A, 438 KB, 1906 sections), 2788 (2-May duplicate-B, 444 KB, 1928 sections). Memo §5 prescription applied per-doc; 184 + 2767 + 2783 + 2787 → `is_current=0, superseded_by=2788`; 2788 retained canonical. Note 2787 and 2788 have **different content_hashes** (`b0b4b9c1…` vs `77fbe1fe…`) — picking by size per memo §5 heuristic; memo §9 portal verification deferred to follow-up.
+- **Acceptance:** ✓ Rows-affected = 4; invariant count = 1 (doc 2788). `COBS 1.1` resolves to doc 2788 on the is_current=1 join. PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[FSRA-COBS]` flipped from xfail-strict to passing. Full-suite delta: 680P/1S/18XF → 681P/1S/17XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_COBS_20260513_082429.db` (sha256 `d199e146…`, integrity ok).
+- **Deferred follow-ups:** doc 2788 metadata (A5.C/E); section + citation cleanup (A7.B.SECTIONS below); content_hash vs portal verification (memo §9).
+
+---
+
+### A7.B.SECTIONS — FSRA COBS section + citation cleanup post-flip
 
 - **Status:** Open
 - **Size:** Half-day
-- **Dependencies:** None (A1 now on master at `2863b79`)
-- **Source:** A7 audit memo
-- **Description:** FSRA COBS has multiple is_current=1 rows. Apply the A2 pattern: identify legitimate prior version, flip prior to is_current=0, set superseded_by, backfill metadata.
-- **Acceptance:** Same shape as A2. Single is_current=1 row for FSRA COBS after reconciliation.
+- **Dependencies:** B1 parser redesign (so cleanup runs against a corrected parser; section-parser non-determinism observed across multiple Bundle 2 rulebooks)
+- **Source:** A7-COBS memo §6 deferred from Bundle 2 apply 2026-05-13
+- **Description:** Delete archived sections from doc 2787 (1906 rows) and stub sections from docs 2767 (90 rows) and 2783 (27 rows) — total ~2023 rows. Preserve sections for doc 184 (1871 rows, legitimate VER21 historical). Plus citation re-pointing: any `citations` rows with `source_doc_id=2787` or `target_doc_id=2787` need either deletion (if duplicate of existing 2788-anchored citation) or re-anchoring to 2788.
+- **Acceptance:** `sections` table contains no rows for COBS doc_ids in {2787, 2767, 2783}; contains rows for {184, 2788}. `citations` table contains no rows referencing 2787 (or those rows have been re-anchored to 2788 with documented per-row decision). PRAGMA integrity_check ok. Full-suite green.
+- **Notes:** Deferred from Bundle 2 due to multi-statement shape (memo §6 conditional DELETE) and parallel concern that B1 parser redesign may rationalise what should be parsed in the first place. Cross-reference `/tmp/qanun-overnight/a7/A7-COBS.md` §6 for the precise decision tree on which doc_ids to delete vs preserve.
 
 ---
 
