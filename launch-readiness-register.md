@@ -650,23 +650,65 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.B1 — A7-GLOBAL Bucket 1 (FSRA OTHER) per-bin reclassification (65 rows)
+### A7.B1 — A7-GLOBAL Bucket 1 (FSRA OTHER) per-bin reclassification (65 rows) — **DONE [2026-05-14]**
 
-- **Status:** Open — per-bin scoping memo done at `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`. Apply pending Bundle 3 authorisation.
+- **Status:** Done (N+2b — 14 May 2026)
+- **Apply commit:** corpus.db sha `eb20750b…125a` (post-Bundle-3); see MASTER-LOG at `/tmp/qanun-overnight/n-plus-2/MASTER-LOG.md`
+- **Follow-ups generated:** A7.B1.SUBCLASSIFY (refinement), A7.B1.SUPERSEDE (internal duplicate flip-only, FSMR portion done in N+3), A7.B2.TITLE-DEDUP (Bucket 2 hidden duplicate check)
 - **Size:** Day
 - **Dependencies:** Per-bin decisions on Bin 1 (target source_entity), Bin 3 (UAE_FEDERAL new bucket or fold-into-ADGM), Bin 7 (depends on `A7-FSRA-content-sniff-classifier` to automate content-sniff reclassification of 15 unlabelled rulebook reingests, or per-doc manual investigation).
 - **Source:** Sprint 1 memo `/tmp/qanun-overnight/sprint-1/A7-GLOBAL-bucket-1-FSRA-OTHER.md` + Sprint 1 follow-up per-bin scoping memo `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`
 - **Description:** Per-doc reclassification of 65 FSRA OTHER rows across 8 distinct bins. The scoping memo enumerates doc IDs per bin and drafts apply SQL (DO NOT EXECUTE — Bundle 3 apply gate authorises). Bin summary:
-  1. Court Practice Directions (16 rows) → reclassify to `ADGM_COURTS / COURTS-PD`
-  2. RA Companies/LLP/Names rules (11 rows) → reclassify to `ADGM_RA / RA-RULES`
-  3. Federal/UAE law (2 rows; 1 moves to Bin 1) → decision: new `UAE_FEDERAL` source_entity or fold to `ADGM`
+  1. Court Practice Directions (16 rows) → reclassify to `ADGM_COURTS / NULL` (V1 convention match — not COURTS-PD)
+  2. RA Companies/LLP/Names rules (11 rows) → reclassify to `ADGM_RA / ADGM-RA-RULES` (bundled; subclassification deferred to A7.B1.SUBCLASSIFY)
+  3. Federal/UAE law (2 rows; 1 moves to Bin 1) → `UAE_FEDERAL / FEDERAL-LAW`
   4. Class Mod Notices / Waivers (2 rows) → `FSRA / WAIVERS`
   5. Bank Recovery and Resolution Regulation 2018 (2 rows; one is a duplicate) → `FSRA / BRR` + flip-only dedup
   6. Adgm1547 high-ID slice 2759-2794 (14 rows) → per-row reclassify to canonical rulebook (twins of GEN/COBS/PRU/MIR/GLO/FUNDS/PIN/CIB current) + flip-only
-  7. Adgm1547 early-ID slice March 2026 (15 rows) → per-row content-sniff + reclassify; depends on content-sniff classifier
-  8. Notices / Publication wrappers (2 rows) → `ADGM / NOTICES` or delete
-- **Acceptance:** All 65 rows reclassified or moved out of FSRA OTHER. `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='OTHER' AND is_current=1` returns 0. Defence-in-depth global single-current invariant test passes for the Bucket 1 portion. Where reclassification creates within-target-bucket multi-current violations (e.g., Bin 1 Court PD revisions), flip-only flips are bundled into the same apply.
-- **Notes:** Bin 7 (15 rows depending on content-sniff classifier) is the principal sequencing constraint. If `A7-FSRA-content-sniff-classifier` lands first, Bin 7 becomes a clean automated apply; otherwise it's 15 manual body-text inspections. Bins 1-5, 8 are ready for apply now (drafted SQL in scoping memo).
+  7. Adgm1547 early-ID slice March 2026 (15 rows) → per-row content-sniff + reclassify; mixed Court/Federal/FSMR/Tax/RA outcomes
+  8. Notices / Publication wrappers (2 rows) → `ADGM / NOTICES`
+- **Acceptance:** All 65 rows reclassified or moved out of FSRA OTHER. ✓ `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='OTHER' AND is_current=1` returned 0 at N+2b close. Defence-in-depth global single-current invariant test passes (N+3 mark-inert extension + FSMR supersede landed). Where reclassification created within-target-bucket multi-current violations (e.g., Bin 1 Court PD revisions), flip-only flips deferred to A7.B1.SUPERSEDE.
+- **Notes:** Bin 7 was applied via per-doc manual classification rather than waiting on the content-sniff classifier — V5 verification in N+2b's PRE-APPLY-VERIFICATIONS.md drove the per-doc decisions. 5 NEW rulebook_codes introduced during apply: ADGM-RA-RULES, NOTICES, WAIVERS, BRR, FEDERAL-LAW, plus 3 from Bin 7 (FSMR, ADGM-CRS, ADGM-FATCA, CIB-AMEND, PIN-AMEND). 1 NEW source_entity: UAE_FEDERAL.
+
+---
+
+### A7.B1.SUBCLASSIFY — Refine ADGM_RA/ADGM-RA-RULES into per-regulation rulebook_codes
+
+- **Status:** Open
+- **Size:** Half-day
+- **Priority:** Low (cosmetic refinement; current bundled state is functional)
+- **Dependencies:** A7.B1 Done (N+2b)
+- **Source:** N+3 morning interactive review — Bundle 3 reclassification bundled 11 ADGM_RA rows under generic `ADGM-RA-RULES`. Per the per-doc inspection during N+2b, these split into 5 ADGM-CLR (Commercial Licensing) + 1 ADGM-IR (Insolvency) + 1 ADGM-LLP + 3 ADGM-COMP (Companies) + 1 ambiguous.
+- **Description:** Split the 11 ADGM_RA/ADGM-RA-RULES rows into finer rulebook_codes. Per-row classification already done during N+2b Block A6 verification — reuse those classifications. Surface the 1 ambiguous row for interactive decision before applying.
+- **Acceptance:** Per-regulation rulebook_codes assigned. ACKNOWLEDGED_CATEGORY_BUCKETS extended to add the new tuples (or shrunk if each new bucket has count=1, making them no longer multi-current). Defence-in-depth test still passes.
+
+---
+
+### A7.B1.SUPERSEDE — Flip-only is_current pass for Bin 1 + Bin 2 internal duplicates + FSMR
+
+- **Status:** Partial-Done — FSMR variant resolved in N+3 (doc 2303 → is_current=0, superseded_by=99). Bin 1 + Bin 2 internal duplicates remain Open.
+- **Size:** Half-day for remaining Bin 1 + Bin 2 portion
+- **Priority:** Medium
+- **Dependencies:** A7.B1 Done (N+2b)
+- **Source:** N+2b close-out surfaced internal duplicates; FSMR variant resolved in N+3
+- **Description:** Flip-only `is_current = 0, superseded_by = <newer>` for known internal duplicates:
+  - PD-9 revisions (145 vs 174) — within ADGM_COURTS/NULL convention
+  - Editorial vs canonical Commercial Licensing pairs (72 vs 187, etc.) — within ADGM_RA/ADGM-RA-RULES (defers to A7.B1.SUBCLASSIFY ordering)
+  - FSMR (doc 2303 → superseded_by=99) — **Done in N+3** (backup at `backups/corpus.db.pre-fsmr-supersede-20260513-213936`)
+  - Any other same-rulebook_code pairs surfaced post-Bundle-3
+- **Acceptance:** Each duplicate pair resolved with conservative supersede (older flips). Bin 1 + Bin 2 internal-duplicate count → 0.
+
+---
+
+### A7.B2.TITLE-DEDUP — Title-level dedup check within Bucket 2
+
+- **Status:** Open
+- **Size:** Quarter-day
+- **Priority:** Low (current state is functional; this surfaces hidden duplicates if any)
+- **Dependencies:** A7.B1 Done (N+2b)
+- **Source:** N+2b B3 surfaced — A7.I.2's 34 reclassified rows landed in Bucket 2 (ADGM FSRA/ADGM-FSRA-F), growing Bucket 2 from 37→71. content_hash check showed zero matches, but title-level dedup not yet run.
+- **Description:** Query Bucket 2 for titles appearing in multiple rows. If any title has count > 1, the rows are alt-source ingests — apply flip-only supersede (older→is_current=0). If all 71 titles unique, no action needed.
+- **Acceptance:** Title-level uniqueness verified within Bucket 2. Any duplicates resolved via supersede.
 
 ---
 
