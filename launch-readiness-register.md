@@ -305,15 +305,20 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-FUNDS-doc-199-mislabel — Correct rulebook_code on doc 199
+### A7-FUNDS-doc-199-mislabel — Correct PRU-content-in-FUNDS-row mislabel (4 affected docs)
 
 - **Status:** Open
 - **Size:** Half-day
-- **Dependencies:** Forensic decision on what to do with mislabeled-but-historic PRU content
-- **Source:** Bundle 2 A7-FUNDS investigation, 2026-05-13
-- **Description:** Doc 199 has `rulebook_code='FUNDS'` but its full_text body identifies as the Prudential Rulebook (PRU) VER19.010126. Likely an upsert bug in pre-A1 FSRA ingestion that wrote PRU content to a FUNDS-tagged row. The doc is currently is_current=0 with superseded_by=2789 (from A7.C apply) — so it's inert for `is_current=1` joins. Correction options: (a) `UPDATE documents SET rulebook_code='PRU' WHERE id=199` plus appropriate `superseded_by` chain-fix; (b) `UPDATE documents SET rulebook_code='PRU', superseded_by=<some-PRU-doc>` plus citation/section re-pointing; (c) leave as-is with a documented annotation. PRU's chain doesn't include a VER19, so option (b)'s `superseded_by` value is non-obvious.
-- **Acceptance:** Doc 199 either has correct `rulebook_code`, or has a documented annotation explaining the mislabel persistence and downstream-query implication. Any forward-looking integrity-check that asserts body-vs-label consistency catches this case.
-- **Notes:** A1 invariant doesn't catch this class of bug (count-by-rulebook-code doesn't verify content matches label). Cross-reference to register item that audits body-vs-label invariants would close the integrity gap.
+- **Dependencies:** Forensic decision on the superseded_by chain for PRU VER19 (which isn't in PRU's canonical chain doc 15 → 2795)
+- **Source:** Bundle 2 A7-FUNDS investigation + post-apply protocol-review forensic, 2026-05-13
+- **Description:** Systematic PRU-content-in-FUNDS-tagged-row mislabel affecting four docs (64, 121, 189, 199) — all share `Adgm1547_11092_VerNN<date>` slug pattern and contain Prudential Rulebook (PRU) body text. Scraper-side routing bug, not isolated. Per-doc bodies confirm:
+  - Doc 64 → `Prudential – Investment, Insurance Intermediation and Banking Rules (PRU) (VER10.250521)`
+  - Doc 121 → `Prudential ... (PRU) (VER11.270422)`
+  - Doc 189 → `Prudential ... (PRU) (VER12.301122)`
+  - Doc 199 → `Prudential ... Rulebook (PRU) (VER19.010126)` (is_current=0 since A7.C Bundle 2 apply)
+  All four also have `Adgm1547 11092 VerNN…` title slugs in the documents table, consistent with a single misrouted scraper source. Doc 2789 (the only is_current=1 FUNDS row post-Bundle-2) is the first genuine FUNDS body content in the corpus.
+- **Acceptance:** `rulebook_code` corrected to PRU on all four docs (64, 121, 189, 199); `superseded_by` chain decided in a focused follow-up (PRU canonical chain doc 15 → 2795 doesn't include a VER19 entry — doc 199's PRU VER19 may be an off-chain capture; 64/121/189 may slot into a parallel pre-K7 PRU historical chain). Section_refs on these four (currently 100% `OTHER` prefix via K7 carry-forward gap) re-prefixed to `PRU` if A3 carry-forward is in scope at the same time, or annotated as deferred. Forward-looking body-vs-label integrity-check added to prevent recurrence.
+- **Notes:** A1 invariant counts is_current=1 per rulebook_code and doesn't catch content-vs-label mismatch. Cross-reference `/tmp/qanun-overnight/a7/A7-FUNDS.md` for the original A7 audit framing (which assumed 199 was a FUNDS capture). Cross-reference **A7-FSRA-pipeline-size-sanity** for the broader pipeline guard against the family of silent-mis-ingest issues. The bundled four-doc correction may also affect any get_rule history queries that currently surface 64/121/189 under FUNDS — they should surface under PRU after this lands (PRU's get_rule history doesn't currently include VER10/VER11/VER12 captures because they're filed elsewhere).
 
 ---
 
