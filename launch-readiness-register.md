@@ -1127,7 +1127,18 @@ Sprint sections not yet landed.
 - **Source:** E9 investigation memo, 12 May 2026
 - **Description:** Extract the Cloudflare Worker proxy code from `~/adgm-corpus/` (lowercase) to a preservation branch on canonical `~/ADGM/adgm-corpus/`. The proxy addresses GCP IP blocking that affects Voyage embedding from Hetzner — a real problem currently unsolved on canonical. Three blocks per memo: (a) `pinecone_client.py` proxy-mode additions (~166 net lines), (b) `infrastructure/cloudflare-worker/` directory contents, (c) any related config/docs.
 - **Acceptance:** Preservation branch `recovery/cloudflare-proxy-2026-05-XX` on canonical adgm-corpus. All three blocks present. Tests added covering proxy-mode behaviour. Branch pushed to origin. Then (and only then) E9 deletion can be authorised.
-- **Notes:** The proxy may also unblock B6 (Voyage re-embedding) by allowing it to run from Hetzner instead of requiring local-only execution. That's a secondary benefit worth confirming.
+- **Notes:** The proxy may also unblock B6 (Voyage re-embedding) by allowing it to run from Hetzner instead of requiring local-only execution. That's a secondary benefit worth confirming. **Sprint 1 update (13 May 2026):** preservation work done — branch `recovery/cloudflare-proxy-2026-05-13` (HEAD `305ed9e`) pushed to origin with 3 commits + 15 mocked-network tests. Sprint 1 follow-up (14 May) merge readiness memo at `/tmp/qanun-overnight/sprint-1-followup/E9-PROXY-merge-readiness.md` recommends merge; one-line rename surfaced as **E9.HOST-RENAME** below.
+
+---
+
+### E9.HOST-RENAME — `host=` → `index_host=` one-line rename in phase_b_pinecone_cleanup_reembed.py
+
+- **Status:** Open
+- **Size:** Triv
+- **Dependencies:** E9.PROXY merged to master
+- **Source:** Sprint 1 follow-up morning surface review, 14 May 2026 — flagged as out-of-scope follow-up by E9.PROXY merge readiness review
+- **Description:** Single-line edit in `adgm_corpus/scripts/phase_b_pinecone_cleanup_reembed.py`: rename `host=` parameter to `index_host=` to match the new `PineconeCorpus` constructor signature from E9.PROXY.
+- **Acceptance:** Edit applied. Script runs without TypeError. No other call sites of `host=` remain in the codebase (grep confirms).
 
 ---
 
