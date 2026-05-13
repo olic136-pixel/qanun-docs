@@ -398,25 +398,6 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-GLOBAL-INVARIANT-FINDINGS — Three multi-current cases beyond the A7 audit
-
-- **Status:** Open
-- **Size:** Half-day (investigation) + tbd (remediation, depending on outcome)
-- **Dependencies:** None
-- **Source:** Bundle 2 close-out, 2026-05-13 — `test_global_single_current_invariant` defence-in-depth test surfaced these
-- **Description:** After all 8 known A7 reconciliations applied (MIR, PRU, GEN, BVI-BCA, COBS, GLO, BVI-REGS, FUNDS), the `test_global_single_current_invariant` test still xfails because the defence-in-depth query returns 3 multi-current cases the A7 audit did not catch:
-  - `FSRA` + `OTHER` — **65 is_current=1 rows**
-  - `ADGM FSRA` + `ADGM-FSRA-F` — **37 is_current=1 rows**
-  - `ADGM_RA` + `ADGM-RA-F` — **32 is_current=1 rows**
-- **Hypotheses:**
-  1. **Legitimate category-bucket cases.** `rulebook_code` here is being used as a *category* (OTHER catch-all; ADGM-FSRA-F = "FSRA Forms"; ADGM-RA-F = "RA Forms") rather than a canonical-rulebook identifier. If so, each row is a distinct document (different form / different consultation paper) that's correctly is_current=1 in its own right, and the A1 single-current invariant doesn't apply. Remediation: refine the global query to exclude category buckets; document the bucket pattern in a new schema-conventions memo.
-  2. **Genuine multi-current violations.** Like the A7 cluster but missed by the audit because the audit might have been scoped to "canonical rulebook codes" only. Each bucket would need its own A7-like reconciliation.
-  3. **Mix.** Some rows in each bucket are genuine duplicates, others are distinct documents.
-- **Acceptance:** First, the investigation that resolves which hypothesis holds (likely Hypothesis 1 based on the bucket naming). Then either query refinement + bucket-pattern memo (if H1), or per-bucket reconciliation items A7.J / A7.K / A7.L (if H2/H3).
-- **Notes:** Surfaced via the highest-value regression test working exactly as the A7 cluster overview §6 anticipated ("catches **any** new violation, not just the 8 known ones"). This is the test paying for itself on its first full pass.
-
----
-
 ### A7.D — FSRA PRU orphan reconciliation — **DONE [2026-05-13]**
 
 - **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; 2795 metadata backfill deferred to A5.C / A5.E.
@@ -597,18 +578,37 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-GLOBAL-INVARIANT-FINDINGS — Three new multi-current buckets surfaced by defence-in-depth test
+### A7-GLOBAL-INVARIANT-FINDINGS — Three multi-current buckets surfaced by defence-in-depth test — **SCOPING DONE, SPLIT INTO A7.B1 / A7.B23.INERT**
 
-- **Status:** Open
-- **Size:** Day (investigation) + per-bucket apply work (varies by bucket size)
+- **Status:** Scoping complete. Investigation per Sprint 1 + follow-up overnight memos found Hypothesis 3 (Mix) holds: Bucket 1 (FSRA OTHER 65 rows) is a real per-bin reclassification problem; Buckets 2 and 3 (forms) are coherent category buckets needing a "mark inert" mechanism. Split into A7.B1 (Bucket 1) and A7.B23.INERT (Buckets 2+3). See `/tmp/qanun-overnight/sprint-1/A7-GLOBAL-bucket-{1,2,3}-*.md` and `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`.
+- **Size:** (Original) Day (investigation) + per-bucket apply work (varies by bucket size)
 - **Dependencies:** None (A7-diag tests on master)
 - **Source:** Bundle 2 close-out, 13 May 2026 — `test_global_single_current_invariant` surfaced 134 rows across 3 buckets the A7 audit didn't characterise
 - **Description:** With all 8 KNOWN_VIOLATIONS reconciled, the global defence-in-depth test ran against the full corpus and surfaced three previously-unknown multi-current buckets:
-  - **FSRA OTHER**: 65 rows with source_entity='FSRA' and rulebook_code='OTHER' (legacy pre-K7 sections still flagged is_current=1)
-  - **ADGM_FSRA-F**: 37 rows with source_entity='ADGM' and rulebook_code='FSRA-F' (possibly K16-migration adjacent; or a separate convention-drift bucket)
-  - **ADGM_RA-F**: 32 rows with source_entity='ADGM_RA' and rulebook_code='RA-F' (ADGM Registration Authority filings — separate from FSRA scope)
-- **Acceptance:** Per-bucket scoping memo identifies whether each affects customer-facing rulebooks for any of the 5 v1 jurisdictions. Buckets that affect customer-facing rulebooks get reconciliation applies (like Bundle 2 A7.X). Buckets that don't affect customer-facing rulebooks get explicit "known but inert" status. test_global_single_current_invariant flips to passing once all buckets are resolved or marked inert.
-- **Notes:** The defence-in-depth test paid for itself on first run — surfacing 134 rows the focused audit missed validates the A7 cluster overview §6 recommendation. Worth a thank-you in retrospect to whoever proposed the test.
+  - **FSRA OTHER**: 65 rows — bin-mixed (Court PDs, RA rules, Federal law, class mods, BRR, FSRA rulebook reingest duplicates, notices). Treated under A7.B1 below.
+  - **ADGM_FSRA-F**: 37 rows — coherent FSRA Forms category. Treated under A7.B23.INERT.
+  - **ADGM_RA-F**: 32 rows — coherent RA Forms category. Treated under A7.B23.INERT.
+- **Notes:** The defence-in-depth test paid for itself on first run — surfacing 134 rows the focused audit missed validates the A7 cluster overview §6 recommendation.
+
+---
+
+### A7.B1 — A7-GLOBAL Bucket 1 (FSRA OTHER) per-bin reclassification (65 rows)
+
+- **Status:** Open — per-bin scoping memo done at `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`. Apply pending Bundle 3 authorisation.
+- **Size:** Day
+- **Dependencies:** Per-bin decisions on Bin 1 (target source_entity), Bin 3 (UAE_FEDERAL new bucket or fold-into-ADGM), Bin 7 (depends on `A7-FSRA-content-sniff-classifier` to automate content-sniff reclassification of 15 unlabelled rulebook reingests, or per-doc manual investigation).
+- **Source:** Sprint 1 memo `/tmp/qanun-overnight/sprint-1/A7-GLOBAL-bucket-1-FSRA-OTHER.md` + Sprint 1 follow-up per-bin scoping memo `/tmp/qanun-overnight/sprint-1-followup/A7-GLOBAL-bucket-1-per-bin-scoping.md`
+- **Description:** Per-doc reclassification of 65 FSRA OTHER rows across 8 distinct bins. The scoping memo enumerates doc IDs per bin and drafts apply SQL (DO NOT EXECUTE — Bundle 3 apply gate authorises). Bin summary:
+  1. Court Practice Directions (16 rows) → reclassify to `ADGM_COURTS / COURTS-PD`
+  2. RA Companies/LLP/Names rules (11 rows) → reclassify to `ADGM_RA / RA-RULES`
+  3. Federal/UAE law (2 rows; 1 moves to Bin 1) → decision: new `UAE_FEDERAL` source_entity or fold to `ADGM`
+  4. Class Mod Notices / Waivers (2 rows) → `FSRA / WAIVERS`
+  5. Bank Recovery and Resolution Regulation 2018 (2 rows; one is a duplicate) → `FSRA / BRR` + flip-only dedup
+  6. Adgm1547 high-ID slice 2759-2794 (14 rows) → per-row reclassify to canonical rulebook (twins of GEN/COBS/PRU/MIR/GLO/FUNDS/PIN/CIB current) + flip-only
+  7. Adgm1547 early-ID slice March 2026 (15 rows) → per-row content-sniff + reclassify; depends on content-sniff classifier
+  8. Notices / Publication wrappers (2 rows) → `ADGM / NOTICES` or delete
+- **Acceptance:** All 65 rows reclassified or moved out of FSRA OTHER. `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='OTHER' AND is_current=1` returns 0. Defence-in-depth global single-current invariant test passes for the Bucket 1 portion. Where reclassification creates within-target-bucket multi-current violations (e.g., Bin 1 Court PD revisions), flip-only flips are bundled into the same apply.
+- **Notes:** Bin 7 (15 rows depending on content-sniff classifier) is the principal sequencing constraint. If `A7-FSRA-content-sniff-classifier` lands first, Bin 7 becomes a clean automated apply; otherwise it's 15 manual body-text inspections. Bins 1-5, 8 are ready for apply now (drafted SQL in scoping memo).
 
 ---
 
