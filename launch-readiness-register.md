@@ -64,13 +64,13 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 15 | 1 | 10 | 26 |
+| A — Data Integrity | 17 | 1 | 10 | 28 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **46** | **7** | **22** | **75** |
+| **Total** | **48** | **7** | **22** | **77** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
@@ -414,6 +414,18 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
+### A7.G.SECTIONS — BVI_FSC BVI-BCA section + citation cleanup post-flip
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** B1 parser redesign (so cleanup runs against a corrected parser; the parser non-determinism that produced 135 vs 18 vs 0 sections on byte-identical content is the underlying B-cluster concern)
+- **Source:** Bundle 2 A7-BVI-BCA close-out, 2026-05-13 (retroactively opened alongside A7.B.SECTIONS / A7.F.SECTIONS)
+- **Description:** Doc 2573 (BVI_FSC BVI-BCA, is_current=0 since pre-Bundle-2) has 135 archived sections while canonical current 2756 has only 18, despite both rows sharing content_hash `f9af6baf…` (byte-identical full_text). The 135-vs-18 asymmetry indicates section-parser non-determinism across runs, not real content divergence. Cleanup decision tree: (a) delete 2573's 135 archived sections (safest — they're orphaned from is_current=1 joins anyway, and the canonical 2756 has its own 18 sections); (b) preserve them with annotation explaining they're parser-output-from-the-same-content (informational only); (c) re-parse the canonical 2756 with the post-B1 parser and compare against 2573 + 2662 to understand which run was correct, then standardize. Plus citation re-pointing on 2662's archived row (also flipped in Bundle 2).
+- **Acceptance:** Either `sections` table has consistent per-doc counts for the BVI-BCA chain (probably via deletion of archived sections), or there's a documented annotation explaining the asymmetry and the section-parser determinism concern is filed as a B-cluster item with its own remediation. PRAGMA integrity_check ok. Full-suite green.
+- **Notes:** Cross-reference `/tmp/qanun-overnight/a7/A7-BVI-BCA.md` and the matching B-cluster determinism concern. Bundle 2 close-out captured this finding alongside the COBS/GLO ones (A7.B.SECTIONS / A7.F.SECTIONS) since they share the parser-determinism root cause.
+
+---
+
 ### A7.H — BVI_FSC REGS duplicate reconciliation — **DONE [2026-05-13, Path (b) inverted]**
 
 - **Status:** Done — interactive apply 2026-05-13 (Bundle 2). **Path (b) inverted** from memo §5 prescription.
@@ -425,6 +437,18 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 - **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_BVI_REGS_20260513_090242.db` (sha256 `d39135ae…`, integrity ok).
 - **Why memo was wrong here:** Memo §3 evaluated "newer scraper run = better" on title-convention surface only. The actual scraper-run-quality evidence (provenance + sections) points the other way: 2664 looks like a partial re-ingestion that lost source path and parser output. The title-cleanliness preference is a separate concern from canonical-version selection.
 - **Deferred follow-ups:** Title hygiene — the malformed "Bvi Investment Business…" pattern is the seed for the **A7-BVI-title-extraction-audit** register item (proposed by memo §9 and now opened below). NULL `updated_at` on 2589 from memo §6 — superseded by Bundle 2 setting `updated_at = datetime('now')` on the touched docs (2664), so 2589 still has its empty `updated_at`; tracked as part of A5.E hygiene scope.
+
+---
+
+### A7-BVI-title-extraction-audit — Audit BVI title normalisation across all BVI_FSC docs
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** A7-BVI-REGS memo §9 + Bundle 2 in-session investigation, 2026-05-13
+- **Description:** Doc 2664's title `Bvi Investment Business Approved Managers Regs` is a malformed title-case normalisation — "Bvi" should be "BVI" (acronym), "Regs" is a truncated "Regulations", and the full S.I. citation `(S.I. 2012 No. 54)` was dropped during normalisation (compare to doc 2589's preserved full title). The BVI scraper's title-extraction logic appears to apply lossy normalisation between runs. Audit: enumerate all `BVI_FSC` docs, categorise titles into well-formed / malformed-normalised / other, identify the offending scraper rev. Tighten the normalisation: preserve acronyms (BVI), preserve canonical regulation names, preserve citation suffixes.
+- **Acceptance:** Audit report in `~/qanun-docs/A7_bvi_title_audit.md`. Recommended fix landed in BVI scraper or a normalisation utility. Regression test ensures titles like "Bvi" → "BVI" and S.I. citations are preserved. Re-run titles audit; zero malformed survivors.
+- **Notes:** Cross-reference A5.A (`rulebook_code` normalisation) — same family of convention-drift concern but for title. A7-BVI-content-hash-dedup (proposed in A7-BVI-BCA memo §9) is the upstream fix that would prevent the duplicate-with-different-title problem from happening in the first place.
 
 ---
 
