@@ -684,7 +684,19 @@ What the corpus actually contains.
 - **Source:** Quick Lookup screenshots, morning of 11 May 2026; B1 PDF inspection memo at `~/qanun-docs/B1_parser_hypothesis_verification.md` (12 May)
 - **Description:** **HYPOTHESIS REFUTED.** The CCD-suggested "parser only promotes rule numbers when lettered sub-clauses follow" hypothesis turned out to be wrong. The four GEN 3.5.X sub-rules that appeared "captured" were spurious matches against body-text Guidance-paragraph references, not real captures. The real rules in FSRA PDFs use TITLE+(1)(2)(3) format **without inline rule numbers as line prefixes**. The current SUB_RULE_RE regex literally cannot find them because they don't appear in the form the regex looks for. This is a parser redesign, not a regex tweak.
 - **Acceptance:** New parser correctly identifies rule numbers in TITLE+(1)(2)(3) format. Test case: `get_rule('GEN 3.5.1')` returns rule text including the outsourcing/appointed-representative rule. Comprehensive test against FSRA GEN with full chapter 3 expected section_refs. Re-run FSRA GEN canary after parser fix and B4 bulk refresh.
-- **Notes:** This is the single largest reframed item in v1.1. The launch timeline grows by ~week as a result. Need a focused session to (a) characterise the actual rule-format structure in FSRA PDFs, (b) design the new parser strategy, (c) implement, (d) test against multiple rulebooks. Until B1 lands, FSRA Quick Lookup quality remains compromised — Problem 2 is unsolved.
+- **Notes:** This is the single largest reframed item in v1.1. The launch timeline grows by ~week as a result. Need a focused session to (a) characterise the actual rule-format structure in FSRA PDFs, (b) design the new parser strategy, (c) implement, (d) test against multiple rulebooks. Until B1 lands, FSRA Quick Lookup quality remains compromised — Problem 2 is unsolved. Sprint 1 + follow-up landed the GEN portion on sprint branch `sprint/B1-parser-redesign-GEN-2026-05-14` (parser_v2/ with state machine + GEN format profile + 15 tests; 8× more L2 sub-rules on doc 2790). PRU/COBS/MIR extension carved out to B1.PARAGRAPHS below per Sprint 1 follow-up diff report (`/tmp/qanun-overnight/sprint-1-followup/B1-parser-v1-vs-v2-diff.md`).
+
+---
+
+### B1.PARAGRAPHS — Extend parser_v2 to PRU/COBS/MIR via L3 paragraph extraction
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** B1 parser_v2 GEN merged to master (with feature flag)
+- **Trigger:** After GEN-only rollout validates state-machine + format-profiles approach in production
+- **Source:** Sprint 1 follow-up morning review, 14 May 2026 — parser_v2 GEN path validated; per `B1-parser-v1-vs-v2-diff.md` further work needed for L3 paragraph Section extraction across other FSRA rulebooks
+- **Description:** Extend `adgm_corpus/processing/parser_v2/` with L3 paragraph extraction capability. Add per-rulebook format profiles for PRU, COBS, MIR (each rulebook has its own numbering quirks). Behind same feature flag as GEN initially; flip per-rulebook as each is validated.
+- **Acceptance:** parser_v2 produces section counts ≥ v1 for PRU/COBS/MIR with no regressions in citation_extractor downstream. Diff report comparable to GEN's. Feature flag allows per-rulebook v2 activation.
 
 ---
 
