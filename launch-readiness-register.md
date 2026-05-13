@@ -1137,7 +1137,7 @@ Sprint sections not yet landed.
 - **Size:** Triv
 - **Dependencies:** E9.PROXY merged to master
 - **Source:** Sprint 1 follow-up morning surface review, 14 May 2026 — flagged as out-of-scope follow-up by E9.PROXY merge readiness review
-- **Description:** Single-line edit in `adgm_corpus/scripts/phase_b_pinecone_cleanup_reembed.py`: rename `host=` parameter to `index_host=` to match the new `PineconeCorpus` constructor signature from E9.PROXY.
+- **Description:** Single-line edit in `scripts/phase_b_pinecone_cleanup_reembed.py` (top-level `scripts/` directory, not under `adgm_corpus/`): rename `host=` parameter to `index_host=` to match the new `PineconeCorpus` constructor signature from E9.PROXY.
 - **Acceptance:** Edit applied. Script runs without TypeError. No other call sites of `host=` remain in the codebase (grep confirms).
 
 ---
