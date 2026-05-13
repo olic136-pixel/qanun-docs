@@ -1356,6 +1356,26 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
+### G15 — Concrete-agent migration to v2 BaseAgent contract
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** G3 (v2 BaseAgent landed on master)
+- **Trigger:** Sprint 3 corpus work — first time the orchestrator needs to actually invoke agents
+- **Source:** Sprint 1 follow-up morning review, 14 May 2026 — Path A-with-v2-foundation preserved v1 concrete agents in `ucie/agents/` untouched; migration deferred to this item
+- **Description:** Migrate 6 concrete agent files from v1 BaseAgent (`ucie/agents/base_agent.py`) to v2 BaseAgent (`ucie/core/base.py`) contract:
+  - `ucie/agents/scraper_agent.py`
+  - `ucie/agents/structure_agent.py`
+  - `ucie/agents/template_discovery_agent.py`
+  - `ucie/agents/verification_agent.py`
+  - `ucie/agents/el_salvador/section_ref_agent.py`
+  - `ucie/agents/el_salvador/corpus_enrichment_agent.py`
+  
+  Includes implementing full lifecycle methods (prepare/run/verify/close — currently `run()`-only stubs).
+- **Acceptance:** All 6 concrete agents extend `ucie.core.base.BaseAgent`. New orchestrator (G2) can invoke each agent end-to-end against a manifest. v1 `ucie/agents/base_agent.py` deletable post-migration. Existing test suite green.
+
+---
+
 # Category H — Per-Jurisdiction Corpus & Case Law
 
 Corpus content per jurisdiction. Builds on G framework. Most items parallelisable across jurisdictions.
