@@ -1,9 +1,20 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.2
-**Date:** 12 May 2026 (evening, post-master-integration session)
+**Version:** 1.3
+**Date:** 13 May 2026 (morning, post-Bundle-1 merge session)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.3 changes from v1.2:**
+- **Bundle 1 merge session complete.** Four sprint branches from the 12-13 May overnight merged across two repos (adgm-corpus: 3 merges — A7-diag, flake-perf, A5C1; qanun-api: 1 merge — F2-TRADEDAR). First-parent topology preserved; sprint branches retained on origin; no force-pushes; 8 gate test counts (4 on-branch + 4 post-merge) all matched projection exactly.
+- **F2.TRADEDAR moved Open → Done** (merge `805f50f` on qanun-api main). Fixture redesigned as autouse session-scoped seed; xfail-strict flipped to passing.
+- **A5.C.1 partial progress** — script + tests committed (merge `ccfa1c0` on adgm-corpus master); backfill APPLY against corpus.db remains Open, pending explicit interactive authorisation per HG1.
+- **C11 partial progress** — near-term threshold-raise mitigation committed (merge `059ad05` on adgm-corpus master); proper C11.A redesign remains Open. Diagnostic refuted the order-dependency hypothesis: root cause is cold-start network variance.
+- **A7 diagnostic infrastructure committed** (merge `9b77f69` on adgm-corpus master) — audit script + 10 strict xfails. Per-rulebook reconciliation applies (A2 + A7.B-A7.I) remain Open and constitute Bundle 2.
+- **Status-at-a-glance table refreshed** (F2.TRADEDAR moves to Done; F open 2 → 1, Done 2 → 3; totals Open 49 → 48, Done 13 → 14).
+- **Test count baselines updated:** adgm-corpus master 676P/1S/22XF; qanun-api main 42P/1S/3XF; qanun main unchanged at 5 vitest.
+- **Register canonical relocation:** at Bundle 1 kickoff, the v1.2 working canonical was synced from `/tmp/qanun-overnight/launch-readiness-register-v1.2.md` into the tracked location `~/qanun-docs/launch-readiness-register.md` (qanun-docs main commit `f3d036f`). From this version forward, `~/qanun-docs/launch-readiness-register.md` is the canonical.
+- **New 'Today's Achievements (13 May 2026 — Bundle 1 Merge Session)' section appended.**
 
 **v1.2 changes from v1.1:**
 - **D10 master integration session complete.** Ten sprint branches merged across three repos (adgm-corpus: 8 merges including foundation; qanun-api: 1 merge; qanun: 1 merge). First-parent topology preserved; sprint branches retained on origin; no force-pushes.
@@ -58,10 +69,12 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
-| F — Test Coverage | 2 | 1 | 2 | 5 |
-| **Total** | **49** | **7** | **13** | **69** |
+| F — Test Coverage | 1 | 1 | 3 | 5 |
+| **Total** | **48** | **7** | **14** | **69** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
+
+**Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -168,12 +181,14 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A5.C.1 — DFSA scraper source_url population fix
 
-- **Status:** Open
+- **Status:** Open — script + tests landed; backfill APPLY pending
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** A5 audit memo finding 12 May 2026
 - **Description:** Today's A1 DFSA bulk produced 22 new is_current=1 docs that lack source_url. The DFSA scraper isn't populating the `source_url` field in the `new_doc` dict returned by `fetch_rulebook`. Fix the scraper, re-run a small backfill for the 22 affected docs only.
 - **Acceptance:** DFSA scraper test confirms `new_doc['source_url']` is populated with the leaf-page URL. 22 affected docs backfilled. Regression test ensures all future scrapes include source_url.
+- **Bundle 1 progress [2026-05-13]:** Script + tests committed to master via `sprint/A5C1-dfsa-source-url-2026-05-12-overnight` (merge commit `ccfa1c0` on adgm-corpus master). `scripts/backfill_dfsa_source_url.py` is dry-run-by-default; derives source_url from `MODULE_URLS` registry (21/22) plus guidance-index fallback (1/22). `tests/acceptance/test_source_url_invariant.py` adds 1 passing diagnostic + 7 strict xfails (one per source_entity class). Backfill APPLY against corpus.db remains pending — requires explicit interactive authorisation per HG1 discipline.
+- **See:** `/tmp/qanun-overnight/a5/A5C1.md`
 - **Notes:** Same pattern likely affects FSRA scraper (A1.a refactor); audit A1.a after this lands.
 
 ---
@@ -550,6 +565,8 @@ Known-to-be-wrong code.
 - **Source:** Master integration session, 12 May 2026 — fired on 3 of 7 on-branch runs (C5, C2, C4)
 - **Description:** `tests/acceptance/test_section_17.py::TestPerformanceQuickSearch::test_performance_quick_search` is order-dependent: passes in isolation (~3.5s), fails when full suite runs (timing/threshold assertion fails). Fired during today's integration on C5, C2, and C4 on-branch runs; all cleared on retry. C3, C7, A6 on-branch runs silent. Post-merge runs all clean first-try. The on-branch vs post-merge split is itself diagnostic: when run after a slightly different test set (sprint branch's pre-master baseline), the trigger fires; when run against the full post-merge master, it doesn't.
 - **Acceptance:** Diagnostic phase: identify the trigger test (the test or fixture that immediately precedes test_performance_quick_search when it fires vs when it doesn't). Run `pytest --collect-only --quiet` to see run order; run `pytest --durations=20` over multiple iterations to identify timing patterns; bisect the test set to find the minimal pre-context that triggers. Fix phase: either (a) per-test fixture cleanup that resets the state the trigger leaves dirty, (b) explicit test ordering directive (`pytest-order` plugin), (c) timing-tolerance adjustment if the test's threshold is too tight for the contaminated state, or (d) xfail-strict with documented unxfail condition if root cause is unfixable.
+- **Bundle 1 progress [2026-05-13]:** Near-term mitigation landed via `sprint/flake-perf-test-2026-05-12-overnight` (merge commit `059ad05` on adgm-corpus master): threshold raised from 5s to 10s in `tests/acceptance/test_section_17.py`. Per overnight diagnostic, the flake is cold-start network variance (first Voyage embed + first Pinecone TLS/gRPC handshake) rather than order-dependency — original hypothesis refuted. The 10s threshold should suppress the fire rate substantially while preserving genuine perf-regression coverage. Proper C11.A redesign (mock the network calls; split into unit + e2e integration-marker) remains Open.
+- **See:** `/tmp/qanun-overnight/flake/flake-diagnostic.md`
 - **Notes:** Contaminates every full-suite run including future integration sessions. Not blocking specific feature work but erodes trust in green/red signal during sessions. Listed in phase-2-backlog.md (qanun-docs main).
 
 ---
@@ -818,14 +835,14 @@ Sprint sections not yet landed.
 
 ---
 
-### F2.TRADEDAR — TradeDar fixture for entity-model tests
+### F2.TRADEDAR — TradeDar fixture for entity-model tests — **DONE [2026-05-13]**
 
-- **Status:** Open
+- **Status:** Done — `sprint/F2-TRADEDAR-fixture-2026-05-12-overnight` (qanun-api, commit `8cdb79b`); merged to main in commit `805f50f` (Bundle 1 Merge 2, 13 May 2026)
 - **Size:** Half-day
-- **Dependencies:** None
 - **Source:** F2 memo, 12 May 2026
-- **Description:** The TradeDar entity model tests are xfail-strict pending a proper fixture. Build the fixture, unxfail, verify.
-- **Acceptance:** Fixture in place; previously-xfailed tests pass.
+- **Description:** Autouse session-scoped fixture added to `tests/conftest.py` that calls `init_db()` and idempotently seeds the TradeDar demo entity. Fixture values mirror the hardcoded fallback in `services/drafting_service.py:234-252` so DB-backed row and fallback path agree. `xfail(strict=True)` marker removed from `test_tradedar_seeded`.
+- **Acceptance:** ✓ Fixture in place; previously-xfailed test passes. Delta: 41P/1S/4XF → 42P/1S/3XF. Post-merge full suite: 42P/1S/3XF clean first try.
+- **See:** `/tmp/qanun-overnight/f2/F2-TRADEDAR.md`
 
 ---
 
@@ -920,6 +937,45 @@ All caught, all resolved on the spot, all filed as C12. Memory entries #18 and #
 **One pre-existing flake characterised:**
 
 `TestPerformanceQuickSearch::test_performance_quick_search` fired on 3 of 7 on-branch runs (C5, C2, C4). All cleared on retry. Post-merge runs all clean first-try. Filed as C11 with order-dependency hypothesis.
+
+---
+
+# Today's Achievements (13 May 2026 — Bundle 1 Merge Session)
+
+**Wall-clock: ~3-4 hours interactive (per runbook estimate).**
+
+**4 sprint branches merged across 2 repos:**
+
+- adgm-corpus master @ `ccfa1c0` (final):
+  - `9b77f69` — Merge 1: `sprint/A7-diagnostic-tools-2026-05-12-overnight` (audit script + 10 strict xfails)
+  - `059ad05` — Merge 3: `sprint/flake-perf-test-2026-05-12-overnight` (C11 threshold raise 5s → 10s)
+  - `ccfa1c0` — Merge 4: `sprint/A5C1-dfsa-source-url-2026-05-12-overnight` (backfill script + 7 strict xfails + 1 passing diagnostic)
+- qanun-api main @ `805f50f` (final):
+  - `805f50f` — Merge 2: `sprint/F2-TRADEDAR-fixture-2026-05-12-overnight` (xfail-strict flipped to passing)
+
+**Test count baselines at session close:**
+
+- adgm-corpus master: **676P / 1S / 22XF** (up from 675P/1S/5XF; +1P from A5C1 diagnostic; +17XF across A7-diag (10) and A5C1 (7))
+- qanun-api main: **42P / 1S / 3XF** (up from 41P/1S/4XF; +1P from F2-TRADEDAR unxfail)
+- qanun main: unchanged at 5 vitest passing (not touched by Bundle 1)
+
+**Structural achievements:**
+
+- First-parent topology preserved on each repo (3 merges on adgm-corpus master in stack: 9b77f69 → 059ad05 → ccfa1c0)
+- All 4 sprint branches retained on origin (no deletion)
+- No force-pushes; all four pushes were fast-forward updates, verified via reflog
+- Test counts exact at each gate (8 gates total: 4 on-branch + 4 post-merge)
+- C11 flake fired only on Merge 1 on-branch (sprint branch was cut from pre-flake-fix baseline at 95d925d); cleared on C11 retry-once protocol; protected by 10s threshold after Merge 3 landed
+- Sprint-branch arithmetic from memory #19 verified across all 4 merges (each branch cut from 95d925d; both on-branch and post-merge counts spelled out per merge in the kickoff prompt, and all six explicit projections matched reality)
+- Register synced from `/tmp/qanun-overnight/launch-readiness-register-v1.2.md` working canonical to `~/qanun-docs/launch-readiness-register.md` tracked canonical at session start (per kickoff correction 2; commit `f3d036f` on qanun-docs main)
+- corpus.db sha256 unchanged across the session at `344305f05d…` (no merge touched corpus.db)
+
+**Net register movement:**
+
+- F2.TRADEDAR: Open → Done (merge `805f50f`)
+- A5.C.1: Open → Open + Bundle 1 note (script + tests committed; backfill APPLY still pending)
+- C11: Open → Open + Bundle 1 note (10s threshold mitigation committed; C11.A redesign still pending)
+- A7 cluster items (A2, A7.B-A7.I): all Open — diagnostic + xfail-strict scaffolding committed on adgm-corpus, reconciliation SQL applies still pending per-rulebook interactive sessions (Bundle 2)
 
 ---
 
@@ -1027,4 +1083,4 @@ Significantly revised from v1.1 to reflect that D10 master integration is comple
 
 ---
 
-*End of register v1.2. Next update: when first-wave items begin landing in significant batch, when overnight sprint produces new findings, or when a new SOW issue requires the C8.APPENDIX schema reference.*
+*End of register v1.3. Next update: when Bundle 2 (A7-cluster reconciliation apply) lands, when overnight produces new findings, or when next major batch moves Open → Done.*
