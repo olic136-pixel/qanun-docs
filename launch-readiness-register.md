@@ -544,14 +544,57 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.ROOT — Ingestion path root-cause investigation
+### A7.ROOT — Ingestion path root-cause investigation — **DONE [2026-05-14]**
+
+- **Status:** Done — investigation memo at `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-ROOT.md` (14 May 2026, Sprint 1 follow-up overnight).
+- **Size:** Day
+- **Dependencies:** A7 (Done) provided starting evidence
+- **Source:** A7 audit cross-cutting finding, 12 May 2026
+- **Root cause:** Multi-URL-same-PDF pattern. The FSRA scraper (`adgm_corpus.collection.scrapers.adgm_rulebooks`) walks 8 separate Thomson Reuters portal URLs (FSRA legislation, commercial legislation, Court legislation, Court procedures, guidance/policy statements, consultation papers, notices/publication, etc.) and downloads every PDF found at each entry point. The same physical rulebook PDF is referenced from multiple portal sections, producing multiple downloads. The filename-substring classifier in `_process_link()` produces DIFFERENT `rulebook_code` outputs for the same PDF served at different URLs (e.g., `cobs-ver23-290426.pdf` matches → COBS; `adgm1547-7580-ver23290426.pdf` matches nothing → OTHER). The 28-April scheduler run produced 9 FSRA rows all classified OTHER; the 2-May run partially re-classified some but also created duplicates in proper rulebook buckets. The A1 invariant didn't catch this because it only enforces uniqueness within (source_entity, rulebook_code) — not across rulebook_codes for the same content.
+- **Acceptance:** ✓ Memo produced. ✓ Offending ingestion path identified (adgm_rulebooks scraper, multi-portal-URL walking + filename-substring classifier). ✓ Gap in A1 invariant characterised (within-rulebook-code uniqueness only; not content-hash-aware). ✓ Additional safeguards proposed as new register items: A7-FSRA-content-sniff-classifier (body-vs-label check, added in B1), A7-FSRA-source-URL-dedup, A7-FSRA-cross-entry-point-dedup, A1-content-hash-aware-invariant (added below).
+- **Notes:** The 5-layer defence-in-depth surfaced from this investigation:
+  1. A1 invariant (within-rulebook-code uniqueness) — already on master
+  2. A7-FSRA-pipeline-size-sanity (size-floor check) — Open
+  3. A7-FSRA-content-sniff-classifier (body-vs-label check) — Open
+  4. A7-FSRA-source-URL-dedup (URL-level uniqueness check) — Open (added below)
+  5. A7-FSRA-cross-entry-point-dedup (content-hash uniqueness check) — Open (added below)
+  6. A1-content-hash-aware-invariant (extended single-current invariant) — Open (added below)
+
+---
+
+### A7-FSRA-source-URL-dedup — Source-URL-based deduplication in scraper write path
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo (`/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-ROOT.md`)
+- **Description:** Track distinct `source_url` values written to the documents table. If a write is attempted for a source_url that is already present with a *different* rulebook_code than the prior entry, halt rather than silently allow. Targets the specific multi-URL-same-PDF pattern where the scraper revisits the same TR portal entry via two different paths and the filename-substring classifier produces different rulebook_code outputs. Captures the URL-side of the multi-URL-same-PDF pattern (counterpart: A7-FSRA-cross-entry-point-dedup catches the content-side via content_hash).
+- **Acceptance:** Implemented in `write_rulebook` (or equivalent write-path layer). Regression test verifies same-source-URL-different-rulebook-code raises halt; same-source-URL-same-rulebook-code passes (idempotent re-ingest). No false positives on the 22 DFSA modules or 8 FSRA rulebooks already in corpus — confirmed by a backfill dry-run before merge.
+- **Notes:** Pairs with A7-FSRA-content-sniff-classifier (body-vs-label), A7-FSRA-cross-entry-point-dedup (content-hash dedup), A7-FSRA-pipeline-size-sanity (size floor), and A1-content-hash-aware-invariant (extended A1). Five-layer defence-in-depth against A7.ROOT's multi-URL-same-PDF pattern.
+
+---
+
+### A7-FSRA-cross-entry-point-dedup — Content-hash-based deduplication in scraper write path
 
 - **Status:** Open
 - **Size:** Day
-- **Dependencies:** A7 (Done) provides starting evidence
-- **Source:** A7 audit cross-cutting finding, 12 May 2026
-- **Description:** The orphan pattern clusters around two dates: 28 April (stub-shaped captures) and 2 May (duplicate captures). Investigate what ingestion process ran on those dates, why the existing safeguards didn't catch the duplicates, what changed. Document so it doesn't recur once the A1 invariant is in place.
-- **Acceptance:** Memo in `~/qanun-docs/` identifying the offending ingestion path(s), confirming the A1 invariant would have prevented recurrence (or proposing additional safeguards if not).
+- **Dependencies:** None
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo
+- **Description:** When `write_rulebook` is called, check whether the computed `content_hash` already exists in any other row with `is_current=1`. If so, log + raise halt: the scheduler likely fetched the same PDF via a different URL (multi-URL-same-PDF pattern). Captures the content-side of the multi-URL pattern (counterpart: A7-FSRA-source-URL-dedup catches the URL-side). The content_hash check is the strongest signal — even if two different URLs serve the same PDF content under slightly different filenames, the hash matches.
+- **Acceptance:** Implemented in `write_rulebook` (or equivalent). Regression test verifies same-content-hash-different-entry-point raises halt; same-content-hash-same-(source_entity,rulebook_code) passes (idempotent re-ingest). No false positives on the existing corpus content via backfill dry-run.
+- **Notes:** Depends on A1.h content-hash-from-full-text fix being on master (already on master per CLAUDE.md). Pairs with A7-FSRA-content-sniff-classifier, A7-FSRA-source-URL-dedup, A7-FSRA-pipeline-size-sanity, A1-content-hash-aware-invariant. Without content_hash dedup at write time, the multi-URL pattern keeps producing duplicate is_current=1 rows that downstream cleanup must handle.
+
+---
+
+### A1-content-hash-aware-invariant — Extend A1 single-current invariant to include content-hash awareness
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo
+- **Description:** The A1 invariant currently checks `(source_entity, rulebook_code, is_current=1) → COUNT ≤ 1`. This catches duplicate captures WITHIN a rulebook_code but not duplicate captures ACROSS rulebook_codes for the same physical content (the multi-URL-same-PDF pattern surfaced in A7.ROOT — same content_hash, different rulebook_code). Extend the invariant to also check `(content_hash, is_current=1) → COUNT ≤ 1` — the same physical content shouldn't appear is_current=1 under multiple (source_entity, rulebook_code) tuples.
+- **Acceptance:** Extended invariant lands in the same A1-style write_rulebook pre-flight check. Regression test verifies the cross-rulebook-code-same-content-hash case raises the new error. Any existing multi-rulebook-current-same-content-hash cases in current corpus state are surfaced for resolution (likely zero after Bundle 3 applies; surface as test xfail until they clear).
+- **Notes:** Goal is to close the A1 gap that allowed the 28-Apr/2-May FSRA duplicates to slip through. Pairs with A7-FSRA-source-URL-dedup (URL-side) and A7-FSRA-cross-entry-point-dedup (content-side write-path check) as the third leg of the defence-in-depth stool. The write-path check (cross-entry-point-dedup) prevents new duplicates; this invariant catches anything that slips through at audit time.
 
 ---
 
