@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 13 | 1 | 7 | 21 |
+| A — Data Integrity | 13 | 1 | 8 | 22 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **44** | **7** | **19** | **70** |
+| **Total** | **44** | **7** | **20** | **71** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA, B-cluster observation); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — investigation underway. **New register items added: A7.B.SECTIONS** (Open) covering COBS archived-section + citation cleanup post-flip.
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA); A7.B (FSRA COBS, sections deferred to A7.B.SECTIONS); A7.F (FSRA GLO, sections deferred to A7.F.SECTIONS). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — investigation underway. **New register items added: A7.B.SECTIONS, A7.F.SECTIONS** (both Open) covering archived-section + citation cleanup post-flip.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -326,14 +326,29 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.F — FSRA GLO orphan reconciliation
+### A7.F — FSRA GLO orphan reconciliation — **DONE [2026-05-13]**
+
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; section + citation cleanup tracked as A7.F.SECTIONS.
+- **Size:** Half-day
+- **Dependencies:** None (A1 now on master)
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-GLO.md`
+- **Description:** Tied-worst case in FSRA cluster (5 currents, same shape as COBS). State: 169 (VER25.010126 legitimate prior, 159 KB, 79 sections), 2769 (28-Apr stub, 1.4 KB, 4 sections), 2785 (2-May stub, 2 KB, 9 sections), 2791 (2-May duplicate-A, 160 KB, 76 sections), 2792 (2-May duplicate-B, 161 KB, 76 sections). Memo §5 prescription applied; 169 + 2769 + 2785 + 2791 → `is_current=0, superseded_by=2792`; 2792 retained canonical. 2791 and 2792 have **different content_hashes** (`7b0595aa…` vs `dfa39e83…`) despite same parser run; size-heuristic pick per memo.
+- **Acceptance:** ✓ Rows-affected = 4; invariant count = 1 (doc 2792). GLO-prefixed sections on is_current=1 GLO docs resolve to doc 2792 only. `GLO 1.1.1` is present at rule level on 2792 (glossary parser worked). PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[FSRA-GLO]` flipped from xfail-strict to passing. Full-suite delta: 681P/1S/17XF → 682P/1S/16XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_GLO_20260513_082626.db` (sha256 `0fd479cd…`, integrity ok).
+- **Glossary-specific note (memo §10):** Pre-apply diagnostic of distinct term entries across competing currents not performed — judged out of scope for the flip-only apply; tracked as part of A7.F.SECTIONS investigation when archived sections are cleaned up.
+- **Deferred follow-ups:** doc 2792 metadata (A5.C/E); section + citation cleanup (A7.F.SECTIONS below); content_hash vs portal verification (memo §9).
+
+---
+
+### A7.F.SECTIONS — FSRA GLO section + citation cleanup post-flip
 
 - **Status:** Open
 - **Size:** Half-day
-- **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** Same pattern as A7.B applied to FSRA GLO (Glossary).
-- **Acceptance:** Single is_current=1 row for FSRA GLO.
+- **Dependencies:** B1 parser redesign (so cleanup runs against a corrected parser)
+- **Source:** A7-GLO memo §6 deferred from Bundle 2 apply 2026-05-13
+- **Description:** Delete archived sections from doc 2791 (76 rows) and stub sections from docs 2769 (4 rows) and 2785 (9 rows) — total 89 rows. Preserve sections for doc 169 (79 rows, legitimate VER25 historical). Plus citation re-pointing for any `citations` rows with `source_doc_id=2791` or `target_doc_id=2791` — either delete (if duplicate of 2792-anchored equivalent) or re-anchor to 2792. Glossary-specific: pre-cleanup, verify 2791 and 2792 term-entry sets are near-identical (memo §10 concern); divergence > 1% flag for review.
+- **Acceptance:** `sections` table contains no rows for GLO doc_ids in {2791, 2769, 2785}; contains rows for {169, 2792}. `citations` table re-anchored or cleared for 2791. PRAGMA integrity_check ok. Full-suite green. Glossary determinism check passed.
+- **Notes:** Smaller scale than A7.B.SECTIONS (~89 rows vs ~2023). Can likely be applied together with A7.B.SECTIONS in a single follow-up session. Cross-reference `/tmp/qanun-overnight/a7/A7-GLO.md` §6.
 
 ---
 
