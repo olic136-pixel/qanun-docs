@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 15 | 1 | 4 | 20 |
+| A — Data Integrity | 14 | 1 | 5 | 20 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **46** | **7** | **16** | **69** |
+| **Total** | **45** | **7** | **17** | **69** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only); A7.D (FSRA PRU — flip-only). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item.
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only); A7.D (FSRA PRU — flip-only); A2 (FSRA GEN — flip-only, Path 2 idempotent two-flip with A3 K7 evidence captured). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -104,15 +104,17 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A2 — FSRA GEN orphan reconciliation
+### A2 — FSRA GEN orphan reconciliation — **DONE [2026-05-13]**
 
-- **Status:** Open
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2; Path 2). Flip-only; 2790 metadata backfill deferred to A5.C / A5.E.
 - **Size:** Half-day
 - **Dependencies:** None (A1 now on master at `2863b79` — will catch any new orphans during reconciliation)
-- **Source:** Pre-A1 audit + A1.h diagnostic, 11 May 2026 (confirmed scope in A7 audit, 12 May)
-- **Description:** Per the A7 audit, FSRA GEN has 3 is_current=1 rows: doc 206 (VER12, legitimate prior with OTHER X.Y refs), doc 2790 (VER13 current with empty metadata), and now also confirmed doc 2768 was the live hazard (already flipped today). Reconciliation: flip doc 206 to is_current=0 with `superseded_by=2790`; backfill doc 2790's missing `version_str`/`version_num`/`source_url` from filename.
-- **Acceptance:** Single SQL transaction with backup-before, integrity-check-after. Doc 206 is_current=0, superseded_by=2790. Doc 2790 has populated version_str + version_num + source_url. Single-current invariant query returns one row for FSRA GEN. Get_rule continues to work for both VER12 historical (via doc 206 is_current=0) and current queries (via doc 2790).
-- **Notes:** Now confirmed as one of nine A2-shaped items per A7 audit; the others are A7.B-A7.J below.
+- **Source:** Pre-A1 audit + A1.h diagnostic, 11 May 2026 (confirmed scope in A7 audit, 12 May) + `/tmp/qanun-overnight/a7/A7-GEN.md`
+- **Description:** Pre-apply state showed 3 is_current=1 rows on local canonical (sha `344305f0…` = 10 May Hetzner snapshot, predating the 11 May A1.h flip of 2768 on Hetzner). Hetzner had 2 currents (2768 already flipped, but `superseded_by` left NULL). Per memo §5's idempotent two-flip prescription (Path 2), local reconciliation: doc 206 (VER12.311025, 260 KB, **130 sections all `OTHER` prefix**) and doc 2768 (4.8 KB stub, 4 sections) both flipped to `is_current=0, superseded_by=2790`; doc 2790 (264.7 KB, 131 sections all `GEN` prefix) retained as canonical current. Local now slightly improves on Hetzner: 2768 has `superseded_by=2790` (vs Hetzner's NULL); the improvement propagates back at next local→Hetzner deploy.
+- **Acceptance:** ✓ Rows-affected = 2; post-COMMIT invariant query `COUNT(*) WHERE source_entity='FSRA' AND rulebook_code='GEN' AND is_current=1` = 1 (doc 2790). `GEN 1.1` resolves to doc 2790 on the is_current=1 join. PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[FSRA-GEN]` flipped from xfail-strict to passing. Full-suite delta: 678P/1S/20XF → 679P/1S/19XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_GEN_20260513_081400.db` (sha256 `75ef39f2…`, integrity ok).
+- **A3 K7 finding:** Doc 206 has 130 sections with prefix breakdown of **100% `OTHER`** (zero GEN). This is the primary A3 retag target — strongest evidence in Bundle 2 (MIR/PRU/COBS/GLO siblings showed no OTHER-prefix carry-forward). A3 retag scope now has a concrete first-item: 130 rows on doc 206 to be re-prefixed from `OTHER` to `GEN` (per A3 register entry's K7 carry-forward plan).
+- **Deferred follow-ups:** (a) Doc 2790 metadata gaps (version_str / version_num / source_url) — A5.C and A5.E. (b) Hetzner 2768 row has `superseded_by=NULL`; local has `superseded_by=2790`. Reconciles at next local→Hetzner deploy; not blocking.
 
 ---
 
