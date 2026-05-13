@@ -343,18 +343,46 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7-FUNDS-doc-199-mislabel — Correct PRU-content-in-FUNDS-row mislabel (4 affected docs)
 
-- **Status:** Open
+- **Status:** Open — apply pending Bundle 3 authorisation. Scoped apply SQL drafted (see below); superseded_by chain decision still open per Dependencies.
 - **Size:** Half-day
-- **Dependencies:** Forensic decision on the superseded_by chain for PRU VER19 (which isn't in PRU's canonical chain doc 15 → 2795)
-- **Source:** Bundle 2 A7-FUNDS investigation + post-apply protocol-review forensic, 2026-05-13
+- **Dependencies:** Forensic decision on the superseded_by chain for PRU VER19 (which isn't in PRU's canonical chain doc 15 → 2795). Option A: point doc 199 at 2795 to match the existing PRU convention (all archived versions → current canonical). Option B: leave superseded_by=NULL to treat 199 as off-chain.
+- **Source:** Bundle 2 A7-FUNDS investigation + post-apply protocol-review forensic, 2026-05-13. Widened-scope confirmation: Sprint 1 follow-up overnight, 2026-05-14 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md`
 - **Description:** Systematic PRU-content-in-FUNDS-tagged-row mislabel affecting four docs (64, 121, 189, 199) — all share `Adgm1547_11092_VerNN<date>` slug pattern and contain Prudential Rulebook (PRU) body text. Scraper-side routing bug, not isolated. Per-doc bodies confirm:
   - Doc 64 → `Prudential – Investment, Insurance Intermediation and Banking Rules (PRU) (VER10.250521)`
   - Doc 121 → `Prudential ... (PRU) (VER11.270422)`
   - Doc 189 → `Prudential ... (PRU) (VER12.301122)`
   - Doc 199 → `Prudential ... Rulebook (PRU) (VER19.010126)` (is_current=0 since A7.C Bundle 2 apply)
   All four also have `Adgm1547 11092 VerNN…` title slugs in the documents table, consistent with a single misrouted scraper source. Doc 2789 (the only is_current=1 FUNDS row post-Bundle-2) is the first genuine FUNDS body content in the corpus.
-- **Acceptance:** `rulebook_code` corrected to PRU on all four docs (64, 121, 189, 199); `superseded_by` chain decided in a focused follow-up (PRU canonical chain doc 15 → 2795 doesn't include a VER19 entry — doc 199's PRU VER19 may be an off-chain capture; 64/121/189 may slot into a parallel pre-K7 PRU historical chain). Section_refs on these four (currently 100% `OTHER` prefix via K7 carry-forward gap) re-prefixed to `PRU` if A3 carry-forward is in scope at the same time, or annotated as deferred. Forward-looking body-vs-label integrity-check added to prevent recurrence.
-- **Notes:** A1 invariant counts is_current=1 per rulebook_code and doesn't catch content-vs-label mismatch. Cross-reference `/tmp/qanun-overnight/a7/A7-FUNDS.md` for the original A7 audit framing (which assumed 199 was a FUNDS capture). Cross-reference **A7-FSRA-pipeline-size-sanity** for the broader pipeline guard against the family of silent-mis-ingest issues. The bundled four-doc correction may also affect any get_rule history queries that currently surface 64/121/189 under FUNDS — they should surface under PRU after this lands (PRU's get_rule history doesn't currently include VER10/VER11/VER12 captures because they're filed elsewhere).
+- **Scoped Apply Procedure (DRAFT — DO NOT EXECUTE; apply gate authorises later):**
+  ```sql
+  -- Per memo /tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md
+  -- Pre-flight backup
+  -- sqlite3 corpus.db ".backup corpus.db.pre-a7-funds-doc-199-mislabel-$(date +%Y%m%d_%H%M%S)"
+
+  BEGIN IMMEDIATE;
+  UPDATE documents
+     SET rulebook_code = 'PRU',
+         updated_at = datetime('now')
+   WHERE id IN (64, 121, 189, 199) AND rulebook_code = 'FUNDS';
+  -- expected rows-affected: 4
+
+  -- Post-UPDATE verification (must return 0):
+  -- SELECT COUNT(*) FROM documents WHERE id IN (64, 121, 189, 199) AND rulebook_code = 'FUNDS';
+  -- Cross-check: doc 199 should remain is_current=0 (post-A7.C apply); 64, 121, 189 remain is_current=0 (always were).
+
+  -- superseded_by chain decision pending — see Dependencies. If Option A (point at 2795 per
+  -- existing PRU convention), add to the same transaction:
+  --   UPDATE documents SET superseded_by = 2795, updated_at = datetime('now')
+  --                       WHERE id IN (64, 121, 189);
+  --   UPDATE documents SET superseded_by = 2795, updated_at = datetime('now') WHERE id = 199;
+  --   (doc 199 currently has superseded_by=2789 from the A7.C apply — that pointed
+  --   at the FUNDS current; after the rulebook_code correction the link is cross-rulebook
+  --   and must be corrected to a PRU target or NULL.)
+
+  COMMIT;
+  ```
+- **Acceptance:** `rulebook_code` corrected to PRU on all four docs (64, 121, 189, 199); `superseded_by` chain decided in a focused follow-up (PRU canonical chain doc 15 → 2795 doesn't include a VER19 entry — doc 199's PRU VER19 may be an off-chain capture; 64/121/189 may slot into a parallel pre-K7 PRU historical chain). Section_refs on these four (currently 100% `OTHER` prefix via K7 carry-forward gap) re-prefixed to `PRU` if A3 carry-forward is in scope at the same time, or annotated as deferred. Forward-looking body-vs-label integrity-check added to prevent recurrence (see `A7-FSRA-content-sniff-classifier`).
+- **Notes:** A1 invariant counts is_current=1 per rulebook_code and doesn't catch content-vs-label mismatch. Cross-reference `/tmp/qanun-overnight/a7/A7-FUNDS.md` for the original A7 audit framing (which assumed 199 was a FUNDS capture); cross-reference `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md` for the widened-scope confirmation. The widened-scope memo also retired the standalone `A7-FUNDS-size-investigation` follow-up — the 67% size-drop framing was an artefact of comparing PRU body text in doc 199 (873 KB) to FUNDS body text in doc 2789 (283 KB), not two FUNDS captures. Cross-reference **A7-FSRA-pipeline-size-sanity** for the broader pipeline guard against the family of silent-mis-ingest issues, and **A7-FSRA-content-sniff-classifier** for the body-vs-label integrity-check. The bundled four-doc correction may also affect any get_rule history queries that currently surface 64/121/189 under FUNDS — they should surface under PRU after this lands (PRU's get_rule history doesn't currently include VER10/VER11/VER12 captures because they're filed elsewhere).
 
 ---
 
@@ -515,15 +543,15 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-FUNDS-doc-199-mislabel — PRU-content-in-FUNDS-row systematic mislabel
+### A7-FSRA-content-sniff-classifier — Body-vs-label integrity check at write time
 
 - **Status:** Open
 - **Size:** Day
-- **Dependencies:** None (A7.C Done; doc 199 is now is_current=0)
-- **Source:** Bundle 2 A7-FUNDS forensic, 13 May 2026
-- **Description:** Systematic PRU-content-in-FUNDS-tagged-row mislabel affecting four docs (64, 121, 189, 199) — all share `Adgm1547_11092_VerNN<date>` slug pattern and contain Prudential Rulebook (PRU) body text. Scraper-side routing bug, not isolated. PRU's canonical chain (doc 15 → 2795) does not include any VER19 entry — doc 199's PRU VER19 may be an off-chain capture or genuinely separate version-line.
-- **Acceptance:** rulebook_code corrected to PRU on all four; superseded_by chain decided in a focused follow-up (e.g., off-chain or fold into PRU canonical with explicit precedence). Scraper routing fix lands so no future FUNDS-tagged row contains PRU body text. Regression test verifies body-text-vs-rulebook-code consistency on insert.
-- **Notes:** Cross-reference `/tmp/qanun-overnight/a7/A7-FUNDS.md` forensic surface from Bundle 2. Related to A7-FSRA-pipeline-size-sanity (the size-sanity guard would have caught the original mislabel earlier).
+- **Dependencies:** None
+- **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md`
+- **Description:** Add a content-sniff classifier to the FSRA scraper write path that verifies the extracted body text matches the rulebook_code being written. Triggered by the doc-199 mislabel pattern (four docs with PRU body text written into FUNDS-tagged rows). The check reads the first ~500 chars of full_text after extraction and matches against a per-rulebook signature string (e.g., "Prudential – Investment, Insurance Intermediation and Banking Rulebook (PRU)" → PRU; "Conduct of Business Rulebook (COBS)" → COBS). On mismatch, raise a halt rather than silent-commit. Defence-in-depth against the wider "same physical PDF served via multiple TR portal URLs with inconsistent rulebook_code classification" pattern surfaced in `A7.ROOT`.
+- **Acceptance:** Classifier implemented in `write_rulebook` pipeline (or equivalent layer). Regression test verifies the doc-199-equivalent case (PRU body text presented under rulebook_code='FUNDS') raises the new halt error. No false positives on the 22 DFSA modules or 8 FSRA rulebooks already in corpus — confirmed by a backfill dry-run before merge.
+- **Notes:** Pairs with `A7-FSRA-pipeline-size-sanity` (size-side check), `A7-FSRA-source-URL-dedup` (URL-level dedup), `A7-FSRA-cross-entry-point-dedup` (content-hash dedup), and `A1-content-hash-aware-invariant` (extended single-current invariant). Five-layer defence-in-depth against the multi-URL-same-PDF pattern.
 
 ---
 
