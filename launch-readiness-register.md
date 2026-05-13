@@ -64,19 +64,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 14 | 1 | 5 | 20 |
+| A — Data Integrity | 13 | 1 | 6 | 20 |
 | B — Content Coverage | 5 | 4 | 1 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **Total** | **45** | **7** | **17** | **69** |
+| **Total** | **44** | **7** | **18** | **69** |
 
 **Done since v1.1 (12 May 2026 master integration session):** D10 (master integration); plus the 9 items that were "Done [awaiting integration]" now fully Done on master/main: A1, A6, C2, C3, C4, C5, C7, F1, F2.
 
 **Done since v1.2 (13 May 2026 Bundle 1 merge session):** F2.TRADEDAR (merge `805f50f` on qanun-api main).
 
-**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR — flip-only); A7.D (FSRA PRU — flip-only); A2 (FSRA GEN — flip-only, Path 2 idempotent two-flip with A3 K7 evidence captured). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item.
+**Done in-progress (13 May 2026 Bundle 2 reconciliation session, running):** A7.E (FSRA MIR); A7.D (FSRA PRU); A2 (FSRA GEN, Path 2 with A3 K7 evidence); A7.G (BVI_FSC BVI-BCA, B-cluster parser determinism observation captured). Each flip-only; doc-level metadata deferred to A5.C / A5.E per item. **A7.H (BVI-REGS) halted on section-asymmetry pre-apply** — deferred to its own decision before Bundle 2 close.
 
 **Net change since v1.1:**
 - 67 items → 69 items (+1 Done from D10; +2 new C11/C12)
@@ -323,14 +323,17 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.G — BVI_FSC BCA duplicate reconciliation
+### A7.G — BVI_FSC BCA duplicate reconciliation — **DONE [2026-05-13]**
 
-- **Status:** Open
+- **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Conservative shape: archive (flip) the duplicate; preserve archived row's sections.
 - **Size:** Half-day
 - **Dependencies:** None (A1 now on master)
-- **Source:** A7 audit memo
-- **Description:** BVI_FSC BCA has duplicate identical captures both marked is_current=1. Different from FSRA pattern — these aren't different versions, they're literal duplicates. Identify which is canonical, remove the other.
-- **Acceptance:** Single is_current=1 row for BVI_FSC BCA. The deleted duplicate's citations (if any) re-pointed to the canonical row.
+- **Source:** A7 audit memo + `/tmp/qanun-overnight/a7/A7-BVI-BCA.md`
+- **Description:** Three rows for BVI_FSC BVI-BCA, all sharing identical content_hash `f9af6baf…` and identical 472,544-byte full_text. Pre-apply state: 2573 (Mar 31, already is_current=0, 135 sections), 2662 (Apr 3, is_current=1, 0 sections), 2756 (Apr 15, is_current=1, 18 sections). Memo §5 prescription applied: 2662 → `is_current=0, superseded_by=2756`; 2756 retained as canonical current; 2573's optional `superseded_by` backfill skipped (kept truly-flip-only consistent with the bundle pattern).
+- **Acceptance:** ✓ Rows-affected = 1; invariant count = 1 (doc 2756). `BVI-BCA Part I` resolves to doc 2756 on the is_current=1 join. PRAGMA integrity_check ok. Test `test_single_current_invariant_per_rulebook[BVI_FSC-BVI-BCA]` flipped from xfail-strict to passing. Full-suite delta: 679P/1S/19XF → 680P/1S/18XF.
+- **Backup:** `/Users/oliver/ADGM/adgm-corpus/backups/corpus_pre_A7_BVI_BCA_20260513_081903.db` (sha256 `9efbc4c3…`, integrity ok).
+- **B-cluster observation captured:** Canonical 2756 has only 18 sections while archived 2573 has 135 (same content_hash). Section-parser produced different output across runs of byte-identical content. Not blocking A7-invariant — a determinism concern that belongs with B-cluster (parser-redesign B1). Worth a follow-up register item if patterns persist.
+- **Deferred follow-up:** doc 2756's metadata gaps (version_str/source_url) — A5.C. Hetzner-side `A7-BVI-content-hash-dedup` register item from memo §9 still Open (BVI scraper currently lacks the dedup that would prevent this recurring).
 
 ---
 
