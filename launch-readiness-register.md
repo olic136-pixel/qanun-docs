@@ -785,6 +785,23 @@ What the corpus actually contains.
 
 ---
 
+### B1.GEN-ROLLOUT — GEN-only parser_v2 production rollout (Path P1)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** B1 parser_v2 module merged to master (done in N+2a)
+- **Source:** Sprint 1 follow-up `B1-parser-v1-vs-v2-diff.md`; N+1 morning interactive review accepted Path P1
+- **Description:** Wire `use_v2_parser` flag in `scripts/process_all.py` and set True for GEN only. PRU/COBS/MIR continue using v1 parser pending B1.PARAGRAPHS (paragraph-level Section extraction). Steps:
+  1. Add flag to process_all.py with per-rulebook activation map
+  2. Re-process GEN document (id 2790) — replace v1-parsed sections with v2-parsed sections (deletes old `GEN 2.1`-style refs, inserts new `GEN 2.1.1`-style refs)
+  3. Re-extract citations against v2 GEN sections — confirm inline cross-refs (e.g., "Rule 2.1.3" inside (1)(2) paragraphs) resolve correctly to new section_refs
+  4. Re-embed GEN sections in ChromaDB — delete old vectors keyed by v1 refs, insert new vectors keyed by v2 refs (atomic per-rulebook)
+  5. Re-upsert GEN sections in Pinecone with v2 refs as metadata
+  6. Downstream validation: MCP `search_corpus` with GEN query returns coherent results; `get_rule` resolves v2 refs; citation_extractor output spot-checked
+- **Acceptance:** GEN section count in corpus.db = 214 (v2 count from diff memo); 140 sub-rule refs (e.g., GEN 3.3.1 through GEN 3.3.18) resolvable via `get_rule`; MCP search returns coherent GEN results; no regression in non-GEN rulebook queries (PRU/COBS/MIR still v1-parsed)
+
+---
+
 # Category C — Code Quality
 
 Known-to-be-wrong code.
