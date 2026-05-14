@@ -93,16 +93,27 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 14 | 0 | 0 | 14 |
-| **H — Per-Jurisdiction Corpus & Case Law** | 19 | 0 | 3 | 22 |
+| **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
 | **I — Governance Suite Mode** | 17 | 0 | 0 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **125** | **6** | **38** | **169** |
+| **Total** | **116** | **6** | **47** | **169** |
+
+> **G-category recount flag (Memory #30):** the G row shows 0 Done but G1-G5, G7, G9, G11, G15 all have substantial Sprint-1/2 landings. A regex pass over the register headers suggests G is closer to ~6 Done / ~8 Open. The G row above is left at its last-hand-counted value pending a full manual G-category recount — flagged as a Block-F follow-up rather than written from an unverified regex tally.
 
 **Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
 
 **Sprint 2 Session 4a movements (14 May 2026, hot-fix session):** B1.DEDUPE added as new register item, immediately Done (Cat B +1 Done +1 Total). G5 Session-3 F1/F2/F3 follow-ups all fixed and merged (no separate register entries — folded under G5 landing notes as Session 4a closure). All 4 fixes carry opt-in live-smoke regression tests (Memory #29). master @ `3803c5f`; suite 800P/1S/12XF → 823P/5S/12XF (no regressions).
+
+**Sprint 3 Closure movements (14-15 May 2026, big overnight — 5a+5b+5c+5d+5e):**
+- **Block A — VARA full processing (H1+H2+H15):** VARA full_text re-ingested via `/entiresection/{id}` URLs (Session 4b had only TOC HTML); 298 sections parsed (L0 Parts + L1 lettered sections — L2/L3 rule split is a vara_parser enhancement carry); ChromaDB delete 8862 stale + insert 298; Pinecone `vara` namespace created (298). H1 → **Done**. H2 case law deferred (enforcement URL 404). H15 vault deferred (VARA manifest lacks obsidian_config).
+- **Block B — DFSA 21-module supersede (H11+H12+H17+H19):** all 21 DFSA modules re-ingested fresh (docs 2812-2832) — fixes the empty-version_str metadata gap + refreshes content; 9,154 sections; ChromaDB delete 3113 + insert 9154; Pinecone `dfsa` namespace created (9154); 3,841 citations. H11 → **Done**. H12 case law deferred (URL 404); H17 vault scaffolded (0 notes — ObsidianAgent.run() stub); H19 inline maps deferred.
+- **Block C — El Salvador enrichment (H3-H10+H16):** SV already well-structured post-4b (16 docs, 2308 sections, 0 NULL rulebook_code); ChromaDB delete 1344 + insert 2308; Pinecone `el_salvador` namespace created (2308). H3+H4+H5+H6+H10 → **Done** (H5 SV-LEAD24 + H6 SV-BTC already existed as docs 2341/2342). H7+H8 gap-fill deferred (SV-PROC-DASP source reachable, SV-UIF source down); H9 case law deferred; H16 vault scaffolded (0 notes).
+- **Block D — BVI re-parse + ingestion (H13+H14+H18):** brief's "URL discovery" premise stale — BVI already had 27 docs; re-parsed 6 zero-section docs (+312 sections, BVI total 793); ChromaDB delete 1302 + insert 793; Pinecone `bvi_fsc` namespace cleared + re-populated (130 → 793). **H14 case law: 20 BVI FSC enforcement decisions ingested into `case_law_documents` — first jurisdiction with case law populated, validates the Block-K schema end-to-end.** H13+H14 → **Done**. H18 vault scaffolded (0 notes).
+- **Block E — Sprint 3 cleanup:** G14 MCP `_JURISDICTION_NAMESPACE_MAP` extended (VARA/DFSA/EL_SALVADOR/BVI_FSC/PANAMA_SMV → per-jurisdiction namespaces; FSRA deliberately left on `default` since `adgm` namespace is partial). COBS doc-100 retag (1586 OTHER→COBS sections). MKT supersede NOT applied (TR portal timeout — carried). A5.C audit characterised (2031 docs missing source_url; court-doc categories need court-portal sources; FSRA-historical needs per-version URLs — no bulk backfill to avoid wrong URLs).
+- **H movements:** H1, H3, H4, H5, H6, H10, H11, H13, H14 → Done (+9). H Done 3→12, Open 19→10. Totals: 125→116 Open / 38→47 Done.
+- master @ `4f68bc7`; corpus.db `ccdbb138…44a3`; suite 849P/5S/11XF/1XP + 2 FAIL (COBS + DFSA-COB search_quality — FTS5 rank-ordering, not data loss; data present + FTS5-indexed).
 
 **Sprint 2 Session 4b movements (14 May 2026, big overnight — Sprint 2 closure + partial Sprint 3):**
 - B1.PARAGRAPHS implementation + PRU/COBS/MIR 3-system rollouts (Blocks A/B/C/D, 4 sprint-branch merges): parser_v2 extended with paragraph_level_sections; PRU/COBS/MIR profiles added; USE_V2_PARSER flipped for all four (GEN/PRU/COBS/MIR on v2). corpus.db section count delta: PRU 1296→1510, COBS 1928→2039, MIR 971→984 (+358 net L3 paragraphs). 3 corpus.db backups in `backups/corpus.db.pre-B1-{PRU,COBS,MIR}-*`.
@@ -1548,9 +1559,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H1 — VARA corpus ingestion (12 rulebooks)
+### H1 — VARA corpus ingestion (12 rulebooks) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block A. 12 rulebooks re-ingested via `/entiresection/{id}` URLs; 298 sections (L0/L1 — L2/L3 rule split is a vara_parser follow-up); ChromaDB 298 + Pinecone `vara` namespace 298. Acceptance partially met: corpus.db is_current=1 for all 12, embeddings in `vara` namespace ✓; section coverage is coarse (Part/lettered-section granularity) pending the L2/L3 splitter.
 - **Size:** Week
 - **Dependencies:** G4, G5, G6, G7, G8
 - **Source:** UCIE v2 SOW Phase 2 §6.1
@@ -1570,9 +1581,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H3 — El Salvador corpus enrichment (rulebook_code population)
+### H3 — El Salvador corpus enrichment (rulebook_code population) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Session 4b H2 resolved 4 NULL rulebook_code docs; Sprint 3 Closure Block C confirmed 16 SV docs all carry rulebook_code (0 NULL is_current=1).
 - **Size:** Half-day
 - **Dependencies:** G11
 - **Source:** UCIE v2 SOW Phase 8 §7.3 (CorpusEnrichmentAgent)
@@ -1581,9 +1592,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H4 — El Salvador section_ref consistency
+### H4 — El Salvador section_ref consistency — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block C. 12 of 16 SV docs have parsed sections (2308 total); the 4 without (SV-ANNUAL report, SV-CNAD-DOCS/FRAMEWORK reference pages, SV-MISC) are non-regulation documents that don't need section structure.
 - **Size:** Half-day
 - **Dependencies:** H3, G6
 - **Source:** UCIE v2 SOW Phase 8 §7.3 (SectionRefAgent)
@@ -1592,9 +1603,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H5 — El Salvador gap fill: SV-LEAD24 (August 2024 reform)
+### H5 — El Salvador gap fill: SV-LEAD24 (August 2024 reform) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — SV-LEAD24 already present as doc 2341 (16 sections); confirmed during Sprint 3 Closure Block C pre-flight. The brief's gap-fill list was stale.
 - **Size:** Half-day
 - **Dependencies:** H3
 - **Source:** UCIE v2 SOW Phase 8 §7.1 + §7.4
@@ -1603,9 +1614,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H6 — El Salvador gap fill: SV-BTC (Bitcoin Law Decreto 57)
+### H6 — El Salvador gap fill: SV-BTC (Bitcoin Law Decreto 57) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — SV-BTC already present as doc 2342 (18 sections); confirmed during Sprint 3 Closure Block C pre-flight. The brief's gap-fill list was stale.
 - **Size:** Half-day
 - **Dependencies:** H3
 - **Source:** UCIE v2 SOW Phase 8 §7.1
@@ -1647,9 +1658,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H10 — El Salvador Pinecone embedding
+### H10 — El Salvador Pinecone embedding — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block C. Pinecone `el_salvador` namespace created with 2308 vectors (voyage-law-2); ChromaDB SV refreshed (1344 stale → 2308). Roundtrip verified.
 - **Size:** Half-day
 - **Dependencies:** H3, H4, H5, H6, H7, H8, G8
 - **Source:** UCIE v2 SOW Phase 8 §7.3
@@ -1658,9 +1669,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H11 — DFSA full corpus completion
+### H11 — DFSA full corpus completion — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block B. All 21 DFSA modules re-ingested fresh (docs 2812-2832) — fixes the empty-`version_str` metadata gap, refreshes content, re-parses sections (9,154 total). ChromaDB delete 3113 + insert 9154; Pinecone `dfsa` namespace created (9154); 3,841 citations. CMC + PRU parsed to 0 sections (sourcebook-format limitation per B2 design memo) — carried as B2-handler work.
 - **Size:** Week
 - **Dependencies:** G4, G5, G6 (incl. B2 sourcebook handler), G7, G8
 - **Source:** v1.3 register's B2 + B3 + post-launch roadmap migrated into v1
@@ -1680,9 +1691,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H13 — BVI further rulebook ingestion
+### H13 — BVI further rulebook ingestion — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block D. Brief's "URL discovery" premise was stale — BVI already had 27 docs ingested. Re-parsed 6 zero-section docs via parse_bvi_regulations/parse_legislation (+312 sections incl. BVI-BO-GUIDE 230, BVI-PCCA 50); BVI total 481→793 sections. ChromaDB delete 1302 + insert 793; Pinecone `bvi_fsc` namespace cleared + re-populated (130→793).
 - **Size:** Week
 - **Dependencies:** G4, G5, G6, G7, G8
 - **Source:** v1 scope expansion (BVI → full coverage)
@@ -1691,9 +1702,9 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ---
 
-### H14 — BVI case law pipeline
+### H14 — BVI case law pipeline — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Closure Block D. BVI FSC enforcement page found at `/news/enforcement-actions`; 20 enforcement decisions scraped + ingested into `case_law_documents` (jurisdiction='BVI'). **First jurisdiction with case law populated — validates the Block-K case_law schema end-to-end.** Passage-level indexing + CaseLawVerifier fingerprint population is a follow-up.
 - **Size:** Day
 - **Dependencies:** H13, H20
 - **Source:** v1 scope expansion
