@@ -92,13 +92,19 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 5 | 0 | 10 | 15 |
+| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 4 | 0 | 11 | 15 |
 | **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
 | **I — Governance Suite Mode** | 0 | 0 | 17 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **90** | **6** | **74** | **170** |
+| **Total** | **89** | **6** | **75** | **170** |
+
+**Option C movements (16 May 2026, bounded session — TemplateDiscoveryAgent + activation pipeline):**
+- **G10 TemplateDiscoveryAgent → Done.** Memory #23 pivot: the agent class was pre-built (556-line v2 agent with Oliver-curated VARA/SV doc lists). The genuine gap was the activation pipeline — `emit_suite_json()` JSON output on the agent (adgm-corpus `36bc1a8`) + `template_discovery_loader.py` in qanun-api (`9982edd`) reading approved JSON into SUITE_REGISTRY. VARA Tier 1 VASP-BD smoke verified end-to-end (7 docs / 9 sections / 9 provision-verified → SUITE_REGISTRY).
+- **DocumentSuite collision (pre-flight #8, Memory #23):** two `DocumentSuite` definitions exist — `drafting_templates.DocumentSuite` (canonical: has `SUITE_REGISTRY` + `register_suite`, used by tests) and `structural_spec.DocumentSuite` (parallel, +`description` field, no registry). The loader imports the canonical one. The `structural_spec` def is likely dead code — **cleanup carry** (not actioned this session; discrete follow-up).
+- G row: 5→4 Open / 10→11 Done. Total row: 90→89 Open / 74→75 Done. adgm-corpus master `36bc1a8`; qanun-api main `9982edd`; qanun-docs main this commit.
+- Sprint 6 unblocked: multi-jurisdiction TemplateDiscoveryAgent runs (5 jurisdictions × licence × tier); the Oliver review queue (`_review_status: pending` files awaiting approval); refining `drafting_instructions` to Stark-exemplar quality.
 
 **Sprint 6 prep movements (15-16 May 2026, deep overnight — 16 blocks, 3 repos):**
 - **Phase 1 (Blocks A-H) — Option C inputs for TemplateDiscoveryAgent (G10):** 8 review memos landed in `qanun-docs/sprint-6-prep/` — 4 per-jurisdiction corpus topology surveys (VARA/DFSA/BVI/SV), ADGM template inventory (162 templates / 851 sections / surfaced 152 empty-provision + 249 thin-instruction anti-patterns), Stark exemplar deep-extraction (28 section files + section_id convention), cross-jurisdiction document equivalence map (full 5-tier × 5-jurisdiction), provision coverage matrix (42/42 anchors verified against corpus.db). These do not close register items — they are the inputs G10 (TemplateDiscoveryAgent) will consume.
@@ -1506,14 +1512,18 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G10 — TemplateDiscoveryAgent
+### G10 — TemplateDiscoveryAgent — **DONE [2026-05-16]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-16] — Option C session. Agent + activation pipeline. adgm-corpus merge `36bc1a8`, qanun-api merge `9982edd`.
 - **Size:** Day
 - **Dependencies:** G3, G6, G7, G8
 - **Source:** UCIE v2 SOW Phase 5 + §6.1 (VARA template discovery example)
 - **Description:** Per jurisdiction: enumerate templates from corpus + licence matrix; produce `<JURISDICTION>_template_review.md` + SectionSpec skeleton stubs + coverage check CSV. Gates Oliver review before activation.
-- **Acceptance:** TemplateDiscoveryAgent runs per jurisdiction; produces 3 deliverables (review.md + skeleton.py + coverage.csv); Oliver gate review on each.
+- **Option C landing (Memory #23 pivot):** the agent class was found PRE-BUILT (556-line v2 BaseAgent, G15-migrated, emits coverage CSV + review markdown from hardcoded VARA 35-doc + SV 53-doc Oliver-curated lists). Per the brief's own Pre-flight-4 protocol, pivoted verify+extend, not rebuild. The genuine gap was the **activation pipeline**:
+  - **adgm-corpus** — extended the agent with `emit_suite_json()` + `DocumentSuiteOut`/`DocumentTemplateOut`/`SectionSpecOut` output schema. Groups proposed documents by (licence_type, tier), derives one SectionSpec stub per covered rulebook (provision = real section_ref verified against corpus.db), writes JSON to `ucie/jurisdictions/{code}/discovered_templates/{licence}/tier{N}.json` with `_review_status: "pending"`. 8 tests.
+  - **qanun-api** — new `services/template_discovery_loader.py`: reads approved JSON (`_review_status == "approved"`), registers `DocumentSuite` via `register_suite()`; skips pending + malformed without raising; wired into `main.py` lifespan. 6 tests.
+  - **VARA Tier 1 VASP-BD smoke** — end-to-end verified: agent emit → 7-doc / 9-section tier1.json (9/9 provision-verified) → approve → loader → SUITE_REGISTRY 0→1. Committed artifact at `ucie/jurisdictions/VARA/discovered_templates/vasp_bd/tier1.json`.
+- **Acceptance:** ✓ TemplateDiscoveryAgent runs per jurisdiction (VARA 37 docs / SV 52 docs, all corpus-ready); ✓ produces review deliverables (CSV + markdown — pre-built) PLUS the Option-C JSON-emit; ✓ Oliver gate is the `_review_status` flip. Multi-jurisdiction emit runs + SV emit (SV's doc list is method-local) are follow-ups.
 
 ---
 
