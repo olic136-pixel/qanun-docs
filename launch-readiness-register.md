@@ -92,15 +92,15 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
-| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 14 | 0 | 0 | 14 |
+| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 5 | 0 | 10 | 15 |
 | **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
 | **I — Governance Suite Mode** | 17 | 0 | 0 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **116** | **6** | **47** | **169** |
+| **Total** | **107** | **6** | **57** | **170** |
 
-> **G-category recount flag (Memory #30):** the G row shows 0 Done but G1-G5, G7, G9, G11, G15 all have substantial Sprint-1/2 landings. A regex pass over the register headers suggests G is closer to ~6 Done / ~8 Open. The G row above is left at its last-hand-counted value pending a full manual G-category recount — flagged as a Block-F follow-up rather than written from an unverified regex tally.
+> **G-category recount complete (Memory #30, Sprint 3 Cleanup Block E):** manual pass over all 15 G entries (the row previously showed 14 Total — itself an undercount; there are G1-G15). Verified against master: `sprint/G1-G3-ucie-foundation-2026-05-14` is merged (`git branch --merged master`), so G1/G2/G3 are Done not "awaiting review"; G14 confirmed implemented (`_JURISDICTION_NAMESPACE_MAP` with VARA/DFSA/etc. routing in `adgm_corpus/mcp/server.py`, Sprint 3 closure Block E2). **Done (10):** G1, G2, G3, G4, G5, G7, G9, G11, G14, G15. **Open (5):** G6 StructureAgent, G8 EmbeddingAgent, G10 TemplateDiscoveryAgent, G12 MCP multi-jurisdiction filtering, G13 Parallel execution coordination. G row corrected 14→15 Total / 0→10 Done / 14→5 Open; Total row +1 Total / +10 Done / −9 Open.
 
 **Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
 
@@ -1347,9 +1347,9 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G1 — Jurisdiction manifest schema
+### G1 — Jurisdiction manifest schema — **DONE [2026-05-14]**
 
-- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed (HEAD `e655aea`); awaiting merge review
+- **Status:** Done [2026-05-14] — `sprint/G1-G3-ucie-foundation-2026-05-14` merged to master (verified via `git branch --merged master`, Sprint 3 Cleanup Block E recount). `ucie/core/manifest_loader.py` in production use across Sprints 2-3.
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** UCIE v2 SOW §3.2
@@ -1359,9 +1359,9 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G2 — OrchestratorAgent with multi-jurisdiction support
+### G2 — OrchestratorAgent with multi-jurisdiction support — **DONE [2026-05-14]**
 
-- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed; awaiting merge review. **Skeleton-only** until G15 migrates concrete agents from v1 contract.
+- **Status:** Done [2026-05-14] — `sprint/G1-G3-ucie-foundation-2026-05-14` merged to master (verified, Sprint 3 Cleanup Block E recount). `ucie/core/orchestrator.py` in production; G15 completed the concrete-agent migration off the v1 contract.
 - **Size:** Half-day
 - **Dependencies:** G1
 - **Source:** UCIE v2 SOW §3.1 + extension noted in §3
@@ -1371,9 +1371,9 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G3 — BaseAgent contract + gate framework
+### G3 — BaseAgent contract + gate framework — **DONE [2026-05-14]**
 
-- **Status:** Open — sprint branch `sprint/G1-G3-ucie-foundation-2026-05-14` pushed; awaiting merge review
+- **Status:** Done [2026-05-14] — `sprint/G1-G3-ucie-foundation-2026-05-14` merged to master (verified, Sprint 3 Cleanup Block E recount). `ucie/core/base.py` + `ucie/core/gate.py` are the contract every UCIE agent extends (TopographyAgent, ScraperAgent, ObsidianAgent, VerificationAgent all subclass BaseAgent).
 - **Size:** Half-day
 - **Dependencies:** G1
 - **Source:** UCIE v2 SOW §3.4
@@ -1521,9 +1521,9 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
 
 ---
 
-### G14 — Cross-jurisdiction MCP server tool naming
+### G14 — Cross-jurisdiction MCP server tool naming — **DONE [2026-05-14]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 3 closure Block E2. Single adgm-corpus MCP retained; `_JURISDICTION_NAMESPACE_MAP` in `adgm_corpus/mcp/server.py` routes search_corpus to per-jurisdiction Pinecone namespaces (VARA→vara, DFSA→dfsa, EL_SALVADOR/CNAD→el_salvador, BVI_FSC→bvi_fsc, PANAMA_SMV→panama_smv). FSRA deliberately left on `default` (the `adgm` namespace is the parser_v2 rollout subset, not a complete FSRA mirror).
 - **Size:** Half-day
 - **Dependencies:** G12
 - **Source:** Implied by multi-jurisdiction extension
