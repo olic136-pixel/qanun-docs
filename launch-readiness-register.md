@@ -94,13 +94,28 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | F — Test Coverage | 1 | 1 | 3 | 5 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 5 | 0 | 10 | 15 |
 | **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
-| **I — Governance Suite Mode** | 17 | 0 | 0 | 17 |
+| **I — Governance Suite Mode** | 8 | 0 | 9 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **107** | **6** | **57** | **170** |
+| **Total** | **98** | **6** | **66** | **170** |
 
 > **G-category recount complete (Memory #30, Sprint 3 Cleanup Block E):** manual pass over all 15 G entries (the row previously showed 14 Total — itself an undercount; there are G1-G15). Verified against master: `sprint/G1-G3-ucie-foundation-2026-05-14` is merged (`git branch --merged master`), so G1/G2/G3 are Done not "awaiting review"; G14 confirmed implemented (`_JURISDICTION_NAMESPACE_MAP` with VARA/DFSA/etc. routing in `adgm_corpus/mcp/server.py`, Sprint 3 closure Block E2). **Done (10):** G1, G2, G3, G4, G5, G7, G9, G11, G14, G15. **Open (5):** G6 StructureAgent, G8 EmbeddingAgent, G10 TemplateDiscoveryAgent, G12 MCP multi-jurisdiction filtering, G13 Parallel execution coordination. G row corrected 14→15 Total / 0→10 Done / 14→5 Open; Total row +1 Total / +10 Done / −9 Open.
+
+**Sprint 3 Cleanup + Sprint 4 Launch movements (14-15 May 2026, dual-repo overnight):**
+- **Phase 1 — adgm-corpus (Blocks A-E):**
+  - A: case law backfill — per-jurisdiction enforcement-URL discovery exhausted; VARA + DFSA enforcement pages all 404, EL_SALVADOR pages reachable but carry no enforcement content. All 3 DEFERRED; BVI (20 decisions) remains the only jurisdiction with case law.
+  - B: `ObsidianAgent.run()` implemented — populates vault from corpus.db (rulebook + section + index notes). Ran across all 5 jurisdictions: **21,540 notes** (ADGM 8906, VARA 311, DFSA 9177, BVI 821, EL_SALVADOR 2325). VARA manifest gained `obsidian_config`.
+  - C: parser refinements — VARA L2 rule split (`_split_subpart_inline_rules` in vara_parser.py): VARA **298 → 555 sections** (+257 L2 rules), re-embedded both vector stores. Cross-jurisdiction citation patterns added (VARA/BVI/SV): FSRA 69→326, **BVI 0→78**; VARA/SV patterns didn't match (cross-ref conventions differ — refinement carry).
+  - D: FTS5 search fixes — `_sanitise_fts_query` rewritten (hyphenated-token OR-expansion + OR-join with bm25 rank). **Both prior search_quality failures resolved; suite 851P/0 FAIL.** MKT supersede applied (doc 3 → 2833, VER10.311025, 815 sections, re-embedded). A5.C audit characterised in a DECISION-PENDING memo. D2 (DFSA CMC/PRU sourcebook strategy-parser) deferred.
+  - E: **G-category recount** (Memory #30) — see the G-recount note above.
+- **Phase 2 — qanun-api (Blocks F-I): Phase 5 governance suite backend — I1-I9 all Done.**
+  - F: `DocumentSuite` model + `SUITE_REGISTRY` (I1); `AppendixSpec` found pre-built (I2, Memory #23).
+  - G: I3 cross-tier context propagation (`build_suite_context_summary` + `_run_suite_background` threading); I4 — `draft_suite_jobs` migration applied (the orchestration code was pre-built but the table was unapplied).
+  - H: I5-I8 suite endpoints found pre-built; verified runtime-functional post-migration + 8 tests added.
+  - I: I9 `/corpus/jurisdiction` completed (added BVI, days_since_last_update, green/yellow/red health) + 8 tests.
+- **I-category: 0 → 9 Done** (I1-I9 backend complete; I10-I17 frontend remain). Totals: 107→98 Open / 57→66 Done.
+- adgm-corpus master `5d18a08`; qanun-api main `581d465`; qanun-docs main updated this commit. adgm-corpus suite 851P/0 FAIL; qanun-api suite 70P/0 FAIL.
 
 **Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
 
@@ -1807,9 +1822,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I1 — DocumentSuite Pydantic model
+### I1 — DocumentSuite Pydantic model — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block F. `DocumentSuite` model + `SUITE_REGISTRY` + `register_suite()` in `services/drafting_templates.py` (tier 1-5 validated; documents/dependencies/applies_to_activities; idempotent registration). 12 tests in `tests/test_document_suite.py`.
 - **Size:** Half-day
 - **Dependencies:** G11
 - **Source:** UCIE v2 SOW Phase 5 §5.3
@@ -1818,9 +1833,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I2 — AppendixSpec model (original SOW Phase F)
+### I2 — AppendixSpec model (original SOW Phase F) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block F. `AppendixSpec` was found already present in `services/structural_spec.py` with the full SOW field set, and `DocumentTemplate.appendices` already integrates it (Memory #23 — pre-flight PF12 found it pre-built). Block F verified + added confirmation tests.
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** Original Qanun SOW Phase F §8.1 + UCIE v2 (extended across jurisdictions)
@@ -1829,9 +1844,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I3 — Cross-tier context propagation
+### I3 — Cross-tier context propagation — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block G. `build_suite_context_summary()` in `services/drafting_service.py` carries structured facts (prior_documents + merged entity_facts) forward; `_run_suite_background` accumulates completed job_ids and threads a `suite_context_summary` into each subsequent document's entity_context. No Claude summarisation call (avoids per-run latency/cost).
 - **Size:** Day
 - **Dependencies:** I1
 - **Source:** UCIE v2 SOW Phase 5 §5.4
@@ -1840,9 +1855,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I4 — Suite orchestration in drafting_service
+### I4 — Suite orchestration in drafting_service — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block G. Orchestration (`_run_suite_background` — tier-ordered sequential dispatch + context carry) + `_save_suite_job`/`get_suite_job_status`/`list_suite_jobs` were found pre-built; the gap was the `draft_suite_jobs` table being unapplied. Block G ran `migrations/add_suite_jobs_20260329.py` against qanun_demo.db (15-col table + `draft_jobs.suite_id` + 2 indexes) — the orchestrator is now runtime-functional.
 - **Size:** Day
 - **Dependencies:** I1, I3
 - **Source:** UCIE v2 SOW Phase 5 §5.3
@@ -1851,9 +1866,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I5 — API endpoint: POST /api/drafting/suite
+### I5 — API endpoint: POST /api/drafting/suite — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block H. `start_suite` in `routers/drafting.py` was pre-built; runtime-functional once Block G applied the `draft_suite_jobs` migration. Block H verified + added test coverage.
 - **Size:** Half-day
 - **Dependencies:** I4
 - **Source:** UCIE v2 SOW §9.2
@@ -1862,9 +1877,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I6 — API endpoint: GET /api/drafting/suite/{job_id}/status
+### I6 — API endpoint: GET /api/drafting/suite/{job_id}/status — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block H. `get_suite_status` pre-built; verified + tested (returns persisted job; unknown id → 404).
 - **Size:** Half-day
 - **Dependencies:** I5
 - **Source:** UCIE v2 SOW §9.2
@@ -1873,9 +1888,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I7 — API endpoint: GET /api/drafting/suite/{job_id}/download
+### I7 — API endpoint: GET /api/drafting/suite/{job_id}/download — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block H. `download_suite` pre-built (ZIP stream of per-doc DOCX + MANIFEST.md); verified + tested (unknown id → 404).
 - **Size:** Half-day
 - **Dependencies:** I5
 - **Source:** UCIE v2 SOW §9.2
@@ -1884,9 +1899,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I8 — API endpoint: POST /api/drafting/suite/{job_id}/redraft/{doc_id}
+### I8 — API endpoint: POST /api/drafting/suite/{job_id}/redraft/{doc_id} — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block H. `redraft_suite_document` pre-built; verified + tested (unknown suite → 404; doc_type not in suite → 404).
 - **Size:** Half-day
 - **Dependencies:** I5
 - **Source:** UCIE v2 SOW §9.2 + product requirement (single-doc-within-suite redraft)
@@ -1895,9 +1910,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I9 — API endpoint: GET /api/corpus/jurisdiction
+### I9 — API endpoint: GET /api/corpus/jurisdiction — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 3 Cleanup Block I. Endpoint pre-existed but incomplete (4 jurisdictions, no recency/health); Block I added BVI_FSC, `days_since_last_update`, and a green/yellow/red `health` indicator (`_jurisdiction_health()`). Pinecone vector_count omitted (qanun-api carries no Pinecone creds; minimal-inline per the G12-dependency note). 8 tests in `tests/test_jurisdiction_endpoint.py`.
 - **Size:** Half-day
 - **Dependencies:** G12
 - **Source:** UCIE v2 SOW §9.2
