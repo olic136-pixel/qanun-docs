@@ -1,0 +1,354 @@
+{
+  "generated_at": "2026-05-14T16:39:29.790285+00:00",
+  "block": "H \u2014 Sprint 6 prep overnight",
+  "purpose": "TemplateDiscoveryAgent input: maps (jurisdiction, licence_type, tier, document) to primary_provisions; each provision verified against corpus.db. Representative coverage \u2014 Option C extends from the full UCIE v2 SOW \u00a76.1/\u00a78.2 tables.",
+  "note": "Provisions are given at rulebook-or-chapter granularity (e.g. \"AML 1.1\", \"VARA-COMP I.A\") because section-level required_provisions for every document is Option C's job. This matrix verifies the rulebook anchors EXIST and surfaces which jurisdictions have thin coverage.",
+  "jurisdictions": {
+    "ADGM": {
+      "documents": [
+        {
+          "tier": 1,
+          "document": "Business Plan",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "GEN Chapter 1",
+              "verified": true
+            },
+            {
+              "provision": "GEN 8.4",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 1,
+          "document": "AML Programme Summary",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "AML 1.1",
+              "verified": true
+            },
+            {
+              "provision": "AML 3.1",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "AML/CFT Policy + Compliance Manual",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "AML 1.1",
+              "verified": true
+            },
+            {
+              "provision": "AML 1.2",
+              "verified": true
+            },
+            {
+              "provision": "AML 1.3",
+              "verified": true
+            },
+            {
+              "provision": "AML 3.1",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "Conflicts of Interest Policy",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "COBS Chapter 3",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "Prudential / Capital Policy",
+          "licence": "Cat 1-3",
+          "primary_provisions": [
+            {
+              "provision": "PRU 1.1",
+              "verified": true
+            },
+            {
+              "provision": "PRU 1.1.1",
+              "verified": true
+            },
+            {
+              "provision": "PRU 8.3",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "document": "Board Terms of Reference",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "GEN Chapter 1",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "coverage": {
+        "verified": 13,
+        "missing": 0,
+        "missing_provisions": []
+      }
+    },
+    "VARA": {
+      "documents": [
+        {
+          "tier": 1,
+          "document": "Business Plan",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "VARA-COMP I",
+              "verified": true
+            },
+            {
+              "provision": "VARA-COMP I.A",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "Compliance & Risk Management Manual",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "VARA-CRM I",
+              "verified": true
+            },
+            {
+              "provision": "VARA-CRM I.A.7",
+              "verified": true
+            },
+            {
+              "provision": "VARA-CRM I.B",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "document": "Board of Directors Charter",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "VARA-COMP I.A.1",
+              "verified": true
+            },
+            {
+              "provision": "VARA-COMP I.A.2",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "coverage": {
+        "verified": 7,
+        "missing": 0,
+        "missing_provisions": []
+      }
+    },
+    "DFSA": {
+      "documents": [
+        {
+          "tier": 1,
+          "document": "Regulatory Business Plan",
+          "licence": "Cat 1-4",
+          "primary_provisions": [
+            {
+              "provision": "GEN 1.1",
+              "verified": true
+            },
+            {
+              "provision": "GEN 1.2",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "AML Compliance Manual",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "AML 1.1",
+              "verified": true
+            },
+            {
+              "provision": "AML 1.1.1",
+              "verified": true
+            },
+            {
+              "provision": "AML 1.1.1(a)",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "Conduct of Business module compliance",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "COB 1.1",
+              "verified": true
+            },
+            {
+              "provision": "COB 1.1.1",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "document": "Board Charter",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "GEN 1.1",
+              "verified": true
+            },
+            {
+              "provision": "GEN 2.1",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "coverage": {
+        "verified": 9,
+        "missing": 0,
+        "missing_provisions": []
+      }
+    },
+    "BVI": {
+      "documents": [
+        {
+          "tier": 1,
+          "document": "Business Plan (Approved Person)",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "BVI-SIBA Part I",
+              "verified": true
+            },
+            {
+              "provision": "BVI-SIBA Part II",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "AML/CFT Programme",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "BVI-AML Part I",
+              "verified": true
+            },
+            {
+              "provision": "BVI-AML Part II",
+              "verified": true
+            },
+            {
+              "provision": "BVI-AML Part III",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "document": "Board Terms of Reference",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "BVI-SIBA Part III",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "coverage": {
+        "verified": 6,
+        "missing": 0,
+        "missing_provisions": []
+      }
+    },
+    "EL_SALVADOR": {
+      "documents": [
+        {
+          "tier": 1,
+          "document": "Business Plan + Capital Adequacy",
+          "licence": "All DASP",
+          "primary_provisions": [
+            {
+              "provision": "SV-LEAD Art.1",
+              "verified": true
+            },
+            {
+              "provision": "SV-LEAD Art.2",
+              "verified": true
+            },
+            {
+              "provision": "SV-DASP Art.37",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 2,
+          "document": "AML/CFT/PWMD Prevention Programme",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "SV-AML Art.1",
+              "verified": true
+            },
+            {
+              "provision": "SV-DASP Art.38",
+              "verified": true
+            },
+            {
+              "provision": "SV-DASP Art.39",
+              "verified": true
+            }
+          ]
+        },
+        {
+          "tier": 3,
+          "document": "Board / Governing Body Charter",
+          "licence": "All",
+          "primary_provisions": [
+            {
+              "provision": "SV-DASP Art.40",
+              "verified": true
+            }
+          ]
+        }
+      ],
+      "coverage": {
+        "verified": 7,
+        "missing": 0,
+        "missing_provisions": []
+      }
+    }
+  }
+}
