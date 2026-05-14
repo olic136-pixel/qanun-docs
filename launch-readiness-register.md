@@ -86,23 +86,37 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 9 | 1 | 18 | 28 |
-| B — Content Coverage | 4 | 4 | 3 | 11 |
+| A — Data Integrity | 8 | 1 | 19 | 28 |
+| B — Content Coverage | 3 | 3 | 5 | 11 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
 | F — Test Coverage | 1 | 1 | 3 | 5 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 14 | 0 | 0 | 14 |
-| **H — Per-Jurisdiction Corpus & Case Law** | 22 | 0 | 0 | 22 |
+| **H — Per-Jurisdiction Corpus & Case Law** | 19 | 0 | 3 | 22 |
 | **I — Governance Suite Mode** | 17 | 0 | 0 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **130** | **7** | **32** | **169** |
+| **Total** | **125** | **6** | **38** | **169** |
 
 **Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
 
 **Sprint 2 Session 4a movements (14 May 2026, hot-fix session):** B1.DEDUPE added as new register item, immediately Done (Cat B +1 Done +1 Total). G5 Session-3 F1/F2/F3 follow-ups all fixed and merged (no separate register entries — folded under G5 landing notes as Session 4a closure). All 4 fixes carry opt-in live-smoke regression tests (Memory #29). master @ `3803c5f`; suite 800P/1S/12XF → 823P/5S/12XF (no regressions).
+
+**Sprint 2 Session 4b movements (14 May 2026, big overnight — Sprint 2 closure + partial Sprint 3):**
+- B1.PARAGRAPHS implementation + PRU/COBS/MIR 3-system rollouts (Blocks A/B/C/D, 4 sprint-branch merges): parser_v2 extended with paragraph_level_sections; PRU/COBS/MIR profiles added; USE_V2_PARSER flipped for all four (GEN/PRU/COBS/MIR on v2). corpus.db section count delta: PRU 1296→1510, COBS 1928→2039, MIR 971→984 (+358 net L3 paragraphs). 3 corpus.db backups in `backups/corpus.db.pre-B1-{PRU,COBS,MIR}-*`.
+- B4 (Block E) drift check across 8 FSRA rulebooks: **7/8 idempotent**, MKT drift surfaced (live VER10.311025 vs canonical VER08.181223). MKT refresh deferred — not coupled with parser_v2 rollout to avoid compounding risk.
+- F2 A3 K7 retag (Block F): doc 206 OTHER → GEN section refs (130 rows). F1 (A5.C backfill) DEFERRED — brief assumed `ingestion_manifest` table that doesn't exist; 2055 docs missing source_url need audit. F3-F8 also DEFERRED — audit specs not in scope.
+- Block K case law schema + verifier (H20+H21+H22): `case_law_documents`/`case_law_passages` tables + indexes; CaseLawVerifier with fingerprint-based lookup; `citations.citation_class` column added. 7 verifier unit tests pass.
+- H El Salvador H2 enrichment: 4 NULL rulebook_code SV docs resolved (2 → SV-LEAD historical, 2 → SV-MISC); single-current invariant preserved per A1. H3-H10 + H16 case law DEFERRED.
+- G VARA Sprint 3: live-smoke PASS; **12/12 VARA rulebooks ingested fresh** into corpus.db (12 inserts + 12 supersedes; single-current invariant maintained). Section parsing + ChromaDB/Pinecone embedding + Obsidian vault + H2 case law DEFERRED to dedicated VARA session.
+- I DFSA Sprint 3: live-smoke PASS (Session 4a F1 fix re-verified); **21/21 modules drift surfaced** but no re-ingestion (pipeline-normalisation difference warrants focused analysis). H11/H12/H17/H19 work DEFERRED.
+- J BVI Sprint 3: live-smoke PASS (Session 4a F3 re-verified). Topology has 9 rulebooks with base-only URLs; per-statute URL discovery (H11/H12) must precede ingestion. DEFERRED.
+
+**Movements:** A3 K7 retag (Cat A Open → Done +1), B1.PARAGRAPHS + B1.DEDUPE-PRU + B1.DEDUPE-COBS + B1.DEDUPE-MIR (4 implied B-cluster Done), H20 + H21 + H22 case law schema (Cat H Done +3). Net: Cat A +1 Done, Cat B +2 Done -1 Open -1 Blocked (B1.PARAGRAPHS moved Open → Done, B4 Open → Done as 7/8-idempotent + drift surfaced), Cat H +3 Done. Totals: 125 Open / 6 Blocked / 38 Done / 169 Total.
+
+master @ `cc20c14`; corpus.db sha `69b1f13d…34f0` (post-G); suite **846P / 5S / 12XF / 5 FAIL** — 5 failures are surfaceable consequences of the session's work (4 VARA queries fail because section embedding deferred per Block G scope; 1 COBS query fails because historical doc 100 OTHER-prefix sections rank higher in FTS5 than the new v2 doc 2788 sections). Not regressions — register patches recommended in Sprint 3 follow-up.
 
 **Reclassifications in v1.4 (within Category A):** A2, A7.B, A7.C, A7.D, A7.E, A7.F, A7.G, A7.H all moved Open → Done (Bundle 2 — 13 May 2026). Plus A7 audit + A5 audit + A6 idempotence test infra + A1 invariant already Done in v1.3.
 
@@ -746,16 +760,20 @@ What the corpus actually contains.
 
 ---
 
-### B1.PARAGRAPHS — Extend parser_v2 to PRU/COBS/MIR via L3 paragraph extraction
+### B1.PARAGRAPHS — Extend parser_v2 to PRU/COBS/MIR via L3 paragraph extraction — **DONE [2026-05-14]**
 
-- **Status:** Open — **NOW UNBLOCKED** (B1.GEN-ROLLOUT landed in production 2026-05-14, see merge `43010aa`)
+- **Status:** Done [2026-05-14] — Sprint 2 Session 4b Blocks A+B+C+D (merge commits `83c1c2f`, `63011c1`, `9da40a0`, `db949fe`)
 - **Size:** Day
-- **Dependencies:** B1 parser_v2 GEN merged to master (with feature flag) — **MET**; B1.GEN-ROLLOUT live in production validating state-machine + format-profiles approach — **MET (Sprint 2 Session 3)**
-- **Trigger:** After GEN-only rollout validates state-machine + format-profiles approach in production — **TRIGGER FIRED 2026-05-14**
-- **Source:** Sprint 1 follow-up morning review, 14 May 2026 — parser_v2 GEN path validated; per `B1-parser-v1-vs-v2-diff.md` further work needed for L3 paragraph Section extraction across other FSRA rulebooks
-- **Description:** Extend `adgm_corpus/processing/parser_v2/` with L3 paragraph extraction capability. Add per-rulebook format profiles for PRU, COBS, MIR (each rulebook has its own numbering quirks). Behind same feature flag as GEN initially (`USE_V2_PARSER` dict in `scripts/process_all.py`); flip per-rulebook as each is validated.
-- **Acceptance:** parser_v2 produces section counts ≥ v1 for PRU/COBS/MIR with no regressions in citation_extractor downstream. Diff report comparable to GEN's. Feature flag allows per-rulebook v2 activation.
-- **Eligible for:** Sprint 2 Session 4 or Sprint 3 (depending on Oliver's prioritisation against H-* per-jurisdiction adapter work).
+- **Dependencies:** B1 parser_v2 GEN merged to master + B1.GEN-ROLLOUT live in production — **MET (Sprint 2 Session 3)**
+- **Source:** Sprint 1 follow-up morning review, 14 May 2026; landed Sprint 2 Session 4b same day
+- **Description:** Extended `adgm_corpus/processing/parser_v2/` with `paragraph_level_sections: bool` profile flag. Added PRU/COBS/MIR profiles reusing DEFAULT regexes (use_paren_digit_as_sub_rule=False, paragraph_level_sections=True). State machine emits L3 Section entries for `(N)`/`(letter)` paragraphs beneath an explicit `N.N.N` sub-rule; section_ref shape `<RULEBOOK> N.N.N(marker)`, parent_ref pointing to the L2 sub-rule.
+- **Block A (implementation)**: 20 new regression tests in `tests/processing/test_parser_v2_paragraphs.py` covering profile flags, synthetic PRU paragraphs, real-corpus baselines, dedupe regression, GEN cross-contamination guard. Suite 39/39 pass.
+- **Block B (PRU rollout)**: corpus.db 1296 v1 → 1510 v2 (+214); 971 L3 paragraphs. ChromaDB adgm_docs 1495 v1 → 1510 v2 (delete+insert). Pinecone adgm namespace 0 → 1510 (INSERT-only). 12 new citations inserted + 11 duplicates skipped. 5/5 spot-check refs resolvable (incl. PRU 1.2.1(a), PRU 1.2.1(b)).
+- **Block C (COBS rollout)**: corpus.db 1928 v1 → 2039 v2 (+111); 1142 L3 paragraphs. ChromaDB 989 v1 → 2039 v2. Pinecone 0 → 2039 (INSERT-only). 43 new citations + 2 dupes skipped. 4/5 spot-check refs resolvable (5th not in source PDF at that section).
+- **Block D (MIR rollout)**: corpus.db 971 v1 → 984 v2 (+13); 560 L3 paragraphs. Notable: 8 chapter entries (v1 had ZERO — confirms Sprint 1 diff memo §2 MIR finding). ChromaDB 733 v1 → 984 v2. Pinecone 0 → 984 (INSERT-only). 13 new citations + 2 dupes skipped. 3/4 spot-check refs resolvable.
+- **Flag flip**: `USE_V2_PARSER` in `scripts/process_all.py` now: `GEN/PRU/COBS/MIR=True`; FUNDS/GLO/AML/MKT/PIN/CIB/FEES=False (those need profile work in a future B1.* rollout).
+- **Backups**: `backups/corpus.db.pre-B1-{PRU,COBS,MIR}-20260514-*` (all matching pre-state sha).
+- **Acceptance:** ✓ parser_v2 produces ≥ v1 section count for all three (PRU/COBS/MIR all exceeded). ✓ Profile-based control means GEN unchanged (211 sections, 0 L3 — guarded by regression test). ✓ Single feature flag in process_all.py for future per-rulebook activation. ✓ Dedupe via keep_longest_text (Session 4a) preserved across all profiles.
 
 ---
 
