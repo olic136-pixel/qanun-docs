@@ -87,7 +87,7 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
 | A — Data Integrity | 9 | 1 | 18 | 28 |
-| B — Content Coverage | 5 | 4 | 1 | 10 |
+| B — Content Coverage | 4 | 4 | 2 | 10 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
@@ -98,7 +98,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **131** | **7** | **30** | **168** |
+| **Total** | **130** | **7** | **31** | **168** |
+
+**Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
 
 **Reclassifications in v1.4 (within Category A):** A2, A7.B, A7.C, A7.D, A7.E, A7.F, A7.G, A7.H all moved Open → Done (Bundle 2 — 13 May 2026). Plus A7 audit + A5 audit + A6 idempotence test infra + A1 invariant already Done in v1.3.
 
@@ -732,13 +734,14 @@ What the corpus actually contains.
 
 ### B1.PARAGRAPHS — Extend parser_v2 to PRU/COBS/MIR via L3 paragraph extraction
 
-- **Status:** Open
+- **Status:** Open — **NOW UNBLOCKED** (B1.GEN-ROLLOUT landed in production 2026-05-14, see merge `43010aa`)
 - **Size:** Day
-- **Dependencies:** B1 parser_v2 GEN merged to master (with feature flag)
-- **Trigger:** After GEN-only rollout validates state-machine + format-profiles approach in production
+- **Dependencies:** B1 parser_v2 GEN merged to master (with feature flag) — **MET**; B1.GEN-ROLLOUT live in production validating state-machine + format-profiles approach — **MET (Sprint 2 Session 3)**
+- **Trigger:** After GEN-only rollout validates state-machine + format-profiles approach in production — **TRIGGER FIRED 2026-05-14**
 - **Source:** Sprint 1 follow-up morning review, 14 May 2026 — parser_v2 GEN path validated; per `B1-parser-v1-vs-v2-diff.md` further work needed for L3 paragraph Section extraction across other FSRA rulebooks
-- **Description:** Extend `adgm_corpus/processing/parser_v2/` with L3 paragraph extraction capability. Add per-rulebook format profiles for PRU, COBS, MIR (each rulebook has its own numbering quirks). Behind same feature flag as GEN initially; flip per-rulebook as each is validated.
+- **Description:** Extend `adgm_corpus/processing/parser_v2/` with L3 paragraph extraction capability. Add per-rulebook format profiles for PRU, COBS, MIR (each rulebook has its own numbering quirks). Behind same feature flag as GEN initially (`USE_V2_PARSER` dict in `scripts/process_all.py`); flip per-rulebook as each is validated.
 - **Acceptance:** parser_v2 produces section counts ≥ v1 for PRU/COBS/MIR with no regressions in citation_extractor downstream. Diff report comparable to GEN's. Feature flag allows per-rulebook v2 activation.
+- **Eligible for:** Sprint 2 Session 4 or Sprint 3 (depending on Oliver's prioritisation against H-* per-jurisdiction adapter work).
 
 ---
 
@@ -827,9 +830,9 @@ What the corpus actually contains.
 
 ---
 
-### B1.GEN-ROLLOUT — GEN-only parser_v2 production rollout (Path P1)
+### B1.GEN-ROLLOUT — GEN-only parser_v2 production rollout (Path P1) — **DONE [2026-05-14]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-14] — Sprint 2 Session 3 Block B
 - **Size:** Day
 - **Dependencies:** B1 parser_v2 module merged to master (done in N+2a)
 - **Source:** Sprint 1 follow-up `B1-parser-v1-vs-v2-diff.md`; N+1 morning interactive review accepted Path P1
@@ -841,6 +844,21 @@ What the corpus actually contains.
   5. Re-upsert GEN sections in Pinecone with v2 refs as metadata
   6. Downstream validation: MCP `search_corpus` with GEN query returns coherent results; `get_rule` resolves v2 refs; citation_extractor output spot-checked
 - **Acceptance:** GEN section count in corpus.db = 214 (v2 count from diff memo); 140 sub-rule refs (e.g., GEN 3.3.1 through GEN 3.3.18) resolvable via `get_rule`; MCP search returns coherent GEN results; no regression in non-GEN rulebook queries (PRU/COBS/MIR still v1-parsed)
+- **Sprint 2 Session 3 outcome (merge commit `43010aa`):**
+  - B1 — `USE_V2_PARSER` dict + `get_parser_for()` dispatcher in `scripts/process_all.py`. GEN→parser_v2; all other FSRA codes→v1. 15 dispatch tests in `tests/test_parser_flag.py`.
+  - B3 — corpus.db: 131 v1 sections deleted, **211 unique v2 sections** inserted for doc_id=2790 (raw v2 produced 214; 3 deduped: GEN 8.4, 8.9, 8.13 each appeared in both TOC and body, kept longest-text version per ref). sections_fts mirrored. corpus.db sha: `081928744c…292e` → `583501b4…32f7` (post-B3) → `820e80db…cfb5` (post-B6).
+  - B4 — ChromaDB: **211 v2 GEN vectors INSERTED** into `adgm_docs` collection (OpenAI text-embedding-3-small, 1536-dim). Pre-state had **zero** doc_2790 vectors (B4 reduced to INSERT-only — Memory #23 finding). Collection total: 74,141 → 74,352. The 655 historical GEN amendment vectors (other docs) untouched.
+  - B5 — Pinecone: **211 v2 GEN vectors INSERTED** into `adgm` namespace (Voyage law-2, 1024-dim). Pre-state had **zero** `adgm` namespace vectors (B5 created the namespace — also INSERT-only). Index total: 68,394 → 68,605.
+  - B6 — Citation extractor re-run: 1 new citation from v2 sections (legacy patterns only; Phase E1 inline extractor is a separate function not run here).
+  - B7 — Downstream verification: 4/5 sample v2 sub-rule refs retrievable; FTS5 "conflicts of interest" returns 5 GEN matches; PRU/COBS/MIR untouched (1296/1928/971 sections); full test suite **785P → 800P / 1S / 12XF** (+15 from parser_flag tests; no regressions).
+  - Section distribution post-rollout: **9 chapters / 62 sections / 140 sub-rules = 211**. The 140 level-2 sub-rules are the headline improvement (v1 had effectively zero usable sub-rule refs per the design memo).
+  - Backup: `backups/corpus.db.pre-B1-GEN-rollout-20260514-071141` (sha matches pre-rollout).
+  - Captures: `/tmp/qanun-overnight/sprint-2-session-3/B1-{v1-GEN-section-refs,chroma-GEN-capture,pinecone-GEN-capture}.json`.
+- **Memory #23 findings surfaced (3):**
+  1. ChromaDB B4 reduced to INSERT-only — brief assumed v1 vectors existed for doc 2790; reality: zero.
+  2. Pinecone B5 reduced to INSERT-only + namespace-create — `adgm` namespace didn't exist pre-rollout.
+  3. parser_v2 GEN dedupe: raw output is 214, unique by ref is 211. 3 refs (GEN 8.4, 8.9, 8.13) appear twice (TOC + body). Surface as parser_v2 follow-up: should internally dedupe by ref+keep-longest, or callers must dedupe at insert site (current workaround).
+- **Memory #18 finding (G5 adapter)**: DFSAAdapter doesn't strip "DFSA-" prefix when passing corpus_code to v1 `fetch_rulebook(code)`. Topology-driven `agent.run()` against DFSA would fail every rulebook. Direct `scrape_rulebook()` calls work if caller passes bare code. Surface for Sprint 3.
 
 ---
 
@@ -1356,6 +1374,11 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
   - `bvi.py` — new PDF scraper via pdfplumber with title-hygiene per A7-BVI-title-extraction-audit (9 tests)
   - `el_salvador.py` — new HTML+PDF dispatcher for cnad.gob.sv (Spanish encoding preserved, 12 tests)
   All 41 adapter tests mock-only — no live portal calls. Test count delta: 743P/1S/12XF → 784P/1S/12XF. Merge commit `3acaada`. Live ingestion deferred to Sprint 3 H-* per-jurisdiction work.
+- **Sprint 2 Session 3 live smoke (Block A, 2026-05-14):** All 5 adapters smoke-tested against real regulator portals in sandbox at `/tmp/qanun-overnight/sprint-2-session-3/g5-smoke-sandbox/`. **5/5 PASS** in ~3.5 minutes total wall-clock (excluding URL discovery). Per-adapter results captured at `/tmp/qanun-overnight/sprint-2-session-3/g5-smoke-{ADGM,DFSA,VARA,BVI,EL_SALVADOR}-result.json`; master memo at `g5-smoke-MASTER.md`. Canonical corpus.db sha unchanged during smoke. **3 follow-ups surfaced (none blocking):**
+  - **F1 — DFSAAdapter prefix-strip bug (Memory #18):** Adapter receives `corpus_code='DFSA-GEN'` from topology/manifest and passes verbatim to v1 `fetch_rulebook(code)`. v1's `MODULE_URLS` expects bare codes. Topology-driven `agent.run()` will fail every DFSA rulebook. Fix: strip `DFSA-` prefix before delegating.
+  - **F2 — VARA manifest URL composition wrong (Memory #23):** Implicit `{base_url}/{slug}` = `https://rulebooks.vara.ae/company-rulebook` returns 404. Canonical pattern is `/rulebook/{slug}`. Three remediation options noted in smoke memo. Topology-driven `agent.run()` against VARA will 404 every rulebook until fixed.
+  - **F3 — Title-extraction heuristic on PDF cover pages (BVI + EL_SALVADOR):** Current "first non-empty line of first page" picks page headers ("VIRGIN ISLANDS" for BVI) or page numbers ("1" for EL_SALVADOR) instead of regulation title. Low-blocker — downstream MCP uses `section_ref` not title; surface for Sprint 3 tuning.
+  Live ingestion remains deferred to Sprint 3 H-* work; smoke confirms adapters can reach and parse real portals end-to-end.
 
 ---
 
