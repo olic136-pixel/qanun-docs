@@ -87,7 +87,7 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
 | A — Data Integrity | 9 | 1 | 18 | 28 |
-| B — Content Coverage | 4 | 4 | 2 | 10 |
+| B — Content Coverage | 4 | 4 | 3 | 11 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
@@ -98,9 +98,11 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **130** | **7** | **31** | **168** |
+| **Total** | **130** | **7** | **32** | **169** |
 
 **Sprint 2 Session 3 movements (14 May 2026):** B1.GEN-ROLLOUT moved Open → Done (Category B). B1.PARAGRAPHS dependency now MET — eligible for Sprint 2 Session 4 or Sprint 3. G5 live smoke landed against real regulator portals (5/5 PASS); 3 follow-ups surfaced for Sprint 3 hygiene.
+
+**Sprint 2 Session 4a movements (14 May 2026, hot-fix session):** B1.DEDUPE added as new register item, immediately Done (Cat B +1 Done +1 Total). G5 Session-3 F1/F2/F3 follow-ups all fixed and merged (no separate register entries — folded under G5 landing notes as Session 4a closure). All 4 fixes carry opt-in live-smoke regression tests (Memory #29). master @ `3803c5f`; suite 800P/1S/12XF → 823P/5S/12XF (no regressions).
 
 **Reclassifications in v1.4 (within Category A):** A2, A7.B, A7.C, A7.D, A7.E, A7.F, A7.G, A7.H all moved Open → Done (Bundle 2 — 13 May 2026). Plus A7 audit + A5 audit + A6 idempotence test infra + A1 invariant already Done in v1.3.
 
@@ -729,6 +731,18 @@ What the corpus actually contains.
 - **Description:** **HYPOTHESIS REFUTED.** The CCD-suggested "parser only promotes rule numbers when lettered sub-clauses follow" hypothesis turned out to be wrong. The four GEN 3.5.X sub-rules that appeared "captured" were spurious matches against body-text Guidance-paragraph references, not real captures. The real rules in FSRA PDFs use TITLE+(1)(2)(3) format **without inline rule numbers as line prefixes**. The current SUB_RULE_RE regex literally cannot find them because they don't appear in the form the regex looks for. This is a parser redesign, not a regex tweak.
 - **Acceptance:** New parser correctly identifies rule numbers in TITLE+(1)(2)(3) format. Test case: `get_rule('GEN 3.5.1')` returns rule text including the outsourcing/appointed-representative rule. Comprehensive test against FSRA GEN with full chapter 3 expected section_refs. Re-run FSRA GEN canary after parser fix and B4 bulk refresh.
 - **Notes:** This is the single largest reframed item in v1.1. The launch timeline grows by ~week as a result. Need a focused session to (a) characterise the actual rule-format structure in FSRA PDFs, (b) design the new parser strategy, (c) implement, (d) test against multiple rulebooks. Until B1 lands, FSRA Quick Lookup quality remains compromised — Problem 2 is unsolved. Sprint 1 + follow-up landed the GEN portion on sprint branch `sprint/B1-parser-redesign-GEN-2026-05-14` (parser_v2/ with state machine + GEN format profile + 15 tests; 8× more L2 sub-rules on doc 2790). PRU/COBS/MIR extension carved out to B1.PARAGRAPHS below per Sprint 1 follow-up diff report (`/tmp/qanun-overnight/sprint-1-followup/B1-parser-v1-vs-v2-diff.md`).
+
+---
+
+### B1.DEDUPE — parser_v2 internal dedupe (keep_longest_text) — **DONE [2026-05-14]**
+
+- **Status:** Done [2026-05-14] — Sprint 2 Session 4a Block A (merge commit `3803c5f`)
+- **Size:** Sub-hour
+- **Dependencies:** B1.GEN-ROLLOUT (Done [2026-05-14]) — needed concrete duplicate-ref evidence
+- **Source:** Sprint 2 Session 3 Block B finding (parser_v2 raw=214, unique-by-ref=211 for GEN doc 2790; refs GEN 8.4 / 8.9 / 8.13 appear in both TOC and body of the PDF)
+- **Description:** Move the dedupe from the insert site (`scripts/process_all.py`) to the parser boundary (`parse_v2()`). Strategy: `keep_longest_text` — the body version always carries more content than the TOC stub, so longest-text-wins reliably selects the substantive Section. Document order preserved by first-occurrence position. All callers (process_all, embedders, MCP tools) now see a single section per `section_ref` without replicating the dedupe logic.
+- **Acceptance:** ✓ `parse_v2(GEN doc 2790 full_text)` returns exactly 211 sections with zero duplicate `section_ref`s — matches corpus.db post-Session-3 state. 4 new regression tests (synthetic short+long pair; document-order preservation; doc 2790 no-duplicate-refs; doc 2790 count=211). All 19 parser_v2 tests pass.
+- **Scenario at fix time (Session 4a A0 pre-flight):** **Scenario (b)** — corpus.db (211 rows), ChromaDB (211 GEN v2 vectors, 0 duplicate refs), Pinecone `adgm` namespace (211 vectors) all coherent. No vector-store re-alignment needed. The dedupe-at-insert in Session 3 had absorbed the parser leak; this fix moves the dedupe upstream for future callers.
 
 ---
 
@@ -1379,6 +1393,11 @@ The agent framework and orchestration layer that makes five-jurisdiction operati
   - **F2 — VARA manifest URL composition wrong (Memory #23):** Implicit `{base_url}/{slug}` = `https://rulebooks.vara.ae/company-rulebook` returns 404. Canonical pattern is `/rulebook/{slug}`. Three remediation options noted in smoke memo. Topology-driven `agent.run()` against VARA will 404 every rulebook until fixed.
   - **F3 — Title-extraction heuristic on PDF cover pages (BVI + EL_SALVADOR):** Current "first non-empty line of first page" picks page headers ("VIRGIN ISLANDS" for BVI) or page numbers ("1" for EL_SALVADOR) instead of regulation title. Low-blocker — downstream MCP uses `section_ref` not title; surface for Sprint 3 tuning.
   Live ingestion remains deferred to Sprint 3 H-* work; smoke confirms adapters can reach and parse real portals end-to-end.
+- **Sprint 2 Session 4a hot-fixes (Block B/C/D, 2026-05-14):** All three F1/F2/F3 follow-ups closed in a single 30-60 min hot-fix session (merge commit `3803c5f`):
+  - **F1 fixed** — `DFSAAdapter` now strips the `DFSA-` jurisdiction prefix via `_strip_jurisdiction_prefix()` before delegating to v1 `fetch_rulebook`. Live-smoke verified end-to-end against the real DFSA TR portal (4.55s, 1216 sections).
+  - **F2 fixed** — New optional `rulebook_path_prefix` manifest field (declarative); VARA manifest sets it to `"rulebook"`. `topography_agent._compose_rulebook_url()` reads it. VARA `topology.json` regenerated — all 12 rulebooks now resolve through `https://rulebooks.vara.ae/rulebook/{slug}`. Live-smoke verified against `rulebooks.vara.ae/rulebook/company-rulebook` (2.82s, 200 + non-empty body).
+  - **F3 fixed** — New shared helper `ucie/agents/scrapers/_pdf_title.py` filters pure-digit page numbers, short header artefacts (<8 chars), and known jurisdiction-name page headers (case-insensitive). BVI + EL_SALVADOR adapters wired through it. Live-smoke verified for both jurisdictions (10.92s combined). Extensible header list — add entries as Sprint 3 ingestion surfaces new artefacts.
+  All three fixes carry opt-in live-smoke regression tests gated on `QANUN_RUN_LIVE_ADAPTER_SMOKE=1` (Memory #29 — mock tests don't catch this layer of drift). Test suite delta this session: 800P/1S/12XF → 823P/5S/12XF (+23P, +4S from new opt-in live-smoke tests).
 
 ---
 
