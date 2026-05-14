@@ -98,7 +98,15 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **89** | **6** | **75** | **170** |
+| **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
+| **Total** | **89** | **6** | **76** | **171** |
+
+**Overnight Orchestrator V1 movements (14 May 2026, bounded session — new `~/qanun-orchestrator/` repo):**
+- **O1 Overnight Orchestrator V1 → Done.** New category O added. Sequential queue runner that chains N bounded CCD sessions via `claude --print` headless mode — replaces the "one big brief" model after three consecutive sessions (Sprint 4/5/Option C) surfaced majority-pre-built code and empirically-bounded per-session throughput (Memory #20), leaving the overnight wall-clock window ~10-15% utilised.
+- **Built:** `~/qanun-orchestrator/` (git `188a6a9`) — `scripts/orchestrator.py` (sequential loop: pending→running→completed/halted, subprocess via stdin, HALT detection via HALT.md marker + non-zero exit + 90-min timeout, SIGINT/SIGTERM graceful shutdown), `lib/queue_lib.py` (YAML frontmatter parser + state transitions), `scripts/aggregate_morning_log.py` (MORNING-SURFACE.md from completed+halted), `config.toml`, sample smoke queue.
+- **Smoke (V1 viability gate, Memory #29):** 2 trivial sessions ran end-to-end via `claude --print` — both exit 0, ~9s each, routed to `completed/`, MORNING-SURFACE.md surfaced both. State machine + HALT path verified.
+- **V2 carries:** parallel execution + per-resource locking (corpus.db/chroma/pinecone), `depends_on` dependency graph resolution, systemd timer auto-start. O category: 0 Open / 1 Done / 1 Total. Total row: +1 Done / +1 Total → 76 Done / 171 Total.
+- **Note:** brief was dated 16 May 2026 with a plan memo `overnight_throughput_plan_2026-05-16.md`; system clock read 14 May, memo absent. Oliver authorised the build directly (design reviewed in-chat) and directed all artifact dates to follow the system clock. Plan memo written to `~/qanun-docs/overnight_throughput_plan_2026-05-14.md` this commit.
 
 **Option C movements (16 May 2026, bounded session — TemplateDiscoveryAgent + activation pipeline):**
 - **G10 TemplateDiscoveryAgent → Done.** Memory #23 pivot: the agent class was pre-built (556-line v2 agent with Oliver-curated VARA/SV doc lists). The genuine gap was the activation pipeline — `emit_suite_json()` JSON output on the agent (adgm-corpus `36bc1a8`) + `template_discovery_loader.py` in qanun-api (`9982edd`) reading approved JSON into SUITE_REGISTRY. VARA Tier 1 VASP-BD smoke verified end-to-end (7 docs / 9 sections / 9 provision-verified → SUITE_REGISTRY).
@@ -2467,6 +2475,26 @@ Pre-launch validation that all five jurisdictions produce regulator-credible out
 - **Source:** v1 readiness criterion
 - **Description:** Explicit go/no-go criteria for launch: register status (all v1 items Done, no Open or Blocked), test suite green, corpus health green across 5 jurisdictions, billing flow tested, support flow ready, ToS/privacy published, customer-shape acceptance passed. Final checklist before public availability.
 - **Acceptance:** Checklist documented; all items pass before any external customer is invited.
+
+---
+
+# Category O — Overnight Orchestration
+
+Infrastructure for scaling overnight CCD throughput. Not a corpus/product item — a
+development-velocity multiplier. Lives in its own repo (`~/qanun-orchestrator/`),
+independent of adgm-corpus / qanun-api / qanun / qanun-docs.
+
+---
+
+### O1 — Overnight Orchestrator V1 — **DONE [2026-05-14]**
+
+- **Status:** Done — `~/qanun-orchestrator/` (new repo), commit `188a6a9` on `main`
+- **Size:** Bounded session (~1h model-active)
+- **Source:** Three consecutive sessions (Sprint 4 / Sprint 5 / Option C) surfaced majority-pre-built code + empirically-bounded per-session throughput (Memory #20) — the overnight wall-clock window was running ~10-15% utilised under the "one big brief" model.
+- **Description:** Single-threaded sequential queue runner. Polls `queue/pending/*.md` (prompt files with YAML frontmatter), runs each through `claude --print` headless mode as a subprocess (prompt via stdin, output captured per-session in `logs/{session_id}/`), routes each to `queue/completed/` or `queue/halted/`. HALT detection: `HALT.md` file marker in the session work dir OR non-zero subprocess exit OR 90-min wall-clock timeout. `aggregate_morning_log.py` produces `MORNING-SURFACE.md` (halted sessions surfaced first). SIGINT/SIGTERM = graceful shutdown after the current session.
+- **Acceptance:** ✓ End-to-end smoke (V1 viability gate, Memory #29) — 2 trivial sessions ran via `claude --print`, both exit 0 (~9s each), state transitions pending→running→completed verified, MORNING-SURFACE.md surfaced both. Pre-flight verified `claude --print` accepts stdin and returns clean text.
+- **V2 carries (next orchestrator session):** parallel execution (`max_parallel > 1`) + per-resource locking (`corpus.db.lock`, `chroma.lock`, `pinecone.lock`); `depends_on` dependency-graph resolution (V1 frontmatter accepts the field but ignores it — runs alphabetical by `session_id`); systemd timer auto-start.
+- **Notes:** Design reviewed in-chat with Oliver; build authorised directly (the dated plan memo named in the build brief did not exist on disk — system clock 14 May vs brief's 16 May date). Plan memo subsequently written to `~/qanun-docs/overnight_throughput_plan_2026-05-14.md`.
 
 ---
 
