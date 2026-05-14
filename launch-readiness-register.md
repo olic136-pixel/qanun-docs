@@ -94,13 +94,21 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | F — Test Coverage | 1 | 1 | 3 | 5 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 5 | 0 | 10 | 15 |
 | **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
-| **I — Governance Suite Mode** | 8 | 0 | 9 | 17 |
+| **I — Governance Suite Mode** | 0 | 0 | 17 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **Total** | **98** | **6** | **66** | **170** |
+| **Total** | **90** | **6** | **74** | **170** |
 
 > **G-category recount complete (Memory #30, Sprint 3 Cleanup Block E):** manual pass over all 15 G entries (the row previously showed 14 Total — itself an undercount; there are G1-G15). Verified against master: `sprint/G1-G3-ucie-foundation-2026-05-14` is merged (`git branch --merged master`), so G1/G2/G3 are Done not "awaiting review"; G14 confirmed implemented (`_JURISDICTION_NAMESPACE_MAP` with VARA/DFSA/etc. routing in `adgm_corpus/mcp/server.py`, Sprint 3 closure Block E2). **Done (10):** G1, G2, G3, G4, G5, G7, G9, G11, G14, G15. **Open (5):** G6 StructureAgent, G8 EmbeddingAgent, G10 TemplateDiscoveryAgent, G12 MCP multi-jurisdiction filtering, G13 Parallel execution coordination. G row corrected 14→15 Total / 0→10 Done / 14→5 Open; Total row +1 Total / +10 Done / −9 Open.
+
+**Sprint 5 movements (15 May 2026, governance suite frontend overnight — dual-repo):**
+- **I-category: 9 → 17 Done — Phase 5 governance suite COMPLETE** (backend I1-I9 from Sprint 4 + frontend I10-I17 this session).
+- **Memory #23 dominated** (the brief explicitly warned it would): I10/I11/I12/I14 were all found PRE-BUILT from Sprint-4-era frontend work — `governance-suite/page.tsx` (492-line 4-step flow), `[suiteJobId]/page.tsx` (390-line polling dashboard), inline tier/jurisdiction selectors. Plus Block A (vitest config) pre-built. CCD pivoted to verify-against-reality + add test coverage, not rebuild.
+- **Genuine gaps built:** I15 `lib/api/suite.ts` (typed frontend data layer, 8 tests); I13 per-jurisdiction questionnaires (`lib/questionnaires/jurisdiction-questions.ts` + `JurisdictionQuestionnaireRouter` — SV exhaustive per SOW §8.3, VARA/DFSA/BVI minimal; 9 tests); I16 `validate_suite()` extending coverage_validator (tier-fact propagation + contradiction detection + suite phantom citations, 8 tests); I17 per-jurisdiction conftest fixtures (VARA/DFSA/BVI/SV demo entities, F2.TRADEDAR pattern, 6 tests).
+- qanun frontend `main`: `4aaf8dc` → final Sprint 5 merge; vitest suite 17 → 26 tests, TS clean (0 errors). qanun-api `main`: `581d465` → `e68e1fe`; pytest 70 → 84 pass / 0 FAIL.
+- **Visual gate deferred to Oliver's morning pass** on the Vercel deployment (qanun.io returns 307 auth-redirect — healthy). Status-at-a-Glance: I row 8→0 Open / 9→17 Done; Total row 98→90 Open / 66→74 Done.
+- Sprint 6 (J-category template content per jurisdiction × licence × tier) now unblocked.
 
 **Sprint 3 Cleanup + Sprint 4 Launch movements (14-15 May 2026, dual-repo overnight):**
 - **Phase 1 — adgm-corpus (Blocks A-E):**
@@ -1921,9 +1929,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I10 — Governance Suite Mode UI (new frontend flow)
+### I10 — Governance Suite Mode UI (new frontend flow) — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Blocks C/D/E. Found PRE-BUILT (Memory #23): `app/(dashboard)/compliance/governance-suite/page.tsx` is a complete 492-line 4-step flow (jurisdiction → licence → tiers → review) calling `POST /api/drafting/suite`. Verified + render-smoke test added; not rebuilt.
 - **Size:** Week
 - **Dependencies:** I5-I9
 - **Source:** UCIE v2 SOW §9.1
@@ -1932,9 +1940,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I11 — Suite progress dashboard component
+### I11 — Suite progress dashboard component — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Blocks C/D/E. Found PRE-BUILT (Memory #23): `governance-suite/[suiteJobId]/page.tsx` is a complete 390-line polling dashboard — status dots, per-tier grouping, redraft (I8), ZIP download (I7), interval cleanup on unmount, skeleton/empty/failed states. Verified + render-smoke test added.
 - **Size:** Day
 - **Dependencies:** I10
 - **Source:** UCIE v2 SOW §9.1
@@ -1943,9 +1951,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I12 — Tier selector component
+### I12 — Tier selector component — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Blocks C/D/E. Found PRE-BUILT (Memory #23): the tier selector is implemented inline in `governance-suite/page.tsx` (TIER_OPTIONS 5-tier cards + "Full Governance Build" toggle + per-tier estimate). Delivered as inline UI, not a standalone component; verified + smoke-tested.
 - **Size:** Half-day
 - **Dependencies:** I10
 - **Source:** UCIE v2 SOW §9.1
@@ -1954,9 +1962,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I13 — Per-jurisdiction entity questionnaire UI
+### I13 — Per-jurisdiction entity questionnaire UI — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Block F (genuine gap built). `lib/questionnaires/jurisdiction-questions.ts` — per-jurisdiction question sets (EL_SALVADOR exhaustive per SOW §8.3 — 13 questions; VARA/DFSA/BVI minimal foundational, extended in Sprint 6). `components/qanun/JurisdictionQuestionnaireRouter.tsx` — dispatcher feeding the right set into the proven generic `PreDraftQuestionnaire` renderer (ADGM uses the existing preflight flow unchanged). 9 vitest tests.
 - **Size:** Day
 - **Dependencies:** I10
 - **Source:** UCIE v2 SOW §9.1 + §8.3 (SV questionnaire example)
@@ -1965,9 +1973,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I14 — Cross-jurisdiction selector
+### I14 — Cross-jurisdiction selector — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Blocks C/D/E. Found PRE-BUILT (Memory #23): inline 5-jurisdiction grid in `governance-suite/page.tsx` + standalone `components/qanun/cee/JurisdictionSelector.tsx`. Verified + smoke-tested.
 - **Size:** Half-day
 - **Dependencies:** I9, I10
 - **Source:** UCIE v2 SOW §9.1
@@ -1976,9 +1984,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I15 — DocumentSuite-DocumentTemplate registry
+### I15 — DocumentSuite-DocumentTemplate registry — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Block B (genuine gap built). `lib/api/suite.ts` — the canonical typed frontend data layer (types: SuiteStatus/SuiteDocument/StartSuiteRequest/JurisdictionInfo etc.; functions: startSuite I5, getSuiteStatus I6, redraftSuiteDocument I8, downloadSuiteZip I7, listSuiteJobs, getJurisdictions I9). The pre-built governance-suite pages had inline types + inline apiFetch; this is the shared client surface for new code. 8 vitest tests (mocked fetch).
 - **Size:** Day
 - **Dependencies:** I1
 - **Source:** Implied by I1 + per-jurisdiction template work
@@ -1987,9 +1995,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I16 — Suite-level coverage validator
+### I16 — Suite-level coverage validator — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Block G (qanun-api). `services/coverage_validator.py` extended with `SuiteCoverageReport` + `validate_suite()`: Check A tier-1 fact propagation (warning), Check B fact contradictions across documents (hard fail — the deliberate-contradiction class), Check C suite-level phantom citations. 8 pytest tests including the brief's "introduce deliberate contradiction; verify validator catches it".
 - **Size:** Half-day
 - **Dependencies:** I4, coverage_validator.py
 - **Source:** Extension of existing coverage validator to suite-level
@@ -1998,9 +2006,9 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 ---
 
-### I17 — Suite-level test fixture
+### I17 — Suite-level test fixture — **DONE [2026-05-15]**
 
-- **Status:** Open
+- **Status:** Done [2026-05-15] — Sprint 5 Block H (qanun-api). `tests/conftest.py` extended with `_seed_per_jurisdiction_demo_entities` (session-scoped autouse) following the F2.TRADEDAR pattern — seeds one demo entity each for VARA/DFSA/BVI/EL_SALVADOR (TradeDar covers ADGM). Suite-mode integration tests can now run against any jurisdiction. 6 pytest tests verify all 5 jurisdictions have a demo entity.
 - **Size:** Half-day
 - **Dependencies:** F2.TRADEDAR pattern
 - **Source:** Test coverage need for suite mode
