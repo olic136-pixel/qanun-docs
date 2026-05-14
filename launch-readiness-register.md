@@ -2908,3 +2908,80 @@ If parallel CCD sessions across worktrees stay disciplined, and Oliver gates run
 ---
 
 *End of register v1.4. Phase 2 prioritisation session complete; Sprint 1 ready to begin.*
+# L-Category — Launch Quality (Register Entries)
+
+Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Paste under a new `## Category L — Launch Quality` section heading.
+
+---
+
+## Category L — Launch Quality
+
+**Status:** Launch-blocker. Anti-fabrication architecture (FOUND IN CORPUS markers, coverage validator, DOCX citation scrub) catches model-fabricated citations but cannot catch corpus-internal errors (duplicate is_current=1, text truncation, missing sub-rules, jurisdiction cross-contamination) or corpus-completeness gaps (material that should exist but doesn't). One error of either class in any user response invalidates the zero-hallucination promise. Surfaced 14 May 2026 via two live Quick Lookup gaps: ADGM FSRA-GEN 8.5 (Approved Person notification) + VARA Marketing Regulations 2024 (Retail/Qualified Investor marketing rules).
+
+### Sub-Category L.A — Internal Integrity (existing corpus)
+
+**Scope:** what's broken in what we have. Methodology: SQL sweeps against `corpus.db` across all 5 jurisdictions + Panama.
+
+- **L1** — Internal integrity audit toolkit: build 6 SQL scripts (single-current invariant, text truncation candidates, sub-rule gap analysis, cross-jurisdiction contamination, citation integrity, length distribution outliers) + aggregation script that produces `violation-matrix.csv` per jurisdiction. Output to `~/ADGM/adgm-corpus/audit/` (new directory). **Status:** Open.
+
+- **L2** — Run integrity sweeps across all jurisdictions. Six sub-items, all parallel-safe in V2, sequential in V1:
+  - **L2a** — Single-current invariant: for every (source_entity, rulebook_code, section_ref), count is_current=1 rows; flag >1. **Status:** Open.
+  - **L2b** — Text truncation candidates: section.text not ending in sentence-terminator and not in table/list mode. **Status:** Open.
+  - **L2c** — Sub-rule gap analysis: missing N.M.K within chapter N.M. **Status:** Open.
+  - **L2d** — Cross-jurisdiction contamination: rulebook_code with >1 distinct source_entity. **Status:** Open.
+  - **L2e** — Citation integrity: orphan citations.target_ref not resolving to existing section. **Status:** Open.
+  - **L2f** — Length distribution outliers: bottom 1% per rulebook flagged for review. **Status:** Open.
+
+- **L3** — Aggregate L2a-f findings into prioritised fix matrix. Severity × user impact × fix effort. Output: `~/qanun-docs/audit/internal-integrity-fixes.md`. **Status:** Open. **Depends on:** L2.
+
+- **L4** — Manual spot-check pass: 50-100 rules per jurisdiction (random sample) + all rules referenced by current templates + all Stark exemplar citations. For each: pull `get_rule()`, verify text matches `source_url`, flag deviations. **Status:** Open. **Depends on:** L3 (prioritises which to spot-check first).
+
+- **L5** — Apply L3 priority fixes. Many sub-items; sized after L3 lands. Includes:
+  - Single-current invariant fixes (set is_current=0 on duplicates)
+  - Text re-ingestion for truncated rules (re-scrape from source_url; re-parse; replace section text)
+  - Sub-rule backfill for missing N.M.K provisions
+  - Jurisdiction tag cleanup for contaminated rulebook_code values
+  **Status:** Open. **Depends on:** L3.
+
+- **L6** — Get_rule lookup hardening: filter by `source_entity` when caller specifies jurisdiction context. Quick Lookup query already knows the jurisdiction; the MCP `get_rule` handler in `adgm_corpus/mcp/server.py` needs the filter applied. **Status:** Open.
+
+- **L7** — Single-current invariant test extension: commit `94ce23d` unxfailed 8 tests for FSMR Bundle 2; same pattern needs applying to GEN/AML/COBS/PRU/MIR/MKT (ADGM) + DFSA + VARA + BVI + SV + Panama rulebooks. Pytest gate prevents regression. **Status:** Open. **Depends on:** L5.
+
+- **L8** — Internal integrity acceptance gate: zero L2a-f violations across the corpus. Pre-launch gate. **Status:** Open. **Depends on:** L5, L7.
+
+### Sub-Category L.B — External Completeness (missing material)
+
+**Scope:** what's missing that should exist. Methodology: per-jurisdiction Material Completeness Register (MCR). Each MCR enumerates authoritative material per regulator, cross-references against corpus, produces gap acquisition plan.
+
+- **L9** — MCR methodology + tooling: per-jurisdiction scraper that enumerates authoritative source index (regulator's published list of rules/regulations/guidance/circulars/forms), compares against `corpus.db` documents for that `source_entity`, produces `MCR.md`. Output convention: `~/qanun-docs/mcr/{JURISDICTION}.md`. **Status:** Open.
+
+- **L10** — ADGM/FSRA MCR. Source: ADGM Legal Framework portal + Thomson Reuters ADGM rulebook portal. Cross-reference: every rulebook listed in the portal + every regulation/decision linked. **Status:** Open. **Depends on:** L9.
+
+- **L11** — VARA MCR. Source: rulebooks.vara.ae + vara.ae/regulations (standalone regulations like Marketing Regulations 2024). Highest priority given two surfaced gaps (Marketing Regulations + VARA-MC Part IV). **Status:** Open. **Depends on:** L9.
+
+- **L12** — DFSA MCR. Source: DFSA Rulebook + DFSA Sourcebook indexes. **Status:** Open. **Depends on:** L9.
+
+- **L13** — BVI MCR. Source: BVI FSC published acts + AML/MLR guidance + Approved Manager regime documents. **Status:** Open. **Depends on:** L9.
+
+- **L14** — EL_SALVADOR MCR. Source: cnad.gob.sv downloads + Diario Oficial for foundational legislation (Bitcoin Law, LEAD, LEAD24 reform). **Status:** Open. **Depends on:** L9.
+
+- **L15** — Panama MCR. Source: SMV (Superintendencia del Mercado de Valores) published material + any AML/CFT supporting law. **Status:** Open. **Depends on:** L9.
+
+- **L16** — Gap acquisition + ingest. Sized by L10-L15 outputs. Each MCR produces a gap list; each gap becomes a sub-session: scrape from source_url → parse → ingest → embed → verify. Likely 20-50 sub-items across all jurisdictions. **Status:** Open. **Depends on:** L10-L15.
+
+- **L17** — Ongoing gap detection: capture Quick Lookup "Gap notice" responses into `~/qanun-docs/audit/gap-log.csv` for accumulating gap signal. Each entry references the user query + missing material named by the model. Reviewed periodically to detect newly-surfaced gaps post-launch. **Status:** Open.
+
+### Sub-Category L.C — Acceptance Gate
+
+- **L18** — Pre-launch acceptance: zero L2a-f integrity violations + zero gaps in any L10-L15 MCR + L6 lookup hardening landed + L17 gap log infrastructure live + accuracy reviewer (existing) re-tested against the cleaned corpus. **Status:** Open. **Depends on:** L8, L16, L6, L17.
+
+---
+
+**L-category total: 18 register items** (8 internal + 9 external + 1 acceptance).
+
+**Status-at-a-Glance impact:**
+- Before: 76 Done / 171 Total (44.4%)
+- After adding L1-L18: 76 Done / 189 Total (40.2%)
+- L16 may decompose into 20-50 sub-items as MCRs land, dropping further. Honest accounting.
+
+**Launch readiness recalibration:** L-category gates everything else. J-category (template content) and remaining I-category sub-items become Sprint 7+ scope contingent on L8 + L18 passing. No point generating templates against an unverified corpus.
