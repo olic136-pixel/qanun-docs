@@ -469,18 +469,6 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-FSRA-pipeline-size-sanity — Fail-loud size-floor for FSRA ingestion
-
-- **Status:** Open
-- **Size:** Half-day
-- **Dependencies:** None
-- **Source:** A7-FUNDS memo §9, 2026-05-13
-- **Description:** When the FSRA scraper fetches a rulebook whose full_text length is < 50% of the prior is_current=1 row's full_text length, the pipeline should fail-loud (raise + abort the write), not silent-commit. The 28-April + 2-May FSRA pipeline's stub-shaped captures (340-byte FUNDS, 4.7-KB GEN, 1.5-KB MIR, etc.) all passed unconditionally because no size-sanity floor existed. A1 invariant covers the count side; this addition covers the size side.
-- **Acceptance:** FSRA scraper raises `SizeFloorError` (or equivalent) when fetched full_text < 0.5 × prior_full_text. Test covers both the floor-trigger and the floor-pass cases. Register entry A1.h.SIZE-FLOOR or similar.
-- **Notes:** Pairs with the existing A1 pre-flight invariant. Defence-in-depth: A1 catches multi-current count; A7-FSRA-pipeline-size-sanity catches partial-fetch silent-commits.
-
----
-
 ### A7.D — FSRA PRU orphan reconciliation — **DONE [2026-05-13]**
 
 - **Status:** Done — interactive apply 2026-05-13 (Bundle 2). Flip-only; 2795 metadata backfill deferred to A5.C / A5.E.
