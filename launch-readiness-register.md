@@ -91,16 +91,16 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
 | E — Operational Hygiene | 9 | 0 | 1 | 10 |
-| F — Test Coverage | 1 | 1 | 3 | 5 |
+| F — Test Coverage | 2 | 1 | 3 | 6 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 4 | 0 | 11 | 15 |
 | **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
 | **I — Governance Suite Mode** | 0 | 0 | 17 | 17 |
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **M — Corpus Integrity & Completeness** | 18 | 0 | 4 | 22 |
+| **M — Corpus Integrity & Completeness** | 20 | 0 | 4 | 24 |
 | **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
-| **Total** | **106** | **6** | **81** | **193** |
+| **Total** | **109** | **6** | **81** | **196** |
 
 **Post-overnight triage movements (15 May 2026, bounded session — 3 repos: adgm-corpus + qanun-docs + qanun-orchestrator):**
 - **New Category M — Corpus Integrity & Completeness.** The appended L-category block at the tail of this register (added pre-overnight as a drop-in spec for L1-L18) is renamed/renumbered M1-M18 — leaves the canonical L category (End-to-End Validation, L1-L8) untouched. M-category structure: M.A Internal Integrity (M1-M8) / M.B External Completeness (M9-M17) / M.C Acceptance Gate (M18) + 3 new entries M19-M21.
@@ -1392,6 +1392,16 @@ Sprint sections not yet landed.
 - **Size:** Day
 - **Dependencies:** D11
 - **Description:** Unchanged from v1.0.
+
+---
+
+### F6 — TemplateDiscoveryAgent test isolation: `emit_suite_json` writes to real path
+
+- **Status:** Open
+- **Size:** ~1 bounded session
+- **Source:** D3.1 paste-back, 15 May 2026 — pytest gate caught Option C smoke artifact regression + untracked tier2-5.json pollution
+- **Description:** `emit_suite_json` writes to hardcoded `ucie/jurisdictions/<JUR>/discovered_templates/` instead of agent's `self.work_dir`. Pytest fixtures pass `work_dir=tmp_path` expecting isolation. Fix: refactor `emit_suite_json` to honour `self.work_dir` (or accept `output_root` kwarg); add fixture-level assertion no tracked files change after test run.
+- **Notes:** Same family as Foundation Hardening write-path discipline, but test infrastructure not corpus integrity, so F not A. Standalone — runs in parallel with any wave.
 
 ---
 
@@ -3001,9 +3011,26 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 - **Acceptance:** Root cause identified. Remediation plan sized in follow-up. Apply produces zero orphan `source_doc` FK rows in citations table (either re-anchored to current docs or cascade-deleted per per-row decision).
 - **Notes:** More severe than the 13,040 dangling-target-ref headline because broken `source_doc` FK means the citation table can't reliably answer "which document made this citation". Surfaced as separate finding from M21 sweep refinement per Memory #28 (decompose parametrically against pre-flight state).
 
+### M23 — Canonical-source manifest verification per jurisdiction
+
+- **Status:** Open — deferred behind Foundation Hardening Sprint (`plans/foundation-hardening-sprint.md`)
+- **Size:** ~7 bounded sessions (tooling + 6 jurisdictions)
+- **Source:** Oliver review 15 May 2026
+- **Description:** Scrape each regulator's published index, diff against manifest `expected_documents` + `material.*`. Three buckets: in-index/not-in-manifest, in-manifest/not-in-index, in-both/not-in-corpus. Tooling: extend G5 adapters with `inventory_mode`; add `scripts/manifest_vs_canonical.py`. Output: `mcr/<JUR>_canonical_diff.md`. M9–M15 MCRs are currently self-referential (manifest verified against itself); M23 raises to Tier 1 (regulator's own index).
+- **Notes:** Architectural sibling of M24 — same per-jurisdiction adapters, build once with both `inventory_mode` + `news_mode` flags. Deferred because adapter work shares code paths with Wave A.
+
+### M24 — Regulator news/updates feed wiring (`qanun.io/changes`)
+
+- **Status:** Open — deferred behind Foundation Hardening Sprint
+- **Size:** Day (~5–7 bounded sessions)
+- **Dependencies:** M23 adapters; reconnaissance of `qanun-regulatory-monitor.timer` on Hetzner
+- **Source:** Oliver review 15 May 2026 — qanun.io/changes empty; wired to corpus-internal supersede events not regulator publications
+- **Description:** Five components: (1) per-regulator news scrapers (`news_mode` on M23 adapters); (2) new `regulator_updates` table; (3) `GET /api/regulators/news` (or extend `/api/corpus/changes` with `mode` param); (4) rewire `changes/page.tsx` to render headline + leading paragraph + canonical out-link; (5) daily refresh timer. Sources per jurisdiction: ADGM media-centre/news+announcements, vara.ae/news, dfsa.ae press releases+enforcement, bvifsc.vg/news+enforcement-actions, cnad.gob.sv+Diario Oficial, supervalores.gob.pa.
+- **Notes:** Existing `scripts/collect_circulars.py` is one-shot hardcoded list, not a live scraper. Current `/api/corpus/changes` (corpus-internal) retained or deprecated post-M24, TBD.
+
 ---
 
-**M-category total: 22 register items** (8 internal + 9 external + 1 acceptance + 4 remediation surfaced post-overnight + post-triage).
+**M-category total: 24 register items** (8 internal + 9 external + 1 acceptance + 4 remediation surfaced post-overnight + post-triage).
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
