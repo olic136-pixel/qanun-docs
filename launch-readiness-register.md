@@ -86,7 +86,7 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 8 | 1 | 19 | 28 |
+| A — Data Integrity | 7 | 1 | 20 | 28 |
 | B — Content Coverage | 3 | 3 | 5 | 11 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
@@ -98,9 +98,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **M — Corpus Integrity & Completeness** | 17 | 0 | 4 | 21 |
+| **M — Corpus Integrity & Completeness** | 18 | 0 | 4 | 22 |
 | **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
-| **Total** | **106** | **6** | **80** | **192** |
+| **Total** | **106** | **6** | **81** | **193** |
 
 **Post-overnight triage movements (15 May 2026, bounded session — 3 repos: adgm-corpus + qanun-docs + qanun-orchestrator):**
 - **New Category M — Corpus Integrity & Completeness.** The appended L-category block at the tail of this register (added pre-overnight as a drop-in spec for L1-L18) is renamed/renumbered M1-M18 — leaves the canonical L category (End-to-End Validation, L1-L8) untouched. M-category structure: M.A Internal Integrity (M1-M8) / M.B External Completeness (M9-M17) / M.C Acceptance Gate (M18) + 3 new entries M19-M21.
@@ -424,9 +424,9 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7-FUNDS-doc-199-mislabel — Correct PRU-content-in-FUNDS-row mislabel (4 affected docs)
+### A7-FUNDS-doc-199-mislabel — Correct PRU-content-in-FUNDS-row mislabel (4 affected docs) — **DONE [2026-05-15]**
 
-- **Status:** Open — apply pending Bundle 3 authorisation. Scoped apply SQL drafted (see below); superseded_by chain decision still open per Dependencies.
+- **Status:** Done — interactive partial apply 2026-05-15 (sprint/A7-FUNDS-doc-199-mislabel-apply-2026-05-15). Option A path (PRU canonical convention preserved — `superseded_by=2795` on all 4 docs). **Pre-flight surfaced** that step 1 (rulebook_code FUNDS→PRU on all 4 docs) had **already been applied 2026-05-13 21:18 +04** via interactive SQL during the Bundle 2 / Sprint 1 follow-up window (no git attribution; all 4 rows carry identical `updated_at = 2026-05-13 17:18:26 UTC` confirming single-batch execution). This session applied the remaining steps 2 + 3 only — 4 rows total, not 8. Backup at `backups/corpus_pre_A7_FUNDS_doc_199_mislabel_20260515_084019.db` (pre-apply corpus.db sha256 `c061d461…4c4c`; post-apply sha256 `5fbbdea8…5389`; backup sha256 `241a0949…8b324`). ✓ Rows-affected: step 1 = 0 (already done), step 2 = 3 (64/121/189 superseded_by NULL→2795), step 3 = 1 (199 superseded_by 2789→2795). ✓ PRU + FUNDS single-current invariants both = 1 post-apply (doc 2795 + doc 2789). ✓ `PRU 1.1.1` resolves to doc 2795. ✓ `PRAGMA integrity_check` = ok; WAL checkpointed. ✓ Test suite: 864 passed / 5 skipped / 8 xfailed / 4 xpassed (no failures; the brief's "610P" baseline was stale by several sprints — current expected baseline is in the 860-876 range post-Sprint-1-through-Option-C). A3 K7 section_ref carry-forward on these 4 docs (100% `OTHER` prefix → `PRU`) remains deferred — not in scope for this apply.
 - **Size:** Half-day
 - **Dependencies:** Forensic decision on the superseded_by chain for PRU VER19 (which isn't in PRU's canonical chain doc 15 → 2795). Option A: point doc 199 at 2795 to match the existing PRU convention (all archived versions → current canonical). Option B: leave superseded_by=NULL to treat 199 as off-chain.
 - **Source:** Bundle 2 A7-FUNDS investigation + post-apply protocol-review forensic, 2026-05-13. Widened-scope confirmation: Sprint 1 follow-up overnight, 2026-05-14 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md`
@@ -2991,9 +2991,19 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 - **M21** — Dangling citations remediation. Block B diagnosis (15 May 2026) at `~/qanun-docs/audit/dangling-citations-investigation.md`. The 13,040 dangling-citation count materially over-states the integrity gap: 98.3% legacy_intra_rulebook (many target document-level labels like "FSMR Schedule 1" or cross-jurisdiction refs in non-canonical formats), 1.7% inline_anchor + inline_shorthand (sweep over-flags 100% of these by design — their target_ref is a rulebook name, never a section_ref). Truncation cross-correlation: 0.6% (independent problems). 7,560 citations have orphan source_doc FK — separate carry, more severe than dangling, deserves its own register entry post-investigation. **Stage 1** sweep refinement (exclude inline_* types + surface orphan FK separately) ~30 min, unblocked; **Stage 2** legacy_intra_rulebook decomposition (half-day). Genuine dangling count likely <2,000 after Stages 1+2. **Status:** Open (Stage 1 ready). **Depends on:** M3 (provides input).
 
+### M22 — Orphan citation source_doc FK remediation
+
+- **Status:** Open — investigation pending (Session S4 per 15 May 2026 operational plan)
+- **Size:** TBD (sized after investigation)
+- **Dependencies:** None for investigation
+- **Source:** Dangling citations investigation memo, 15 May 2026 (`~/qanun-docs/audit/dangling-citations-investigation.md` §Real decomposition)
+- **Description:** 7,560 citations have `source_doc` FK pointing to documents not in the documents table. Of these, 6,238 also have non-resolving `target_ref` (appeared in `citation_integrity.csv`); 1,322 have resolving `target_ref` but orphaned `source_doc`. Root cause hypotheses: (a) re-ingestion residue (documents superseded with new IDs, old IDs deleted but citations not cascade-cleaned), (b) partial migration leaving stale references, (c) other. Investigation session determines root cause and sizes remediation.
+- **Acceptance:** Root cause identified. Remediation plan sized in follow-up. Apply produces zero orphan `source_doc` FK rows in citations table (either re-anchored to current docs or cascade-deleted per per-row decision).
+- **Notes:** More severe than the 13,040 dangling-target-ref headline because broken `source_doc` FK means the citation table can't reliably answer "which document made this citation". Surfaced as separate finding from M21 sweep refinement per Memory #28 (decompose parametrically against pre-flight state).
+
 ---
 
-**M-category total: 21 register items** (8 internal + 9 external + 1 acceptance + 3 remediation surfaced post-overnight).
+**M-category total: 22 register items** (8 internal + 9 external + 1 acceptance + 4 remediation surfaced post-overnight + post-triage).
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
