@@ -98,8 +98,18 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
+| **M — Corpus Integrity & Completeness** | 17 | 0 | 4 | 21 |
 | **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
-| **Total** | **89** | **6** | **76** | **171** |
+| **Total** | **106** | **6** | **80** | **192** |
+
+**Post-overnight triage movements (15 May 2026, bounded session — 3 repos: adgm-corpus + qanun-docs + qanun-orchestrator):**
+- **New Category M — Corpus Integrity & Completeness.** The appended L-category block at the tail of this register (added pre-overnight as a drop-in spec for L1-L18) is renamed/renumbered M1-M18 — leaves the canonical L category (End-to-End Validation, L1-L8) untouched. M-category structure: M.A Internal Integrity (M1-M8) / M.B External Completeness (M9-M17) / M.C Acceptance Gate (M18) + 3 new entries M19-M21.
+- **Block A — FSRA truncation root-cause investigation.** Memo at `~/qanun-docs/audit/fsra-truncation-investigation.md` (commit `0eddd83`). Refined finding: the 6,271 FSRA truncation count conflates ~968 parent-header structural artifacts (sweep false positives) + ~5,303 ambiguous short-rule rows. Source-page comparison blocked at scale (83.7% of FSRA docs missing source_url per A5.C carry). Stage 1 sweep refinement is unblocked (~half-day); Stage 2 per-rulebook source comparison blocked on A5.C.
+- **Block B — Dangling citations root-cause investigation.** Memo at `~/qanun-docs/audit/dangling-citations-investigation.md` (commit `faa3267`). Memory #28 parametric adapt: documents.source_entity is NOT NULL (brief's Q1 hypothesis returns 0). Real decomposition: 98.3% legacy_intra_rulebook; 1.7% inline_anchor/inline_shorthand whose target_ref is a rulebook name by design (sweep over-flags 100% of these types). 7,560 citations have orphan source_doc FK — should be a separate finding more severe than dangling. Truncation cross-correlation: 0.6% (independent problems). Genuine dangling likely <2,000 after Stages 1+2.
+- **Block C — Manifest schema expansion + VARA worked example.** adgm-corpus master `26a6098` → `9090fbf` (sprint/manifest-expansion-2026-05-15 merged --no-ff, sprint branch retained). MANIFEST_SCHEMA.json v1.0 → v1.1 (additive, back-compat): adds optional `material` field with 8 categories (primary_legislation/implementing_regulations/rulebooks/guidance/circulars/enforcement_decisions/faqs/forms); extends doc_type_values 5→8 (+regulation/form/faq). VARA migrated — expected_documents 12→13 (VARA-MR2024 added with _pending_verification flag), material populated (12 rulebooks + 1 implementing_regulation + 6 empty honest placeholders), secondary_sources added.
+- **M-category counts:** M1 (audit toolkit) → Done; M2 + M2a-f (sweeps) → Done; M3 (aggregate violation-matrix.md, canonical at adgm-corpus/audit/) → Done; M9 (MCR methodology) → Done with caveat (manifest scope narrow — see M20); M10-M15 → Partial (count as Open in table — MCRs ran against pre-expansion manifests, re-run needed); rest Open. **Done: M1/M2/M3/M9 = 4.** New M19/M20/M21 added (FSRA truncation fix / manifest expansion / dangling citations remediation). M row: 17 Open / 0 Blocked / 4 Done / 21 Total. Total row: 89→106 Open / 76→80 Done / 171→192 Total.
+- **Block E — qanun-orchestrator CLAUDE.md.** Queue-prompt drafting discipline lesson preserved (no `[same as above]` / `[standard pattern]` placeholders survive headless `claude --print`; surfaced during overnight by 5 sessions halting/no-output on truncated prompts).
+- **Carry — 5 remaining per-jurisdiction manifest migrations (ADGM, DFSA, BVI, EL_SALVADOR, PANAMA)** sized ~3.5h total; orphan source_doc FK remediation (7,560 rows — separate carry, deserves its own register entry post-investigation); FSRA Stage 2 truncation source-comparison blocked on A5.C completion.
 
 **Overnight Orchestrator V1 movements (14 May 2026, bounded session — new `~/qanun-orchestrator/` repo):**
 - **O1 Overnight Orchestrator V1 → Done.** New category O added. Sequential queue runner that chains N bounded CCD sessions via `claude --print` headless mode — replaces the "one big brief" model after three consecutive sessions (Sprint 4/5/Option C) surfaced majority-pre-built code and empirically-bounded per-session throughput (Memory #20), leaving the overnight wall-clock window ~10-15% utilised.
@@ -2908,80 +2918,88 @@ If parallel CCD sessions across worktrees stay disciplined, and Oliver gates run
 ---
 
 *End of register v1.4. Phase 2 prioritisation session complete; Sprint 1 ready to begin.*
-# L-Category — Launch Quality (Register Entries)
+# M-Category — Corpus Integrity & Completeness (Register Entries)
 
-Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Paste under a new `## Category L — Launch Quality` section heading.
+Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally drafted as an L-category drop-in (15 May 2026 pre-overnight); renamed/renumbered to M-category 15 May 2026 post-overnight to avoid collision with the canonical Category L (End-to-End Validation, L1-L8). Lives under a `## Category M — Corpus Integrity & Completeness` section heading.
 
 ---
 
-## Category L — Launch Quality
+## Category M — Corpus Integrity & Completeness
 
 **Status:** Launch-blocker. Anti-fabrication architecture (FOUND IN CORPUS markers, coverage validator, DOCX citation scrub) catches model-fabricated citations but cannot catch corpus-internal errors (duplicate is_current=1, text truncation, missing sub-rules, jurisdiction cross-contamination) or corpus-completeness gaps (material that should exist but doesn't). One error of either class in any user response invalidates the zero-hallucination promise. Surfaced 14 May 2026 via two live Quick Lookup gaps: ADGM FSRA-GEN 8.5 (Approved Person notification) + VARA Marketing Regulations 2024 (Retail/Qualified Investor marketing rules).
 
-### Sub-Category L.A — Internal Integrity (existing corpus)
+### Sub-Category M.A — Internal Integrity (existing corpus)
 
 **Scope:** what's broken in what we have. Methodology: SQL sweeps against `corpus.db` across all 5 jurisdictions + Panama.
 
-- **L1** — Internal integrity audit toolkit: build 6 SQL scripts (single-current invariant, text truncation candidates, sub-rule gap analysis, cross-jurisdiction contamination, citation integrity, length distribution outliers) + aggregation script that produces `violation-matrix.csv` per jurisdiction. Output to `~/ADGM/adgm-corpus/audit/` (new directory). **Status:** Open.
+- **M1** — Internal integrity audit toolkit: 6 SQL scripts (single-current invariant, text truncation candidates, sub-rule gap analysis, cross-jurisdiction contamination, citation integrity, length distribution outliers) + aggregation script that produces `violation-matrix.md` per jurisdiction. Output to `~/ADGM/adgm-corpus/audit/`. **Status:** **Done** (toolkit landed pre-overnight; the M2 sweeps produced all 6 CSVs via this toolkit; `audit/violation-matrix.md` is the aggregator output).
 
-- **L2** — Run integrity sweeps across all jurisdictions. Six sub-items, all parallel-safe in V2, sequential in V1:
-  - **L2a** — Single-current invariant: for every (source_entity, rulebook_code, section_ref), count is_current=1 rows; flag >1. **Status:** Open.
-  - **L2b** — Text truncation candidates: section.text not ending in sentence-terminator and not in table/list mode. **Status:** Open.
-  - **L2c** — Sub-rule gap analysis: missing N.M.K within chapter N.M. **Status:** Open.
-  - **L2d** — Cross-jurisdiction contamination: rulebook_code with >1 distinct source_entity. **Status:** Open.
-  - **L2e** — Citation integrity: orphan citations.target_ref not resolving to existing section. **Status:** Open.
-  - **L2f** — Length distribution outliers: bottom 1% per rulebook flagged for review. **Status:** Open.
+- **M2** — Run integrity sweeps across all jurisdictions. Six sub-items, all parallel-safe in V2, sequential in V1. **Status:** **Done** (all 6 CSVs landed at `audit/findings/`):
+  - **M2a** — Single-current invariant: for every (source_entity, rulebook_code, section_ref), count is_current=1 rows; flag >1. **Status:** **Done**.
+  - **M2b** — Text truncation candidates: section.text not ending in sentence-terminator and not in table/list mode. **Status:** **Done** (`audit/findings/truncation_candidates.csv`; 6,499 rows of which 6,271 FSRA — see M19 for refined diagnosis).
+  - **M2c** — Sub-rule gap analysis: missing N.M.K within chapter N.M. **Status:** **Done**.
+  - **M2d** — Cross-jurisdiction contamination: rulebook_code with >1 distinct source_entity. **Status:** **Done**.
+  - **M2e** — Citation integrity: orphan citations.target_ref not resolving to existing section. **Status:** **Done** (`audit/findings/citation_integrity.csv`; 13,040 rows — see M21 for refined diagnosis).
+  - **M2f** — Length distribution outliers: bottom 1% per rulebook flagged for review. **Status:** **Done**.
 
-- **L3** — Aggregate L2a-f findings into prioritised fix matrix. Severity × user impact × fix effort. Output: `~/qanun-docs/audit/internal-integrity-fixes.md`. **Status:** Open. **Depends on:** L2.
+- **M3** — Aggregate M2a-f findings into prioritised fix matrix. Severity × user impact × fix effort. Output: `~/ADGM/adgm-corpus/audit/violation-matrix.md` (canonical location; no copy to qanun-docs required). **Status:** **Done** (20 lines; surfaced 20,567 corpus integrity findings — note that the FSRA truncation + dangling citation headline numbers materially over-state genuine issues per M19/M21 root-cause memos). **Depends on:** M2.
 
-- **L4** — Manual spot-check pass: 50-100 rules per jurisdiction (random sample) + all rules referenced by current templates + all Stark exemplar citations. For each: pull `get_rule()`, verify text matches `source_url`, flag deviations. **Status:** Open. **Depends on:** L3 (prioritises which to spot-check first).
+- **M4** — Manual spot-check pass: 50-100 rules per jurisdiction (random sample) + all rules referenced by current templates + all Stark exemplar citations. For each: pull `get_rule()`, verify text matches `source_url`, flag deviations. **Status:** Open. **Depends on:** M3 (prioritises which to spot-check first).
 
-- **L5** — Apply L3 priority fixes. Many sub-items; sized after L3 lands. Includes:
+- **M5** — Apply M3 priority fixes. Many sub-items; sized after M3 lands. Includes:
   - Single-current invariant fixes (set is_current=0 on duplicates)
-  - Text re-ingestion for truncated rules (re-scrape from source_url; re-parse; replace section text)
+  - Text re-ingestion for truncated rules (re-scrape from source_url; re-parse; replace section text) — gated on A5.C source_url backfill per M19
   - Sub-rule backfill for missing N.M.K provisions
   - Jurisdiction tag cleanup for contaminated rulebook_code values
-  **Status:** Open. **Depends on:** L3.
+  **Status:** Open. **Depends on:** M3.
 
-- **L6** — Get_rule lookup hardening: filter by `source_entity` when caller specifies jurisdiction context. Quick Lookup query already knows the jurisdiction; the MCP `get_rule` handler in `adgm_corpus/mcp/server.py` needs the filter applied. **Status:** Open.
+- **M6** — Get_rule lookup hardening: filter by `source_entity` when caller specifies jurisdiction context. Quick Lookup query already knows the jurisdiction; the MCP `get_rule` handler in `adgm_corpus/mcp/server.py` needs the filter applied. **Status:** Open.
 
-- **L7** — Single-current invariant test extension: commit `94ce23d` unxfailed 8 tests for FSMR Bundle 2; same pattern needs applying to GEN/AML/COBS/PRU/MIR/MKT (ADGM) + DFSA + VARA + BVI + SV + Panama rulebooks. Pytest gate prevents regression. **Status:** Open. **Depends on:** L5.
+- **M7** — Single-current invariant test extension: commit `94ce23d` unxfailed 8 tests for FSMR Bundle 2; same pattern needs applying to GEN/AML/COBS/PRU/MIR/MKT (ADGM) + DFSA + VARA + BVI + SV + Panama rulebooks. Pytest gate prevents regression. **Status:** Open. **Depends on:** M5.
 
-- **L8** — Internal integrity acceptance gate: zero L2a-f violations across the corpus. Pre-launch gate. **Status:** Open. **Depends on:** L5, L7.
+- **M8** — Internal integrity acceptance gate: zero M2a-f violations across the corpus. Pre-launch gate. **Status:** Open. **Depends on:** M5, M7.
 
-### Sub-Category L.B — External Completeness (missing material)
+### Sub-Category M.B — External Completeness (missing material)
 
 **Scope:** what's missing that should exist. Methodology: per-jurisdiction Material Completeness Register (MCR). Each MCR enumerates authoritative material per regulator, cross-references against corpus, produces gap acquisition plan.
 
-- **L9** — MCR methodology + tooling: per-jurisdiction scraper that enumerates authoritative source index (regulator's published list of rules/regulations/guidance/circulars/forms), compares against `corpus.db` documents for that `source_entity`, produces `MCR.md`. Output convention: `~/qanun-docs/mcr/{JURISDICTION}.md`. **Status:** Open.
+- **M9** — MCR methodology + tooling: per-jurisdiction scraper that enumerates authoritative source index (regulator's published list of rules/regulations/guidance/circulars/forms), compares against `corpus.db` documents for that `source_entity`, produces `MCR.md`. Output convention: `~/qanun-docs/mcr/{JURISDICTION}.md`. **Status:** **Done (with caveat)** — `mcr/mcr_generator.py` landed; 6 MCRs produced 14-15 May 2026. **Caveat:** the v1.0 manifest schema enumerated only rulebooks, so MCRs reported full PRESENT against an incomplete authoritative inventory. Manifest schema v1.1 (M20) adds 8 material categories; once 5 remaining jurisdictions migrate (M20), re-run M10-M15 against the expanded manifests.
 
-- **L10** — ADGM/FSRA MCR. Source: ADGM Legal Framework portal + Thomson Reuters ADGM rulebook portal. Cross-reference: every rulebook listed in the portal + every regulation/decision linked. **Status:** Open. **Depends on:** L9.
+- **M10** — ADGM/FSRA MCR. Source: ADGM Legal Framework portal + Thomson Reuters ADGM rulebook portal. Cross-reference: every rulebook listed in the portal + every regulation/decision linked. **Status:** **Partial** — initial MCR landed at `mcr/ADGM.md` against pre-expansion FSRA.json; re-run needed post-M20 ADGM migration. **Depends on:** M9, M20.
 
-- **L11** — VARA MCR. Source: rulebooks.vara.ae + vara.ae/regulations (standalone regulations like Marketing Regulations 2024). Highest priority given two surfaced gaps (Marketing Regulations + VARA-MC Part IV). **Status:** Open. **Depends on:** L9.
+- **M11** — VARA MCR. Source: rulebooks.vara.ae + vara.ae/regulations (standalone regulations like Marketing Regulations 2024). Highest priority given two surfaced gaps (Marketing Regulations + VARA-MC Part IV). **Status:** **Partial** — initial MCR landed at `mcr/VARA.md`; VARA manifest now expanded (M20 worked example) so a VARA re-run will pick up VARA-MR2024 properly. **Depends on:** M9, M20.
 
-- **L12** — DFSA MCR. Source: DFSA Rulebook + DFSA Sourcebook indexes. **Status:** Open. **Depends on:** L9.
+- **M12** — DFSA MCR. Source: DFSA Rulebook + DFSA Sourcebook indexes. **Status:** **Partial** — initial MCR at `mcr/DFSA.md`. **Depends on:** M9, M20.
 
-- **L13** — BVI MCR. Source: BVI FSC published acts + AML/MLR guidance + Approved Manager regime documents. **Status:** Open. **Depends on:** L9.
+- **M13** — BVI MCR. Source: BVI FSC published acts + AML/MLR guidance + Approved Manager regime documents. **Status:** **Partial** — initial MCR at `mcr/BVI.md`. **Depends on:** M9, M20.
 
-- **L14** — EL_SALVADOR MCR. Source: cnad.gob.sv downloads + Diario Oficial for foundational legislation (Bitcoin Law, LEAD, LEAD24 reform). **Status:** Open. **Depends on:** L9.
+- **M14** — EL_SALVADOR MCR. Source: cnad.gob.sv downloads + Diario Oficial for foundational legislation (Bitcoin Law, LEAD, LEAD24 reform). **Status:** **Partial** — initial MCR at `mcr/EL_SALVADOR.md`. **Depends on:** M9, M20.
 
-- **L15** — Panama MCR. Source: SMV (Superintendencia del Mercado de Valores) published material + any AML/CFT supporting law. **Status:** Open. **Depends on:** L9.
+- **M15** — Panama MCR. Source: SMV (Superintendencia del Mercado de Valores) published material + any AML/CFT supporting law. **Status:** **Partial** — initial MCR at `mcr/PANAMA.md`. **Depends on:** M9, M20.
 
-- **L16** — Gap acquisition + ingest. Sized by L10-L15 outputs. Each MCR produces a gap list; each gap becomes a sub-session: scrape from source_url → parse → ingest → embed → verify. Likely 20-50 sub-items across all jurisdictions. **Status:** Open. **Depends on:** L10-L15.
+- **M16** — Gap acquisition + ingest. Sized by M10-M15 outputs. Each MCR produces a gap list; each gap becomes a sub-session: scrape from source_url → parse → ingest → embed → verify. Likely 20-50 sub-items across all jurisdictions. **Status:** Open. **Depends on:** M10-M15.
 
-- **L17** — Ongoing gap detection: capture Quick Lookup "Gap notice" responses into `~/qanun-docs/audit/gap-log.csv` for accumulating gap signal. Each entry references the user query + missing material named by the model. Reviewed periodically to detect newly-surfaced gaps post-launch. **Status:** Open.
+- **M17** — Ongoing gap detection: capture Quick Lookup "Gap notice" responses into `~/qanun-docs/audit/gap-log.csv` for accumulating gap signal. Each entry references the user query + missing material named by the model. Reviewed periodically to detect newly-surfaced gaps post-launch. **Status:** Open.
 
-### Sub-Category L.C — Acceptance Gate
+### Sub-Category M.C — Acceptance Gate + Surfaced Remediation
 
-- **L18** — Pre-launch acceptance: zero L2a-f integrity violations + zero gaps in any L10-L15 MCR + L6 lookup hardening landed + L17 gap log infrastructure live + accuracy reviewer (existing) re-tested against the cleaned corpus. **Status:** Open. **Depends on:** L8, L16, L6, L17.
+- **M18** — Pre-launch acceptance: zero M2a-f integrity violations + zero gaps in any M10-M15 MCR + M6 lookup hardening landed + M17 gap log infrastructure live + accuracy reviewer (existing) re-tested against the cleaned corpus. **Status:** Open. **Depends on:** M8, M16, M6, M17.
+
+- **M19** — FSRA structural_parser truncation systematic fix. Block A diagnosis (15 May 2026) at `~/qanun-docs/audit/fsra-truncation-investigation.md` refined the 6,271 FSRA truncation count: ~968 are parent-header structural artifacts (sweep false positives), ~5,303 are ambiguous short-rule rows whose status cannot be confirmed without source-page comparison. 83.7% of FSRA docs have empty source_url (A5.C carry). Two-stage remediation: **Stage 1** (sweep heuristic refinement — exclude parent headers + colon-introducer rows) sized half-day, unblocked; **Stage 2** (per-rulebook source comparison) blocked on A5.C completion. **Status:** Open (Stage 1 ready). **Depends on:** M3 (provides input); Stage 2 also depends on A5.C.
+
+- **M20** — Manifest schema expansion + per-jurisdiction migration. Block C (15 May 2026) at `~/qanun-docs/audit/manifest-schema-expansion.md`. MANIFEST_SCHEMA.json v1.1 (additive, back-compat) adds optional `material` field with 8 categories (primary_legislation / implementing_regulations / rulebooks / guidance / circulars / enforcement_decisions / faqs / forms); doc_type_values 5→8 (+regulation/form/faq). VARA migrated (12 rulebooks → 12 rulebooks + 1 implementing_regulation = VARA-MR2024 with _pending_verification flag; secondary_sources populated; 6 honest empty placeholders for non-rulebook categories). 5 remaining migrations (ADGM, DFSA, BVI, EL_SALVADOR, PANAMA) sized ~3.5h total. After migrations land, M10-M15 re-run picks up newly-enumerated gaps. **Status:** **In Progress** (1 of 6 migrations complete — count as Open in Status-at-a-Glance until all 6 land). **Depends on:** none for VARA; ADGM gap material informs M10 directly.
+
+- **M21** — Dangling citations remediation. Block B diagnosis (15 May 2026) at `~/qanun-docs/audit/dangling-citations-investigation.md`. The 13,040 dangling-citation count materially over-states the integrity gap: 98.3% legacy_intra_rulebook (many target document-level labels like "FSMR Schedule 1" or cross-jurisdiction refs in non-canonical formats), 1.7% inline_anchor + inline_shorthand (sweep over-flags 100% of these by design — their target_ref is a rulebook name, never a section_ref). Truncation cross-correlation: 0.6% (independent problems). 7,560 citations have orphan source_doc FK — separate carry, more severe than dangling, deserves its own register entry post-investigation. **Stage 1** sweep refinement (exclude inline_* types + surface orphan FK separately) ~30 min, unblocked; **Stage 2** legacy_intra_rulebook decomposition (half-day). Genuine dangling count likely <2,000 after Stages 1+2. **Status:** Open (Stage 1 ready). **Depends on:** M3 (provides input).
 
 ---
 
-**L-category total: 18 register items** (8 internal + 9 external + 1 acceptance).
+**M-category total: 21 register items** (8 internal + 9 external + 1 acceptance + 3 remediation surfaced post-overnight).
 
-**Status-at-a-Glance impact:**
-- Before: 76 Done / 171 Total (44.4%)
-- After adding L1-L18: 76 Done / 189 Total (40.2%)
-- L16 may decompose into 20-50 sub-items as MCRs land, dropping further. Honest accounting.
+**Status-at-a-Glance impact (this commit):**
+- Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
+- After M renumber + transitions + new M19-M21: 106 Open / 6 Blocked / 80 Done / 192 Total (41.7% Done)
+- M row added: 17 Open / 0 Blocked / 4 Done / 21 Total
+- Done flips: M1, M2 (parent + all 6 sub-items M2a-f), M3, M9 (with caveat) — 4 register items
+- Partial = Open in table accounting (M10-M15 are Partial; M20 is In Progress — all count as Open until full closure)
 
-**Launch readiness recalibration:** L-category gates everything else. J-category (template content) and remaining I-category sub-items become Sprint 7+ scope contingent on L8 + L18 passing. No point generating templates against an unverified corpus.
+**Launch readiness recalibration:** M-category gates everything else. J-category (template content) and remaining I-category sub-items become Sprint 7+ scope contingent on M8 + M18 passing. No point generating templates against an unverified corpus.
