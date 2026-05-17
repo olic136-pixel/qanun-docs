@@ -98,9 +98,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **0** | **20** |
 | **K — Commercial Readiness** | **10** | **0** | **0** | **10** |
 | **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
-| **M — Corpus Integrity & Completeness** | **21** | **0** | **4** | **25** |
+| **M — Corpus Integrity & Completeness** | **22** | **0** | **4** | **26** |
 | **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
-| **Total** | **107** | **7** | **61** | **175** |
+| **Total** | **108** | **7** | **61** | **176** |
 
 ### Methodology — per-family aggregation
 
@@ -304,7 +304,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 - **Size:** Multi-day
 - **Dependencies:** None
 - **Source:** A5 audit memo, 12 May 2026 (supersedes v1.0's A4)
-- **Description:** 2,099 is_current=1 rows have empty source_url. Recovery strategy varies by source_entity: (a) from local_path filename if URL is encoded, (b) by re-fetching the document during a future bulk refresh, (c) by cross-referencing against the regulator's portal. Of these 2,099, 22 are post-A1 DFSA docs from today's bulk — those need a scraper fix (A5.C.1) plus backfill, not just backfill.
+- **Description:** Wave C Session 1 discovery refined the scope: **2,029 local rows / 2,083 Hetzner rows** remain after A5.C.1 closure. Per-entity breakdown (local): **DIFC_COURTS 1066 rows** (bailii.org URL pattern reversal — single largest sub-scope), DIFC ~5, ADGM ~5, FSRA ~22, UAE_FEDERAL 5 (mis-classified historicals → ADGM portal), PANAMA_SMV 5 (SMV docs), MONDAQ 2 (commentary HTML — likely unresolvable to portal URL), PANAMA 1 (SMV PDF). Recovery strategies vary by source_entity: (a) local_path filename reversal for scraped portals (PANAMA_SMV, DIFC, ADGM, UAE_FEDERAL, PANAMA), (b) DIFC_COURTS bailii URL reconstruction (largest sub-scope; needs dedicated strategy), (c) hand-resolution for MONDAQ commentary tail. **Sequence dependency on M26:** Wave C Session 2 (bulk apply) waits on M26 resolution (local↔Hetzner drift; 54-row delta + UNKNOWN entity on Hetzner only). Applying recovery strategies to diverged corpus snapshots risks widening the gap.
 - **Acceptance:** Per source_entity: every is_current=1 row has non-empty source_url. Recovery method documented per row category. Audit script verifies completeness.
 - **Notes:** This is the regulatory-credibility item — a tool whose differentiator is grounded citations cannot ship with empty provenance.
 
@@ -312,11 +312,11 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A5.C.1 — DFSA scraper source_url population fix
 
-- **Status:** Open — script + tests landed; backfill APPLY pending
+- **Status:** Done [2026-05-17, Wave C Session 1 — A5.C.1's main work (scraper-side `source_url` population) was completed pre-session by the **A1.h fix (11 May 2026)** which landed `"source_url": module_url` in `DFSARulebookScraper._doc_dict_from_html`. Subsequent re-ingest cycles via systemd timers backfilled 21 of the original 22 rows automatically. Session 1 swept the residue: **1 local row** (doc 2428 "Supervisory Guidelines on Assessing the Suitability of Crypto Tokens") hand-resolved to `https://www.dfsa.ae/crypto` (the specific DFSA crypto hub page where the document is referenced — more accurate provenance than the script's `GUIDANCE_INDEX_BASE` fallback would have given); **6 Hetzner rows** (1 hand-resolved doc 2428 mirroring local + 5 DFSA-* rows via `scripts/backfill_dfsa_source_url.py` MODULE_URLS lookup — Hetzner's `scripts/` directory drifted behind the repo because standard deploys scp `adgm_corpus/` not `scripts/`; deployed during Session 1 with chown/chmod/sha-verify per Memory #5). Backups taken: local `corpus_pre_a5c1_20260517_190701.db` + Hetzner `corpus_pre_a5c1_20260517_151334.db` + Hetzner `corpus_pre_a5c1_script_20260517_152021.db`. Pytest delta +2P / -2XF (DFSA xfail-strict markers removed from `test_source_url_invariant.py`; other 4 entities retain their xfails until their backfills land — Wave C Session 2 scope). qanun-api service health verified post-apply: active, zero error journal entries. Memory #5 protocol followed throughout: backup before each apply, sha verification on script deploy, no scp of corpus.db, qanun-api service health checked post-apply.]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** A5 audit memo finding 12 May 2026
-- **Description:** Today's A1 DFSA bulk produced 22 new is_current=1 docs that lack source_url. The DFSA scraper isn't populating the `source_url` field in the `new_doc` dict returned by `fetch_rulebook`. Fix the scraper, re-run a small backfill for the 22 affected docs only.
+- **Description:** [Historical — pre-A1.h-fix language preserved for register audit trail.] The original A5 audit memo (12 May 2026) recorded that the DFSA scraper wasn't populating `source_url` in the `new_doc` dict returned by `fetch_rulebook`. A1.h fix (11 May 2026) landed `"source_url": module_url` in `DFSARulebookScraper._doc_dict_from_html` between the audit's investigation and its write-up. Closure path: scraper fix did the bulk via subsequent re-ingest cycles; Wave C Session 1 swept the residue (1 local + 6 Hetzner rows).
 - **Acceptance:** DFSA scraper test confirms `new_doc['source_url']` is populated with the leaf-page URL. 22 affected docs backfilled. Regression test ensures all future scrapes include source_url.
 - **Bundle 1 progress [2026-05-13]:** Script + tests committed to master via `sprint/A5C1-dfsa-source-url-2026-05-12-overnight` (merge commit `ccfa1c0` on adgm-corpus master). `scripts/backfill_dfsa_source_url.py` is dry-run-by-default; derives source_url from `MODULE_URLS` registry (21/22) plus guidance-index fallback (1/22). `tests/acceptance/test_source_url_invariant.py` adds 1 passing diagnostic + 7 strict xfails (one per source_entity class). Backfill APPLY against corpus.db remains pending — requires explicit interactive authorisation per HG1 discipline.
 - **See:** `/tmp/qanun-overnight/a5/A5C1.md`
@@ -3046,9 +3046,19 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 - **Acceptance:** Zero rows in `SELECT content_hash, COUNT(*) FROM documents WHERE is_current = 1 AND content_hash != '' GROUP BY content_hash HAVING COUNT(DISTINCT source_entity || '/' || COALESCE(rulebook_code, '')) > 1`. `test_write_invariants.py::test_global_no_content_hash_collisions` xfail marker removed and test passes non-strict.
 - **Notes:** Functionally a Wave A residual but architecturally similar to M21/M22 (corpus-state remediation surfaced by an integrity probe). Sequencing flexibility: can be done any time after Session 1 lands; does not block Wave A Sessions 2-5. Recommended scheduling: alongside Wave D citation integrity work since the per-row triage pattern overlaps.
 
+### M26 — Local-Hetzner corpus snapshot drift
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** None — but blocks Wave C Session 2 (A5.C bulk apply); diverged snapshots will widen if strategies apply asymmetrically
+- **Source:** Wave C Session 1 discovery, 17 May 2026
+- **Description:** Step 2 discovery during A5.C scope sizing surfaced material drift between local and Hetzner corpus.db. **54-row total delta** across entities. **UNKNOWN entity exists only on Hetzner** (most diagnostic finding — suggests Hetzner's systemd-timer ingest cycles produced docs without source_entity classification; local doesn't have these rows at all). **6 DFSA empty-source_url rows on Hetzner vs 1 on local** (resolved by Session 1's apply; symptom of the broader pattern). 10 May audit memo recorded local≡Hetzner exact match at 2,298/2,595/87,637/14,919 — drift accumulated over the 7 days since: local received Wave A/B re-ingest cycles via dev scripts; Hetzner ran independent systemd timers (qanun-regulatory-monitor, qanun-corpus-version-check, qanun-review-cycle) producing rows that local doesn't have. No active sync model between local and Hetzner corpus.db (this is the operational question to resolve).
+- **Acceptance:** (1) Identify the 54-row delta source by source_entity (sqlite EXCEPT-style query across both DBs). (2) Audit Hetzner's UNKNOWN entity rows — classify or remove. (3) Decide reconciliation strategy: (a) Hetzner-as-source-of-truth (pull Hetzner state to local; lose local Wave A/B in-flight work?), (b) local-as-source-of-truth (push local state to Hetzner — but #5 forbids scp corpus.db; would need SQL-level reconciliation), (c) per-entity reconciliation (preserve newer rows per entity based on updated_at). (4) Document sync model going forward (whose timers produce canonical state; how Wave A/B re-ingests propagate to prod). (5) Bulk apply (A5.C Session 2) can proceed once drift resolved.
+- **Notes:** This is operational hygiene as much as corpus integrity — surfaced via M-category because it's about corpus state consistency, not deploy mechanics. Wave C Session 2 sequencing was revised to insert this session BEFORE the bulk A5.C apply (17 May 2026 direction).
+
 ---
 
-**M-category total: 25 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run)
+**M-category total: 26 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
