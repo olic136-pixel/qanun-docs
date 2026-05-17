@@ -3052,9 +3052,57 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 - **Size:** Day
 - **Dependencies:** None — but blocks Wave C Session 2 (A5.C bulk apply); diverged snapshots will widen if strategies apply asymmetrically
 - **Source:** Wave C Session 1 discovery, 17 May 2026
-- **Description:** Step 2 discovery during A5.C scope sizing surfaced material drift between local and Hetzner corpus.db. **54-row total delta** across entities. **UNKNOWN entity exists only on Hetzner** (most diagnostic finding — suggests Hetzner's systemd-timer ingest cycles produced docs without source_entity classification; local doesn't have these rows at all). **6 DFSA empty-source_url rows on Hetzner vs 1 on local** (resolved by Session 1's apply; symptom of the broader pattern). 10 May audit memo recorded local≡Hetzner exact match at 2,298/2,595/87,637/14,919 — drift accumulated over the 7 days since: local received Wave A/B re-ingest cycles via dev scripts; Hetzner ran independent systemd timers (qanun-regulatory-monitor, qanun-corpus-version-check, qanun-review-cycle) producing rows that local doesn't have. No active sync model between local and Hetzner corpus.db (this is the operational question to resolve).
-- **Acceptance:** (1) Identify the 54-row delta source by source_entity (sqlite EXCEPT-style query across both DBs). (2) Audit Hetzner's UNKNOWN entity rows — classify or remove. (3) Decide reconciliation strategy: (a) Hetzner-as-source-of-truth (pull Hetzner state to local; lose local Wave A/B in-flight work?), (b) local-as-source-of-truth (push local state to Hetzner — but #5 forbids scp corpus.db; would need SQL-level reconciliation), (c) per-entity reconciliation (preserve newer rows per entity based on updated_at). (4) Document sync model going forward (whose timers produce canonical state; how Wave A/B re-ingests propagate to prod). (5) Bulk apply (A5.C Session 2) can proceed once drift resolved.
+- **Description:** Wave C M26 drift investigation session (17 May 2026) refined initial 54-row scope estimate to **369-row affected surface** (115 set-diff + 197 intersection mismatches + 57 UNKNOWN) across **four distinct root cause categories**, each with its own fix shape. See `~/qanun-docs/audit/M26-drift-investigation-2026-05-17.md` for full discovery: per-entity delta table, set-difference samples, intersection-mismatch breakdown by content_hash / source_entity / source_url, full UNKNOWN entity audit. Sub-items M26.1-M26.4 address each root cause separately; M26 parent stays Open as umbrella until all 4 sub-items close. Sync model decision (D6) deferred to its own architectural memo session — doesn't block sub-item applies.
+- **Acceptance:** All four sub-items (M26.1, M26.2, M26.3, M26.4) closed Done. Parity verified via re-run of `audit_drift_local_vs_hetzner.py` showing zero drift. D6 sync model documented separately. Wave C Session 2 (A5.C bulk apply) unblocked.
 - **Notes:** This is operational hygiene as much as corpus integrity — surfaced via M-category because it's about corpus state consistency, not deploy mechanics. Wave C Session 2 sequencing was revised to insert this session BEFORE the bulk A5.C apply (17 May 2026 direction).
+
+---
+
+### M26.1 — DFSA source_key keying convention drift
+
+- **Status:** Open — strategy authorised D1=(a) on 17 May 2026 Wave C M26 investigation: build source_key migration table from set-diff sample analysis (manual pairing of old↔new keys based on title + content_hash); single SQL UPDATE pass on Hetzner. Apply pending follow-on session.
+- **Size:** Half-day
+- **Dependencies:** None — recommended to apply first so M26.4 investigation isn't muddied by ghost-duplicates
+- **Source:** Wave C M26 drift investigation, 17 May 2026
+- **Description:** ~20+ rows show as set-difference (Hetzner-only or local-only) when they're actually the same documents under different source_keys. Hetzner uses old keying convention (e.g. `dfsa_aml_anti-money-laundering...ver30...`); local uses new convention from post-A1.h scraper updates (e.g. `dfsa_s3_dfsa-aml`). Set-difference samples confirm pairs with matching titles + similar content_hash prefixes — same documents, different keys. Not a true row-level drift; a keying-convention catch-up.
+- **Acceptance:** All paired old↔new source_keys identified and mapped. Single SQL UPDATE pass on Hetzner renames old keys to new convention. Post-apply audit shows zero "ghost duplicate" set-difference entries; remaining set-diff represents true row drift only.
+- **Apply session brief:** TBD when follow-on session scheduled.
+
+---
+
+### M26.2 — A5.D content_hash recomputation lag on Hetzner
+
+- **Status:** Open — strategy authorised D2=(b) selective on 17 May 2026 Wave C M26 investigation: re-run A5.D recomputation logic on Hetzner for the rows where local hash matches A5.D formula (full_text-derived) and Hetzner doesn't (still has older PDF-bytes-derived hash). Apply pending follow-on session.
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** Wave C M26 drift investigation, 17 May 2026
+- **Description:** 106 intersection mismatches on content_hash: same source_key on both sides, different content_hash. Pattern consistent with A5.D landing on local Wave B Session 1 (defense-in-depth recomputation in `_doc_dict_from_pdf` to use full_text-derived hashes); Hetzner still has the older hash convention for affected rows since A5.D wasn't deployed as a recomputation pass on Hetzner. Same content, just inconsistent hashing convention — Hetzner's hashes need to be brought into A5.D-correctness.
+- **Acceptance:** Selective recomputation script identifies rows where Hetzner hash matches old (PDF-bytes-derived) formula but doesn't match A5.D (full_text-derived) formula. UPDATE Hetzner content_hash to A5.D-correct value. Post-apply: zero content_hash intersection mismatches.
+- **Apply session brief:** TBD when follow-on session scheduled. Confirms A5.D defense-in-depth catches what it should.
+
+---
+
+### M26.3 — UNKNOWN entity classification gap (57 rows, Hetzner-only)
+
+- **Status:** Open — strategy authorised D3=(c) hybrid on 17 May 2026 Wave C M26 investigation: heuristic classification from `rulebook_code` + `local_path` + `title` patterns first; manual audit of whatever residue doesn't match high-confidence heuristics. Apply pending follow-on session.
+- **Size:** Day (heuristic script + audit residue)
+- **Dependencies:** None
+- **Source:** Wave C M26 drift investigation, 17 May 2026
+- **Description:** 57 rows on Hetzner have `source_entity = 'UNKNOWN'` (or NULL/empty); zero such rows on local. All 57 rows show max_updated 2026-04-03 — settled state, NOT recent timer misfires. These are legacy classification gaps from before the entity classification logic was hardened. Full 57-row listing in M26 investigation memo. Likely real documents whose entity field never got set; not garbage to remove.
+- **Acceptance:** Heuristic classification script applied; residue manually audited; all 57 rows have correct non-UNKNOWN source_entity. Post-apply: zero UNKNOWN/NULL/empty source_entity rows on Hetzner is_current=1.
+- **Apply session brief:** TBD when follow-on session scheduled. Heuristic pattern design based on rulebook_code prefix mapping (e.g. `BVI-*` → BVI_FSC, `DFSA-*` → DFSA, `SV-*` → EL_SALVADOR, `VARA-*` → VARA, etc.).
+
+---
+
+### M26.4 — True entity drift (EL_SALVADOR +3, BVI_FSC +2)
+
+- **Status:** Open — strategy authorised D4=(b) per-row investigate on 17 May 2026 Wave C M26 investigation: read each Hetzner-only row's title + content_hash + updated_at; decide per-row if it's a genuine new doc (pull to local via INSERT with section re-keying) or a duplicate of an existing local row under different keying (already handled by M26.1, skip). Apply pending follow-on session.
+- **Size:** Half-day (5 rows, manual review + 5 INSERTs at most)
+- **Dependencies:** Recommended after M26.1 closes (so ghost-key duplicates already migrated; M26.4 review focuses on true drift only)
+- **Source:** Wave C M26 drift investigation, 17 May 2026
+- **Description:** After accounting for root causes 1-3 (keying drift, hash lag, UNKNOWN classification), ~5 rows remain as genuine bidirectional drift: EL_SALVADOR +3 on Hetzner, BVI_FSC +2 on Hetzner. Per-entity table shows small positive deltas with recent updated_at on both sides — consistent with independent timer-driven ingests producing legitimately different rows. Manageable row-by-row.
+- **Acceptance:** Each of the 5 Hetzner-only rows reviewed; classified as either (a) genuine new doc → pulled to local via INSERT with sections-table doc_id re-keying through `insert_document()` (Wave A gates fire correctly), or (b) duplicate of existing local row → no action, M26.1 should have already handled. Post-apply: per-entity table shows zero deltas (or documented residual).
+- **Apply session brief:** TBD when follow-on session scheduled. Pulls require section-table doc_id translation: SELECT sections WHERE doc_id=hetzner_id; INSERT sections with new local doc_id from the documents INSERT's lastrowid.
 
 ---
 
