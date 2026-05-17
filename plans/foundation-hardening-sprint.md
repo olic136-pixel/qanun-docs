@@ -102,3 +102,46 @@ closure.
 
 Wave B opens next: combined A5.A + A5.D + A5.E session, then standalone
 A5.B (canonical `section_ref` decomposition).
+
+## Wave B — complete (15-17 May 2026)
+
+Wave B closed in 4 register items across 2 code sessions + 2 register
+touches (Sessions 1, 2 plus 1.5, 2.5):
+
+| Item | Code session |
+|---|---|
+| A5.A — normalise_rulebook_code helper | Session 1 |
+| A5.D — content_hash compute in write_rulebook | Session 1 |
+| A5.E — version_str per-entity validator | Session 1 |
+| A5.B — canonical section_ref decomposition | Session 2 |
+
+Structural shape post-Wave-B: parser-side write path now has consistent
+canonicalisation. `insert_document` routes rulebook_code through
+`normalise_rulebook_code` before invariant gates fire. `write_rulebook`
+derives `content_hash` from `full_text` (canonical going forward).
+`assert_write_invariants` Gate 5 validates `version_str` against
+per-entity regex patterns. The new `adgm_corpus.storage._section_ref`
+module provides single-source-of-truth decomposition of section_ref
+strings across 11 format shapes coexisting in the corpus.
+
+Three xfail-strict global tests now sit on the test suite tracking
+calibration gaps from Wave A and B (Memory #25 pattern, three instances):
+content_hash collisions (8 rows), content-sniff signature gaps (15
+ADGM_RA-F rows), version_str outlier (1 FSRA row — `VER10311025`,
+appears to be malformed `VER10.311025` missing the dot). Worth a future
+Wave A+ refinement session addressing all three in one pass.
+
+Wave B sprint pacing came in well under the memo's "4 sessions" estimate
+— A5.A/D/E combined into one Session 1 (small, mechanical, all in
+`storage/db.py`); A5.B as standalone Session 2 (architectural, expanded
+from 5 to 11 formats after Step 2 discovery surfaced legacy shapes).
+
+Carries surfaced during Wave B:
+- qanun-api consumer refactor (2 sites at `services/change_detection_service.py:54, 200`)
+  pending a cross-repo Python sharing decision
+- A5.B unknown-sample pattern refinement candidates (DFSA `CMC 1`, BVI
+  multi-word) — global coverage is ≥95% but not 100%
+
+Wave C opens next: source_url backfill (A5.C + A5.C.1). 2-3 interactive
+sessions per the memo. Wave D drafting (queue-format pilot via O1 V1)
+can begin in parallel; Wave D execution waits on Wave C closure.
