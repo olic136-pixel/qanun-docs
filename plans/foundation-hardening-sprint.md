@@ -74,3 +74,31 @@ landed, recovered with `git reset --soft HEAD~1` + `git restore --staged`
 The discipline that prevented bad code reaching origin: explicit-path
 `git add` (Memory #21 in operational hygiene), never `git add -A` in
 adgm-corpus. Future Wave sessions retain this discipline.
+
+## Wave A — complete (15 May 2026)
+
+Wave A closed in 5 register items + parallel-OK F6 across one extended CCD
+day (Sessions 1, 2, 3a, 3b, 4 plus register touches 1.5, 2.5, 3b.5, 4.5):
+
+| Item | Code session |
+|---|---|
+| A1-content-hash-aware-invariant | Session 1 |
+| A7-FSRA-cross-entry-point-dedup | Session 1 (subsumed into data-layer gate) |
+| A7-FSRA-source-URL-dedup | Session 1 (scope broadened to universal write-path) |
+| A7-FSRA-pipeline-size-sanity | Session 2 Part B |
+| A7-FSRA-content-sniff-classifier | Session 3b |
+| A8-WRITE-PATH-COVERAGE | Session 4 |
+| F6 (parallel-OK) | Session 2 Part A |
+
+Structural shape post-Wave-A: all corpus write operations route through
+`insert_document` → `assert_write_invariants` → Gates 1, 2, 4 (Gate 3
+size-floor in `write_rulebook`). AST-scan meta-test prevents future
+bypass; `add_jurisdiction.py` Step 16 validates signature registration
+per jurisdiction.
+
+Status-at-a-Glance table refresh + per-family aggregation methodology
+documentation: separate housekeeping session immediately following Wave A
+closure.
+
+Wave B opens next: combined A5.A + A5.D + A5.E session, then standalone
+A5.B (canonical `section_ref` decomposition).
