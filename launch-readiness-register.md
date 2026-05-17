@@ -278,7 +278,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A5.A — Normalise rulebook_code lookups across the codebase
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave B Session 1 — `normalise_rulebook_code(source_entity, code)` helper landed in `adgm_corpus.storage.db`. Canonical normalisation: strip whitespace, upper-case letters, map legacy sentinels (`<NULL>`/`null`/`None`) to empty string, optional per-entity aliases via `NORMALISATION_ALIASES` dict. `insert_document` routes rulebook_code through the helper before `assert_write_invariants` fires so Gates 1/2/4 see the canonical form. NORMALISATION_ALIASES starts empty per Step 2 discovery — zero variance in current data (all `is_current=1` rulebook_codes already upper-case + trimmed + no sentinel forms). 8 unit tests in `TestNormaliseRulebookCode` cover none/empty/whitespace/case/sentinels/hyphens/dots/underscores + integration test confirming normalisation fires before invariant checks.]
 - **Size:** Day
 - **Dependencies:** None
 - **Source:** A5 audit memo, 12 May 2026
@@ -326,7 +326,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A5.D — content_hash pre-compute on INSERT
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave B Session 1 — SHA-256 from `full_text` computed in `adgm_corpus.collection.scrapers.adgm_rulebooks.write_rulebook` before `insert_document` call; scraper-provided `content_hash` is overridden with WARN log on mismatch. **Discovery nuance:** `_doc_dict_from_pdf` was already computing full_text hashes for the FSRA path (the register entry's stated gap was narrower than discovery confirmed — Memory #23 finding). The `write_rulebook` guard becomes defense-in-depth for FSRA and primary protection for any future scraper that builds doc dicts outside `_doc_dict_from_pdf`. 2 unit tests cover the hash-override behavior + empty-full_text-preserves-scraper-hash. 7 pre-existing tests in `test_refresh_rulebooks`/`test_idempotence_refresh`/`test_reextract_citations_for_flipped_versions` migrated from asserting scraper-literal hashes (e.g. `'h_new'`) to computing and asserting the canonical full_text-derived hash.]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** A5 audit memo, 12 May 2026
@@ -337,7 +337,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A5.E — version_str canonical type + validator
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave B Session 1 — `VERSION_STR_PATTERNS` dict added to `adgm_corpus.storage._signatures` alongside `RULEBOOK_SIGNATURES`. Registered patterns: FSRA `^VER\d{2}\.\d{6}$` (88% match against current rows), DFSA `^VER\d+-\d+$` (100% match). ADGM_RA skipped at calibration (3 rows, no pattern reaches 80% threshold per Step 2 discovery — VER03012025 / VER01071024 / Feb 2025 fail clustering). 12 other entities have entirely empty `version_str` (exempt from Gate 5 by design — heterogeneous or version-less corpora). Gate 5 in `assert_write_invariants` raises `VersionStrFormatError` on mismatch when entity is registered and incoming version_str is non-empty. 5 unit tests in `TestVersionStrFormat` cover match/mismatch/unregistered-entity-skips/empty-version_str-skips/registered-but-empty. New global `test_global_version_str_matches_patterns` xfail-strict — predicts and confirms 1 row failure: FSRA `'VER10311025'` (appears to be malformed `'VER10.311025'` missing the period). Memory #25 calibration-gap pattern — un-xfail when the outlier row is fixed in a future Wave A+ refinement session. 16 pre-existing fixture errors resolved during apply: default fix was `version_str=''` (skips Gate 5) for tests not specifically validating version_str behavior; canonical-pattern values applied where the test was about version_str semantics.]
 - **Size:** Half-day
 - **Dependencies:** None (low priority per A5 memo)
 - **Source:** A5 audit memo, 12 May 2026
