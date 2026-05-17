@@ -783,6 +783,18 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
+### A8-WRITE-PATH-COVERAGE — Structural enforcement of write-path routing
+
+- **Status:** Done [2026-05-15, Wave A Session 4 — AST-scan meta-test at `tests/acceptance/test_write_path_coverage.py` enforces that all production code under `adgm_corpus/` and `scripts/` routes write operations through `insert_document`, never `_insert_document_raw` directly (Name/Attribute/ImportFrom references all caught); exempts `adgm_corpus/storage/db.py` (implementation site); `tests/` not scanned (legitimate direct-primitive testing allowed). Pairs with `scripts/add_jurisdiction.py` Step 16: validates content-sniff signature registration for each jurisdiction (PASS if `RULEBOOK_SIGNATURES` has entries for `source_entity`, WARN if empty or absent, no FAIL because heterogeneous content is legitimate). Together: meta-test catches future bypasses at CI; Step 16 catches signature-omission at jurisdiction-onboarding gate-check.]
+- **Size:** Bounded session (~1h)
+- **Dependencies:** A1 + A7.* Wave A items (this is the structural enforcer that ensures they can't be bypassed)
+- **Source:** Foundation Hardening Sprint Wave A — item 5 of 5; scope identified during Session 4 planning
+- **Description:** Without structural enforcement, future scrapers or migration scripts could silently bypass Gates 1-4 by calling `_insert_document_raw` directly. The AST-scan meta-test makes this impossible without explicit acknowledgment — any reference to `_insert_document_raw` outside the implementation site fails CI. Step 16 of `add_jurisdiction.py` extends the 15-step gate-checker to include "content-sniff signatures registered" — a soft check (WARN not FAIL) because heterogeneous-content jurisdictions legitimately have no signatures.
+- **Acceptance:** Meta-test passes with zero violations on current state. Step 16 fires correctly: VARA shows PASS with 12 signatures (matches Session 3a memo). `--list-steps` enumerates 16 entries.
+- **Notes:** Cosmetic carry — `scripts/add_jurisdiction.py --list-steps` header still prints "15 Steps" hardcoded string (list body correctly shows 16). Trivial fix for future housekeeping prompt.
+
+---
+
 # Category B — Content Coverage
 
 What the corpus actually contains.
