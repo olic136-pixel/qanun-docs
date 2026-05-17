@@ -38,3 +38,39 @@ Parallel-OK during sprint:
 ## Tracking
 
 Per-wave status updates land in the register against each item's `Status:` field. This memo establishes scope and the acceptance gate only; the register is the source of truth. First Wave A session opens with a `corpus_status()` check and a register read-through.
+
+## Lessons during the sprint
+
+Lessons surfaced during Wave A sessions. Captured here rather than as separate
+register entries because they apply to remaining-wave session discipline,
+not to register-tracked deliverables.
+
+### Pre-flight pytest baselines on pollution-prone code
+
+Session 2 surfaced a process trap: running the pytest baseline at Step 2(e)
+*before* fixing F6 polluted the working tree with the very artefacts that
+F6's fix prevents. Subsequent post-fix verification then saw the leftover
+pollution and chased it as an apparent regression. The fix had worked from
+iteration 1; the appearance of failure was a baseline artefact.
+
+Mitigation for remaining Wave A/B/C/D/E sessions: when the session work is
+a bug fix whose test gate is the bug itself (the F6 family — bugs that
+contaminate working state during pytest), either (a) clean the working tree
+between baseline and verification with `git checkout -- .` and a
+targeted `rm -rf` of known-polluted paths, or (b) skip the pre-fix
+baseline and treat the post-fix run as authoritative. Document which
+approach was taken in the session paste-back.
+
+### Memory #21 caught a near-miss commit
+
+During Session 2's diagnostic detour, an over-broad `find … | xargs rm -rf`
+deleted test files that had been recovered by `git checkout -- tests/ ucie/`
+— but the recovery also wiped Part A edits. After re-applying, the first
+commit attempt staged the deletions of `lexis/tests/*` alongside the
+intended Part A files. Caught by `git status` review before the commit
+landed, recovered with `git reset --soft HEAD~1` + `git restore --staged`
++ `git checkout --`. Published master is clean.
+
+The discipline that prevented bad code reaching origin: explicit-path
+`git add` (Memory #21 in operational hygiene), never `git add -A` in
+adgm-corpus. Future Wave sessions retain this discipline.

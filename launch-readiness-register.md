@@ -683,7 +683,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7-FSRA-pipeline-size-sanity — Fail-loud size-floor scraper guard
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 2 Part B — SizeFloorError raised by assert_write_invariants when new full_text < SIZE_FLOOR_RATIOS[entity] × prior; scope universal not FSRA-only per Oliver directive 15 May 2026]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** Bundle 2 A7-FUNDS forensic memo §9, 13 May 2026
@@ -1385,7 +1385,7 @@ Sprint sections not yet landed.
 
 ### F6 — TemplateDiscoveryAgent test isolation: `emit_suite_json` writes to real path
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 2 Part A — emit_suite_json now honours self.work_dir; working_tree_clean_check fixture asserts on teardown]
 - **Size:** ~1 bounded session
 - **Source:** D3.1 paste-back, 15 May 2026 — pytest gate caught Option C smoke artifact regression + untracked tier2-5.json pollution
 - **Description:** `emit_suite_json` writes to hardcoded `ucie/jurisdictions/<JUR>/discovered_templates/` instead of agent's `self.work_dir`. Pytest fixtures pass `work_dir=tmp_path` expecting isolation. Fix: refactor `emit_suite_json` to honour `self.work_dir` (or accept `output_root` kwarg); add fixture-level assertion no tracked files change after test run.
