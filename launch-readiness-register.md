@@ -86,7 +86,7 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 7 | 1 | 20 | 28 |
+| A — Data Integrity | 6 | 1 | 21 | 28 |
 | B — Content Coverage | 3 | 3 | 5 | 11 |
 | C — Code Quality | 6 | 0 | 6 | 12 |
 | D — Feature Completion | 10 | 1 | 1 | 12 |
@@ -98,9 +98,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
 | **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
 | **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **M — Corpus Integrity & Completeness** | 20 | 0 | 4 | 24 |
+| **M — Corpus Integrity & Completeness** | 21 | 0 | 4 | 25 |
 | **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
-| **Total** | **109** | **6** | **81** | **196** |
+| **Total** | **109** | **6** | **82** | **197** |
 
 **Post-overnight triage movements (15 May 2026, bounded session — 3 repos: adgm-corpus + qanun-docs + qanun-orchestrator):**
 - **New Category M — Corpus Integrity & Completeness.** The appended L-category block at the tail of this register (added pre-overnight as a drop-in spec for L1-L18) is renamed/renumbered M1-M18 — leaves the canonical L category (End-to-End Validation, L1-L8) untouched. M-category structure: M.A Internal Integrity (M1-M8) / M.B External Completeness (M9-M17) / M.C Acceptance Gate (M18) + 3 new entries M19-M21.
@@ -635,7 +635,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7-FSRA-source-URL-dedup — Source-URL-based deduplication in scraper write path
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 1 — scope broadened to universal write-path per Oliver directive 15 May 2026]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo (`/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-ROOT.md`)
@@ -647,7 +647,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7-FSRA-cross-entry-point-dedup — Content-hash-based deduplication in scraper write path
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 1 — subsumed into assert_write_invariants]
 - **Size:** Day
 - **Dependencies:** None
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo
@@ -659,7 +659,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A1-content-hash-aware-invariant — Extend A1 single-current invariant to include content-hash awareness
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 1]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — A7.ROOT investigation memo
@@ -1389,7 +1389,7 @@ Sprint sections not yet landed.
 - **Size:** ~1 bounded session
 - **Source:** D3.1 paste-back, 15 May 2026 — pytest gate caught Option C smoke artifact regression + untracked tier2-5.json pollution
 - **Description:** `emit_suite_json` writes to hardcoded `ucie/jurisdictions/<JUR>/discovered_templates/` instead of agent's `self.work_dir`. Pytest fixtures pass `work_dir=tmp_path` expecting isolation. Fix: refactor `emit_suite_json` to honour `self.work_dir` (or accept `output_root` kwarg); add fixture-level assertion no tracked files change after test run.
-- **Notes:** Same family as Foundation Hardening write-path discipline, but test infrastructure not corpus integrity, so F not A. Standalone — runs in parallel with any wave.
+- **Notes:** Same family as Foundation Hardening write-path discipline, but test infrastructure not corpus integrity, so F not A. Standalone — runs in parallel with any wave. UPDATE 15 May 2026: bit again during Wave A Session 1 pytest gate; explicit-path `git add` prevented pollution from being committed but the working-tree leak persists. Third occurrence in 2 days — recommend prioritising for the next available bounded session.
 
 ---
 
@@ -3018,7 +3018,19 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-**M-category total: 24 register items** (8 internal + 9 external + 1 acceptance + 4 remediation surfaced post-overnight + post-triage).
+### M25 — Historical content_hash collisions across rulebook tuples (8 rows)
+
+- **Status:** Open — feeds into Wave D (citation integrity) of Foundation Hardening Sprint, but logically a Wave A residual
+- **Size:** Investigation + remediation, sized after triage (~1-2 bounded sessions)
+- **Dependencies:** None
+- **Source:** Wave A Session 1 backfill dry-run, 15 May 2026 — surfaced 8 existing is_current=1 rows sharing content_hash across different (source_entity, rulebook_code) tuples. Tracked as xfail-strict reason in `tests/acceptance/test_write_invariants.py::test_global_no_content_hash_collisions`.
+- **Description:** Eight document rows in current corpus.db state share content_hash with at least one other is_current=1 row under a different (source_entity, rulebook_code) tuple. Breakdown surfaced by the dry-run: UAE_FEDERAL/FEDERAL-LAW vs FSRA/null (~4-5 rows) and ADGM_RA/ADGM-RA-RULES or ADGM-RA-DPR vs FSRA/null (~3 rows). These are the residual A7.ROOT artefacts the new write-path gate cannot retroactively heal — the new `assert_write_invariants` function blocks future ingestion of such patterns, but pre-existing rows remain. Per-collision triage required: for each collision pair, determine which row is canonical (e.g. UAE federal law correctly classified under UAE_FEDERAL vs incorrectly under FSRA/null), flip the wrong-classification row to is_current=0 (or delete if pure duplicate), and document the decision.
+- **Acceptance:** Zero rows in `SELECT content_hash, COUNT(*) FROM documents WHERE is_current = 1 AND content_hash != '' GROUP BY content_hash HAVING COUNT(DISTINCT source_entity || '/' || COALESCE(rulebook_code, '')) > 1`. `test_write_invariants.py::test_global_no_content_hash_collisions` xfail marker removed and test passes non-strict.
+- **Notes:** Functionally a Wave A residual but architecturally similar to M21/M22 (corpus-state remediation surfaced by an integrity probe). Sequencing flexibility: can be done any time after Session 1 lands; does not block Wave A Sessions 2-5. Recommended scheduling: alongside Wave D citation integrity work since the per-row triage pattern overlaps.
+
+---
+
+**M-category total: 25 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
