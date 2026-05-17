@@ -671,7 +671,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7-FSRA-content-sniff-classifier — Body-vs-label integrity check at write time
 
-- **Status:** Open
+- **Status:** Done [2026-05-15, Wave A Session 3b — content-sniff classifier (Gate 4) added to assert_write_invariants; RULEBOOK_SIGNATURES dict generated from Session 3a calibration memo; length-threshold opt-out per Oliver authorisation (entities whose full_text <= SIGNATURE_SCAN_CHARS skip content-sniff by structural rule, not test accommodation); xfail-strict on ADGM_RA/ADGM-RA-F for 15-row calibration gap pending Wave A+ refinement]
 - **Size:** Day
 - **Dependencies:** None
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-FUNDS-doc-199-widened.md`
