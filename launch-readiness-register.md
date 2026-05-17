@@ -86,21 +86,27 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
-| A — Data Integrity | 6 | 1 | 21 | 28 |
-| B — Content Coverage | 3 | 3 | 5 | 11 |
-| C — Code Quality | 6 | 0 | 6 | 12 |
-| D — Feature Completion | 10 | 1 | 1 | 12 |
-| E — Operational Hygiene | 9 | 0 | 1 | 10 |
-| F — Test Coverage | 2 | 1 | 3 | 6 |
-| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | 4 | 0 | 11 | 15 |
-| **H — Per-Jurisdiction Corpus & Case Law** | 10 | 0 | 12 | 22 |
-| **I — Governance Suite Mode** | 0 | 0 | 17 | 17 |
-| **J — Per-Jurisdiction Templates & Suites** | 20 | 0 | 0 | 20 |
-| **K — Commercial Readiness** | 10 | 0 | 0 | 10 |
-| **L — End-to-End Validation** | 8 | 0 | 0 | 8 |
-| **M — Corpus Integrity & Completeness** | 21 | 0 | 4 | 25 |
-| **O — Overnight Orchestration** | 0 | 0 | 1 | 1 |
-| **Total** | **109** | **6** | **82** | **197** |
+| A — Data Integrity | 3 | 0 | 5 | 8 |
+| B — Content Coverage | 4 | 3 | 2 | 9 |
+| C — Code Quality | 5 | 0 | 7 | 12 |
+| D — Feature Completion | 9 | 2 | 1 | 12 |
+| E — Operational Hygiene | 8 | 0 | 2 | 10 |
+| F — Test Coverage | 2 | 2 | 2 | 6 |
+| **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | **4** | **0** | **11** | **15** |
+| **H — Per-Jurisdiction Corpus & Case Law** | **13** | **0** | **9** | **22** |
+| **I — Governance Suite Mode** | **0** | **0** | **17** | **17** |
+| **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **0** | **20** |
+| **K — Commercial Readiness** | **10** | **0** | **0** | **10** |
+| **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
+| **M — Corpus Integrity & Completeness** | **21** | **0** | **4** | **25** |
+| **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
+| **Total** | **107** | **7** | **61** | **175** |
+
+### Methodology — per-family aggregation
+
+The Status-at-a-Glance counts above use **per-family aggregation**: each register entry has a family ID — the first `[A-Z]\d+` chunk of its prefix. `A1-content-hash-aware-invariant`, `A7.B.SECTIONS`, and `A7-FSRA-source-URL-dedup` all map to families `A1`, `A7`, and `A7` respectively. Both authoring formats are recognised: `### ` heading entries (most categories) and `- **` bullet entries (M-category post-overnight triage entries M1-M21 plus indented M2a-f sub-bullets). A family's status is the worst of its sub-items: **Open** if any sub-item is Open / Partial / In Progress / Scoping; otherwise **Blocked** if any sub-item is Blocked; otherwise **Done**. The table counts families, not individual entries.
+
+This rule resolves the methodology-divergence finding surfaced across Sessions 0, 1.5, 2.5, and 3b.5 (per-entry vs per-family inconsistency in prior table authorship). Documented per Foundation Hardening Sprint Wave A closure direction (15 May 2026). Rebuild script preserved at `/tmp/rebuild_table.py` if a future audit needs to re-derive counts.
 
 **Post-overnight triage movements (15 May 2026, bounded session — 3 repos: adgm-corpus + qanun-docs + qanun-orchestrator):**
 - **New Category M — Corpus Integrity & Completeness.** The appended L-category block at the tail of this register (added pre-overnight as a drop-in spec for L1-L18) is renamed/renumbered M1-M18 — leaves the canonical L category (End-to-End Validation, L1-L8) untouched. M-category structure: M.A Internal Integrity (M1-M8) / M.B External Completeness (M9-M17) / M.C Acceptance Gate (M18) + 3 new entries M19-M21.
