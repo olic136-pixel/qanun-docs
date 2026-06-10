@@ -17,6 +17,7 @@ The register had not been touched since 17 May 2026 (24 days stale per PF-1 §6)
 - **Operational-model correction (S1-0):** Hetzner runs a 7th corpus-touching unit beyond the 6-timer model — `qanun-corpus-scheduler.service`, a **persistent corpus-WRITING service** (`scripts/run_scheduler.py`, internal collection schedule incl. daily adgm_courts 09:00 UTC; it performed the 09-Jun courts ingest). It must join any future ingestion FREEZE_SET. Also: the adgm-corpus production venv is `.venv/` not `venv/` (Python 3.11.15).
 - **Test-baseline note:** 4 stale `xpassed` markers in adgm-corpus (`test_search_quality` COBS / FUNDS / MKT / VARA-MC params) are now genuinely passing — unxfail housekeeping pending (30-May fix-list item 15; out of R1 scope). New known regression: `test_search_quality[systems and controls…-GEN-GEN]` fails post-R1 (content-currency search regression, root-caused; see M28).
 - **Status-at-a-Glance refreshed:** C 5→7 Open / 12→14 Total; E 8→9 Open / 10→11 Total; M 22→25 Open / 26→29 Total; **Total 108→114 Open / 7 Blocked / 61 Done / 176→182 Total.** No family flips to Done this session — the audited work closes the 30-May audit's LC11 criterion and LC1's data layer, which map to sub-item-level progress (M5 partial, H3 re-affirmed, A7.B1.SUPERSEDE FSMR portion) rather than whole-family closures.
+- **LC13 (secrets hygiene) accepted-risk addendum (2026-06-10, same-day post-reconciliation):** MAX-1 hygiene scan (trufflehog) returned **VERIFIED** live-secret verdicts in `adgm-corpus` (github olic136-pixel): Anthropic/OpenAI/Pinecone keys in `.env`/`.env.bak` at commit `b5a5fcc5` (deleted at HEAD, live in pushed history) and AWS/OpenAI/Pinecone keys in `infrastructure/launchd/io.qanun.corpus-scheduler.plist` at commit `27df4371` and still at HEAD (code fix stripping the plist to env-references landing on `sprint/max1-hygiene-20260610`). Client decision 2026-06-10: **key rotation declined — accepted risk, client aware. LC13 remains FAIL for the external-team-onboarding gate. History scrub: parked, companion decision to rotation.** Full record under **E1** (Category E). No count changes — E1 stays Open.
 
 **v1.4 changes from v1.3 (Phase 2 prioritisation session):**
 
@@ -1255,13 +1256,18 @@ Sprint sections not yet landed.
 
 ---
 
-### E1 — API key rotation
+### E1 — API key rotation — **ROTATION DECLINED [2026-06-10] — ACCEPTED RISK (LC13 FAIL stands)**
 
-- **Status:** Open — user-action surfaced [2026-05-14]
+- **Status:** Open — accepted risk [2026-06-10]: rotation declined by client; LC13 (secrets hygiene) remains FAIL for the external-team-onboarding gate. Held Open as a standing accepted-risk record, not pending work.
 - **Size:** Half-day (user dashboard work ~15-20 min; CCD verification afterwards)
 - **Dependencies:** None
 - **Description:** Unchanged from v1.0 (overdue since 12 May per the 48-hour Section 0 spec).
 - **Sprint 2 Session 1 status:** CCD cannot generate provider keys via dashboards. User-action memo surfaced at `/tmp/qanun-overnight/sprint-2-session-1/E1-API-KEY-ROTATION-USER-ACTION.md` with step-by-step rotation instructions for Anthropic / OpenAI / Pinecone / Voyage. Hetzner rotation deferred to Sprint 10 per CLAUDE.md deploy procedure. Mark Done once user confirms rotation + CCD verifies local `.env` keys work.
+- **[2026-06-10 addendum — MAX-1 hygiene scan + client decision (LC13):**
+  - **Scan result (MAX-1 hygiene scan, trufflehog, 2026-06-10 — finding classes only, no key values reproduced here):** `adgm-corpus` (github olic136-pixel) carries trufflehog-**VERIFIED** (live) secrets in two finding classes: (1) Anthropic + OpenAI + Pinecone API keys in `.env` / `.env.bak` at commit `b5a5fcc5` — files deleted at HEAD but **live in pushed history** (cross-ref E6, the b5a5fcc orphan-branch investigation); (2) AWS + OpenAI + Pinecone keys in `infrastructure/launchd/io.qanun.corpus-scheduler.plist` at commit `27df4371` **and still present at current HEAD**.
+  - **Code fix (plist at HEAD):** the scheduler plist is being stripped to environment-variable references — fix landing 2026-06-10 on adgm-corpus branch `sprint/max1-hygiene-20260610`. This removes the at-HEAD exposure only; history exposure (both finding classes) is untouched by the code fix.
+  - **Decision record (client, 2026-06-10):** Key rotation declined by client 2026-06-10 — accepted risk, client aware. LC13 remains FAIL for the external-team-onboarding gate. History scrub: parked, companion decision to rotation.
+  - **Register effect:** E1 stays Open (accepted risk ≠ Done — the risk persists and gates external-team onboarding); no Status-at-a-Glance count changes.**]**
 
 ---
 
