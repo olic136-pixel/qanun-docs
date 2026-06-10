@@ -1,9 +1,23 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.4
-**Date:** 13 May 2026 (evening, Phase 2 prioritisation session — full v1 scope expansion)
+**Version:** 1.5
+**Date:** 10 June 2026 (MAX-1 register reconciliation — PF-1 / S1 / R1 audit sessions of 10 June 2026 recorded)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.5 changes from v1.4 (10 June 2026 — MAX-1 reconciliation session):**
+
+The register had not been touched since 17 May 2026 (24 days stale per PF-1 §6). Three audited sessions ran on 2026-06-10 and are reconciled here. Evidence logs: `audits/PREFLIGHT_20260610.md` (PF-1, read-only cross-machine audit against the 30-May NO-GO baseline `audits/LAUNCH_READINESS_20260530_0741.md`), `audits/S1_DEPLOY_20260610.md` (S1, Wave A/B gate-code deploy to Hetzner), `audits/R1_REMEDIATION_20260610.md` (R1, LC1 duplicate-current data remediation).
+
+- **LC11 (30-May audit code-sync criterion) CLOSED by S1.** The Wave A/B integrity-gate code that was "Done" in this register since 15-17 May but never deployed (30-May audit finding) is now live on Hetzner: 15 files deployed (7 DIFFER + 8 MISSING incl. `storage/_signatures.py`, `storage/_section_ref.py`), all sha-verified; local and Hetzner `adgm_corpus` trees now **sha-identical at master `e95ed11`**. HET-IMPORT-OK + GATE-SMOKE-OK (`BodyLabelMismatchError` fired on a synthetic duplicate) prove Gates 1-5 load and fire under the production venv. The "Done = merged locally, not deployed" caveat on Wave A/B items (A5.A/A5.B/A5.D/A5.E, A7-FSRA-* gates, A1-content-hash-aware-invariant, A8) is hereby retired. (S1-3/S1-4/§8.)
+- **LC1 (duplicate-current) data remediation applied by R1, both machines.** Hetzner: real duplicate-current rulebook groups **9 → 0** (57 row-updates: 45 retirements + 5 reclassify-keeps + 7 keeper bumps; zero DELETE/INSERT); duplicate-current section groups **7607 → 30**; current total 2314 → 2269. Local mirror: 15 row-updates; current total 2265 → 2254; FSRA|OTHER residual → 0. **`test_single_current_invariant` now 10/10 green on both machines** (was 2 failed: FSRA-GEN, FSRA-GLO). Keepers: GEN VER14.210526, GLO Ver28.210526, COBS Ver23.290426, AML Ver11.210526, FUNDS Ver12.290426, MIR VER12.270426, PRU VER20.270426, FSMR Ver29.210526, BVI-BCA 2756, BVI-REGS 2589. Snapshots: `corpus_pre_s1_20260610.db` + `corpus_pre_r1_20260610.db` (Hetzner), `corpus.db.pre-r1-20260610-124057` (local). (R1-3/R1-4/R1-6.)
+- **El Salvador empty-code rows resolved (Option 3, local mirror):** 2709/2711 → SV-LEAD retired sup→2378; 2710 → SV-MISC kept current; 2732 → SV-MISC retired. EL_SALVADOR empty-code group gone on Hetzner. H3 note updated. (R1-1/R1-3.)
+- **FSMR lineage resolved:** keeper is now doc 2821 "Ver29.210526" (OTHER→FSMR reclassify) on Hetzner / 2835 local; 2303 (stub), 99 (the N+3-era keeper) and 2829 retired sup→2821. A7.B1.SUPERSEDE note updated. (R1-0 finding 2, R1-3.)
+- **6 new items added:** **M27** (FSRA OTHER-48 re-bucketing, deferred from R1 for source_entity authority), **M28** (re-parse + re-index bundle — **now REQUIRED**, GEN search-quality regression is live evidence on both machines), **M29** (cross-entity bare-ref citation collision DFSA vs FSRA), **C13** (qanun-corpus-scheduler SIGTERM exit-1 clean-shutdown bug), **C14** (reextract `--since-minutes` ISO-T cutoff bug), **E11** (`scripts/` never deploys to Hetzner).
+- **Operational-model correction (S1-0):** Hetzner runs a 7th corpus-touching unit beyond the 6-timer model — `qanun-corpus-scheduler.service`, a **persistent corpus-WRITING service** (`scripts/run_scheduler.py`, internal collection schedule incl. daily adgm_courts 09:00 UTC; it performed the 09-Jun courts ingest). It must join any future ingestion FREEZE_SET. Also: the adgm-corpus production venv is `.venv/` not `venv/` (Python 3.11.15).
+- **Test-baseline note:** 4 stale `xpassed` markers in adgm-corpus (`test_search_quality` COBS / FUNDS / MKT / VARA-MC params) are now genuinely passing — unxfail housekeeping pending (30-May fix-list item 15; out of R1 scope). New known regression: `test_search_quality[systems and controls…-GEN-GEN]` fails post-R1 (content-currency search regression, root-caused; see M28).
+- **Status-at-a-Glance refreshed:** C 5→7 Open / 12→14 Total; E 8→9 Open / 10→11 Total; M 22→25 Open / 26→29 Total; **Total 108→114 Open / 7 Blocked / 61 Done / 176→182 Total.** No family flips to Done this session — the audited work closes the 30-May audit's LC11 criterion and LC1's data layer, which map to sub-item-level progress (M5 partial, H3 re-affirmed, A7.B1.SUPERSEDE FSMR portion) rather than whole-family closures.
+- **LC13 (secrets hygiene) accepted-risk addendum (2026-06-10, same-day post-reconciliation):** MAX-1 hygiene scan (trufflehog) returned **VERIFIED** live-secret verdicts in `adgm-corpus` (github olic136-pixel): Anthropic/OpenAI/Pinecone keys in `.env`/`.env.bak` at commit `b5a5fcc5` (deleted at HEAD, live in pushed history) and AWS/OpenAI/Pinecone keys in `infrastructure/launchd/io.qanun.corpus-scheduler.plist` at commit `27df4371` and still at HEAD (code fix stripping the plist to env-references landing on `sprint/max1-hygiene-20260610`). Client decision 2026-06-10: **key rotation declined — accepted risk, client aware. LC13 remains FAIL for the external-team-onboarding gate. History scrub: parked, companion decision to rotation.** Full record under **E1** (Category E). No count changes — E1 stays Open.
 
 **v1.4 changes from v1.3 (Phase 2 prioritisation session):**
 
@@ -88,9 +102,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 |---|---|---|---|---|
 | A — Data Integrity | 3 | 0 | 5 | 8 |
 | B — Content Coverage | 4 | 3 | 2 | 9 |
-| C — Code Quality | 5 | 0 | 7 | 12 |
+| C — Code Quality | 7 | 0 | 7 | 14 |
 | D — Feature Completion | 9 | 2 | 1 | 12 |
-| E — Operational Hygiene | 8 | 0 | 2 | 10 |
+| E — Operational Hygiene | 9 | 0 | 2 | 11 |
 | F — Test Coverage | 2 | 2 | 2 | 6 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | **4** | **0** | **11** | **15** |
 | **H — Per-Jurisdiction Corpus & Case Law** | **13** | **0** | **9** | **22** |
@@ -98,9 +112,9 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **0** | **20** |
 | **K — Commercial Readiness** | **10** | **0** | **0** | **10** |
 | **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
-| **M — Corpus Integrity & Completeness** | **22** | **0** | **4** | **26** |
+| **M — Corpus Integrity & Completeness** | **25** | **0** | **4** | **29** |
 | **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
-| **Total** | **108** | **7** | **61** | **176** |
+| **Total** | **114** | **7** | **61** | **182** |
 
 ### Methodology — per-family aggregation
 
@@ -306,7 +320,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 - **Source:** A5 audit memo, 12 May 2026 (supersedes v1.0's A4)
 - **Description:** Wave C Session 1 discovery refined the scope: **2,029 local rows / 2,083 Hetzner rows** remain after A5.C.1 closure. Per-entity breakdown (local): **DIFC_COURTS 1066 rows** (bailii.org URL pattern reversal — single largest sub-scope), DIFC ~5, ADGM ~5, FSRA ~22, UAE_FEDERAL 5 (mis-classified historicals → ADGM portal), PANAMA_SMV 5 (SMV docs), MONDAQ 2 (commentary HTML — likely unresolvable to portal URL), PANAMA 1 (SMV PDF). Recovery strategies vary by source_entity: (a) local_path filename reversal for scraped portals (PANAMA_SMV, DIFC, ADGM, UAE_FEDERAL, PANAMA), (b) DIFC_COURTS bailii URL reconstruction (largest sub-scope; needs dedicated strategy), (c) hand-resolution for MONDAQ commentary tail. **Sequence dependency on M26:** Wave C Session 2 (bulk apply) waits on M26 resolution (local↔Hetzner drift; 54-row delta + UNKNOWN entity on Hetzner only). Applying recovery strategies to diverged corpus snapshots risks widening the gap.
 - **Acceptance:** Per source_entity: every is_current=1 row has non-empty source_url. Recovery method documented per row category. Audit script verifies completeness.
-- **Notes:** This is the regulatory-credibility item — a tool whose differentiator is grounded citations cannot ship with empty provenance.
+- **Notes:** This is the regulatory-credibility item — a tool whose differentiator is grounded citations cannot ship with empty provenance. **[2026-06-10 PF-1:** scope re-confirmed unchanged — missing source_url 2093/2314 (90.4%) Hetzner / 2043/2265 (90.2%) local, proportionally identical to the 30-May baseline (`audits/PREFLIGHT_20260610.md` §3h). M26 sequence dependency stands.**]**
 
 ---
 
@@ -763,7 +777,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ### A7.B1.SUPERSEDE — Flip-only is_current pass for Bin 1 + Bin 2 internal duplicates + FSMR
 
-- **Status:** Partial-Done — FSMR variant resolved in N+3 (doc 2303 → is_current=0, superseded_by=99). Bin 1 + Bin 2 internal duplicates remain Open.
+- **Status:** Partial-Done — FSMR variant resolved in N+3 (doc 2303 → is_current=0, superseded_by=99). Bin 1 + Bin 2 internal duplicates remain Open. **[2026-06-10 R1 update:** the N+3 FSMR end-state is superseded — R1 established doc 2821 "Ver29.210526" (OTHER→FSMR reclassify) as the FSMR keeper and retired 2303 (stub), 99 (the N+3-era keeper) and 2829 with superseded_by=2821 on Hetzner; local mirror keeper is 2835. FSMR doc-level lineage is now fully clean on both machines (see `audits/R1_REMEDIATION_20260610.md` R1-0 finding 2 + R1-3/R1-6). Section-level caveat: keeper 2821/2835 sections carry ingest-time 'OTHER Chapter N' prefixes — tracked under M28. Bin 1 + Bin 2 internal duplicates remain Open — they did not appear in R1's Hetzner residual scan, but R1 did not positively verify them either.**]**
 - **Size:** Half-day for remaining Bin 1 + Bin 2 portion
 - **Priority:** Medium
 - **Dependencies:** A7.B1 Done (N+2b)
@@ -1092,6 +1106,30 @@ Known-to-be-wrong code.
 
 ---
 
+### C13 — qanun-corpus-scheduler SIGTERM clean-shutdown bug (exit 1 on intentional stop)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** S1 deploy session, 10 June 2026 — `audits/S1_DEPLOY_20260610.md` S1-1 (re-confirmed at R1-1, `audits/R1_REMEDIATION_20260610.md`)
+- **Description:** `qanun-corpus-scheduler.service` (persistent corpus-writing service on Hetzner, `scripts/run_scheduler.py`) exits 1 on every `systemctl stop`: its SIGTERM handler calls APScheduler `shutdown()` twice, the second call raises `SchedulerNotRunningError`, and the unit lands in `failed` state instead of `inactive` (journal-confirmed 2026-06-10 10:52:15). Benign in practice — an intentional `systemctl stop` does not trigger `Restart=on-failure` and a subsequent `start` works cleanly — but every freeze/unfreeze cycle leaves a misleading `failed` unit state that future audits must explain away.
+- **Acceptance:** SIGTERM handler made idempotent (guard the second `shutdown()` call or use `scheduler.running` check). `systemctl stop qanun-corpus-scheduler` leaves the unit `inactive (dead)`, exit 0; journal shows clean shutdown. Regression test for the double-shutdown path.
+- **Notes:** Discovery context: S1-0 also surfaced that this unit was absent from the 6-timer operational model entirely — it is a 7th, persistent, corpus-WRITING unit (internal schedule incl. adgm_courts daily 09:00 UTC; it performed the 09-Jun courts ingest PF-1 attributed to "timers"). Any future ingestion-freeze procedure must stop the **service** (it has no timer) alongside the announcements + version-check timers.
+
+---
+
+### C14 — Reextract-citations `--since-minutes` ISO-T cutoff bug (lexical timestamp comparison)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** R1 remediation session, 10 June 2026 — `audits/R1_REMEDIATION_20260610.md` R1-5
+- **Description:** The citation re-extraction script's `--since-minutes` selection builds an ISO-`T`-formatted cutoff string and compares it lexically against `documents.updated_at`. Rows bumped via SQLite `datetime('now')` are **space**-separated, and `'T' > ' '` in ASCII, so any same-day space-format timestamp lexically sorts BEFORE the T-format cutoff and is silently excluded. In R1-5 the default 30-minute window found 0 of the 10 just-bumped docs; the session worked around it invocation-side by widening to `--since-minutes 720` (pushing the cutoff date to the previous day). Gate code untouched — the bug is still in the script.
+- **Acceptance:** Cutoff and column compared in a single canonical format (normalise both via `datetime()` in the SQL, or format the cutoff with a space separator). Regression test: a doc bumped with `datetime('now')` 5 minutes ago is selected by `--since-minutes 30`.
+- **Notes:** Same family as C4 (reextract robustness). Affects any future remediation session that relies on the default selection window — until fixed, callers must verify dry-run doc counts against the intended set.
+
+---
+
 # Category D — Feature Completion
 
 Sprint sections not yet landed.
@@ -1218,13 +1256,18 @@ Sprint sections not yet landed.
 
 ---
 
-### E1 — API key rotation
+### E1 — API key rotation — **ROTATION DECLINED [2026-06-10] — ACCEPTED RISK (LC13 FAIL stands)**
 
-- **Status:** Open — user-action surfaced [2026-05-14]
+- **Status:** Open — accepted risk [2026-06-10]: rotation declined by client; LC13 (secrets hygiene) remains FAIL for the external-team-onboarding gate. Held Open as a standing accepted-risk record, not pending work.
 - **Size:** Half-day (user dashboard work ~15-20 min; CCD verification afterwards)
 - **Dependencies:** None
 - **Description:** Unchanged from v1.0 (overdue since 12 May per the 48-hour Section 0 spec).
 - **Sprint 2 Session 1 status:** CCD cannot generate provider keys via dashboards. User-action memo surfaced at `/tmp/qanun-overnight/sprint-2-session-1/E1-API-KEY-ROTATION-USER-ACTION.md` with step-by-step rotation instructions for Anthropic / OpenAI / Pinecone / Voyage. Hetzner rotation deferred to Sprint 10 per CLAUDE.md deploy procedure. Mark Done once user confirms rotation + CCD verifies local `.env` keys work.
+- **[2026-06-10 addendum — MAX-1 hygiene scan + client decision (LC13):**
+  - **Scan result (MAX-1 hygiene scan, trufflehog, 2026-06-10 — finding classes only, no key values reproduced here):** `adgm-corpus` (github olic136-pixel) carries trufflehog-**VERIFIED** (live) secrets in two finding classes: (1) Anthropic + OpenAI + Pinecone API keys in `.env` / `.env.bak` at commit `b5a5fcc5` — files deleted at HEAD but **live in pushed history** (cross-ref E6, the b5a5fcc orphan-branch investigation); (2) AWS + OpenAI + Pinecone keys in `infrastructure/launchd/io.qanun.corpus-scheduler.plist` at commit `27df4371` **and still present at current HEAD**.
+  - **Code fix (plist at HEAD):** the scheduler plist is being stripped to environment-variable references — fix landing 2026-06-10 on adgm-corpus branch `sprint/max1-hygiene-20260610`. This removes the at-HEAD exposure only; history exposure (both finding classes) is untouched by the code fix.
+  - **Decision record (client, 2026-06-10):** Key rotation declined by client 2026-06-10 — accepted risk, client aware. LC13 remains FAIL for the external-team-onboarding gate. History scrub: parked, companion decision to rotation.
+  - **Register effect:** E1 stays Open (accepted risk ≠ Done — the risk persists and gates external-team onboarding); no Status-at-a-Glance count changes.**]**
 
 ---
 
@@ -1329,6 +1372,18 @@ Sprint sections not yet landed.
 - **Status:** Open
 - **Size:** ≤1 hour
 - **Description:** Unchanged from v1.0.
+
+---
+
+### E11 — `scripts/` directory never deploys to Hetzner (deploy-procedure gap)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** S1 deploy session, 10 June 2026 — `audits/S1_DEPLOY_20260610.md` (S1 scoped `adgm_corpus/` only); operationally bitten twice in R1 (`audits/R1_REMEDIATION_20260610.md` R1-4 §1 + R1-5)
+- **Description:** Standard deploys scp the `adgm_corpus/` package only — the repo's `scripts/` directory (operational tooling: `audit_multi_current.py`, `fix_version_metadata.py`, citation reextract, backfills, `run_scheduler.py` siblings) has no deploy path and drifts indefinitely behind the repo on Hetzner. First observed in Wave C Session 1 (A5.C.1 note, 17 May: "Hetzner's `scripts/` directory drifted behind the repo"); S1 (10 June) deployed the full `adgm_corpus/` tree to sha-identity but again did not ship `scripts/`; R1 had to scp its audit + reextract tooling to `/tmp` on the server ad hoc, twice. Note the production scheduler unit itself runs `scripts/run_scheduler.py` — so part of `scripts/` IS production runtime, deployed at some unrecorded point and not covered by the standard procedure.
+- **Acceptance:** Deploy procedure (per `hetzner-deploy-plan.md` / CLAUDE.md deploy steps) extended to include `scripts/` with sha-verification, or an explicit documented decision that `scripts/` is local-only tooling plus a carve-out list for the members that ARE production runtime (`run_scheduler.py` at minimum). Post-fix: a tree-diff of `scripts/` local↔Hetzner is clean (or matches the documented carve-out exactly).
+- **Notes:** Until closed, every remediation session must ship its server-side tooling to `/tmp` manually and record the sha — the R1 pattern.
 
 ---
 
@@ -1657,7 +1712,7 @@ Corpus content per jurisdiction. Builds on G framework. Most items parallelisabl
 
 ### H3 — El Salvador corpus enrichment (rulebook_code population) — **DONE [2026-05-15]**
 
-- **Status:** Done [2026-05-15] — Session 4b H2 resolved 4 NULL rulebook_code docs; Sprint 3 Closure Block C confirmed 16 SV docs all carry rulebook_code (0 NULL is_current=1).
+- **Status:** Done [2026-05-15] — Session 4b H2 resolved 4 NULL rulebook_code docs; Sprint 3 Closure Block C confirmed 16 SV docs all carry rulebook_code (0 NULL is_current=1). **[2026-06-10 R1 update:** the 30-May audit (LC2) found 4 Hetzner ES rows still current with empty codes (2709, 2710, 2711, 2732) — the 15-May closure held locally only. R1 resolved them via **Option 3 (local mirror)**: 2709/2711 → SV-LEAD + retired sup→2378 (2709 is a mis-titled duplicate scrape of the canonical DAIL Decreto 643 = doc 2378); 2710 → SV-MISC + kept current; 2732 → SV-MISC + retired (sup NULL). EL_SALVADOR empty-code group gone on Hetzner; both machines now aligned. Evidence: `audits/R1_REMEDIATION_20260610.md` §(e) + R1-3.**]**
 - **Size:** Half-day
 - **Dependencies:** G11
 - **Source:** UCIE v2 SOW Phase 8 §7.3 (CorpusEnrichmentAgent)
@@ -2967,11 +3022,11 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
   - Text re-ingestion for truncated rules (re-scrape from source_url; re-parse; replace section text) — gated on A5.C source_url backfill per M19
   - Sub-rule backfill for missing N.M.K provisions
   - Jurisdiction tag cleanup for contaminated rulebook_code values
-  **Status:** Open. **Depends on:** M3.
+  **Status:** Open — **partial progress 2026-06-10 (R1):** the single-current-invariant sub-item is applied on both machines — Hetzner real duplicate-current groups 9 → 0 (57 row-updates: 45 retirements, 5 reclassify-keeps, 7 keeper bumps; zero DELETE/INSERT), duplicate-current section groups 7607 → 30; local mirror 15 row-updates, FSRA|OTHER residual → 0 (`audits/R1_REMEDIATION_20260610.md` R1-3/R1-4/R1-6). Enumerated benign residual: FSRA|OTHER 48 (deferred → M27), form buckets 37+32 (A7.B23.INERT), COMP-LAW truncation false positives 5 (A7.I.1). Truncation re-ingestion, sub-rule backfill and contamination cleanup sub-items remain Open. **Depends on:** M3.
 
 - **M6** — Get_rule lookup hardening: filter by `source_entity` when caller specifies jurisdiction context. Quick Lookup query already knows the jurisdiction; the MCP `get_rule` handler in `adgm_corpus/mcp/server.py` needs the filter applied. **Status:** Open.
 
-- **M7** — Single-current invariant test extension: commit `94ce23d` unxfailed 8 tests for FSMR Bundle 2; same pattern needs applying to GEN/AML/COBS/PRU/MIR/MKT (ADGM) + DFSA + VARA + BVI + SV + Panama rulebooks. Pytest gate prevents regression. **Status:** Open. **Depends on:** M5.
+- **M7** — Single-current invariant test extension: commit `94ce23d` unxfailed 8 tests for FSMR Bundle 2; same pattern needs applying to GEN/AML/COBS/PRU/MIR/MKT (ADGM) + DFSA + VARA + BVI + SV + Panama rulebooks. Pytest gate prevents regression. **Status:** Open — **2026-06-10 note (R1):** the existing `test_single_current_invariant` parametrisation is now **10/10 green on both machines** (was 2 failed: FSRA-GEN, FSRA-GLO, since the 21-May ingest wave re-dirtied them) — LC1's acceptance signal per `audits/R1_REMEDIATION_20260610.md` R1-6. Extension scope unchanged. **Depends on:** M5.
 
 - **M8** — Internal integrity acceptance gate: zero M2a-f violations across the corpus. Pre-launch gate. **Status:** Open. **Depends on:** M5, M7.
 
@@ -3054,7 +3109,7 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 - **Source:** Wave C Session 1 discovery, 17 May 2026
 - **Description:** Wave C M26 drift investigation session (17 May 2026) refined initial 54-row scope estimate to **369-row affected surface** (115 set-diff + 197 intersection mismatches + 57 UNKNOWN) across **four distinct root cause categories**, each with its own fix shape. See `~/qanun-docs/audit/M26-drift-investigation-2026-05-17.md` for full discovery: per-entity delta table, set-difference samples, intersection-mismatch breakdown by content_hash / source_entity / source_url, full UNKNOWN entity audit. Sub-items M26.1-M26.4 address each root cause separately; M26 parent stays Open as umbrella until all 4 sub-items close. Sync model decision (D6) deferred to its own architectural memo session — doesn't block sub-item applies.
 - **Acceptance:** All four sub-items (M26.1, M26.2, M26.3, M26.4) closed Done. Parity verified via re-run of `audit_drift_local_vs_hetzner.py` showing zero drift. D6 sync model documented separately. Wave C Session 2 (A5.C bulk apply) unblocked.
-- **Notes:** This is operational hygiene as much as corpus integrity — surfaced via M-category because it's about corpus state consistency, not deploy mechanics. Wave C Session 2 sequencing was revised to insert this session BEFORE the bulk A5.C apply (17 May 2026 direction).
+- **Notes:** This is operational hygiene as much as corpus integrity — surfaced via M-category because it's about corpus state consistency, not deploy mechanics. Wave C Session 2 sequencing was revised to insert this session BEFORE the bulk A5.C apply (17 May 2026 direction). **[2026-06-10 update:** PF-1 re-measured both machines (drift pattern unchanged vs 30-May baseline apart from automated court-judgment ingests: +2 docs each side, different judgments — ADGMCFI 14/15 local vs 16/17 Hetzner, themselves new M26.4-class drift); R1 then aligned the duplicate-current scope across machines via local-mirror remediation. M26.1-M26.4 remain untouched and Open. New M26 follow-up from R1 finding 3: verify whether a genuine CIB Ver07 exists upstream — the "…270426" OTHER batch carries provably bogus regressive versioning (`audits/R1_REMEDIATION_20260610.md` R1-0 finding 3).**]**
 
 ---
 
@@ -3106,7 +3161,46 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-**M-category total: 26 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery)
+### M27 — FSRA OTHER-48 re-bucketing (deferred from R1 — needs source_entity authority)
+
+- **Status:** Open — deliberately deferred at the R1 gate, 10 June 2026
+- **Size:** Day (48 rows, mappings already enumerated; needs an authorised entity-change session)
+- **Dependencies:** None technically; blocked procedurally on a session brief whose authorised action set includes `source_entity` changes (R1's §0.2 did not)
+- **Source:** R1 remediation session, 10 June 2026 — `audits/R1_REMEDIATION_20260610.md` R1-0 finding 4 + R1-4 §1 (residual ids logged)
+- **Description:** 48 of the 70 Hetzner FSRA|OTHER multi-current rows are NOT duplicate lineages — they are misbucketed standalone documents that local cleaned by **changing `source_entity`** (per the local reference end-state: 24 → ADGM_COURTS empty-code, 11 → ADGM_RA/ADGM-RA-RULES, 5 → UAE_FEDERAL/FEDERAL-LAW, 3 → ADGM/NOTICES, 1 → ADGM-CRS, 1 → ADGM-FATCA, 1 → ADGM_RA/ADGM-DPR, 2 → FSRA/WAIVERS). R1 correctly declined to retire them (that would have marked current law non-current) and declined to re-bucket (entity changes outside its authority; the 2 WAIVERS rows additionally fail the 1-row-destination check). They remain `is_current=1` under FSRA|OTHER as an enumerated, acknowledged residual — and are the dominant remaining `HAVING c>1` group on Hetzner.
+- **Acceptance:** All 48 rows re-bucketed per the local-reference mapping (or per-row documented divergence); `SELECT COUNT(*) FROM documents WHERE source_entity='FSRA' AND rulebook_code='OTHER' AND is_current=1` = 0 on Hetzner (matching local post-R1-6 state of 0); audit_multi_current.py residual classes reduce to form buckets + COMP-LAW false positives only; WAIVERS destination decision recorded.
+- **Notes:** Sibling of A7.B1 (the local-side 65-row reclassification, Done 14 May) — this is its Hetzner counterpart for the standalone-doc subset. Cross-reference A7.B1.SUBCLASSIFY for the ADGM-RA-RULES refinement that should follow.
+
+---
+
+### M28 — Re-parse + re-index bundle (parser_v2 re-parse of 21-May keepers + FSMR section-prefix fix + Pinecone/Chroma re-index) — **REQUIRED**
+
+- **Status:** Open — **escalated from recommended to REQUIRED, 10 June 2026**
+- **Size:** Multi-day
+- **Dependencies:** R1 applied (done 10 June); needs sections-table UPDATE authority (FSMR prefix fix) + vector-store write authority
+- **Source:** 30-May launch-readiness audit fix-list item 12 (`audits/LAUNCH_READINESS_20260530_0741.md`); escalated by R1 — `audits/R1_REMEDIATION_20260610.md` R1-4 (surfaced residual), R1-6 (live regression evidence), §6.2
+- **Description:** Three coupled tails of the LC1 remediation, now with live user-visible evidence:
+  1. **Parser_v2 re-parse of the 21-May coarse-parse keepers.** The R1 keepers from the 21-May consolidated ingest wave (GEN 2830 Hetzner / 2844 local "VER14.210526" — 131 sections, chapter-level granularity — plus GLO/AML/FSMR siblings) were parsed coarsely. **Live evidence:** `test_search_quality[systems and controls…-GEN-GEN]` now FAILS on local and the same condition exists on Hetzner production (2830, same parse) — pre-R1 the sole GEN hit was retired Ver13 doc 2790/2790-local; the keeper's sections are in FTS but don't rank top-20. Root-caused conclusively as content-currency search regression, not data-integrity error. B1 GEN format profiles for parser_v2 exist (B1.GEN-ROLLOUT).
+  2. **FSMR section-prefix fix.** FSMR keeper 2821 (Hetzner) / 2835 (local) sections carry ingest-time `OTHER Chapter N` prefixes; section-level FSMR resolution is degraded until an `UPDATE sections` pass (fix_version_metadata.py step-4 logic) re-prefixes them — outside R1's §0.2 authority.
+  3. **Pinecone + Chroma re-index.** FSRA section currency changed on BOTH machines (R1 retired/reclassified 57 + 15 rows); vector stores still reflect pre-R1 currency. The 30-May audit already flagged VARA under-vectoring (555 of 2112 sections) for the same pass.
+- **Acceptance:** 21-May keepers re-parsed at rule-level granularity (section counts comparable to their Ver13/Ver27-era predecessors, e.g. GEN ≥ ~1,000 vs the current 131); `test_search_quality[systems and controls…-GEN-GEN]` green again on both machines with zero new failures; FSMR keeper sections all `FSMR`-prefixed, `get_rule('FSMR …')` resolves at section level; Pinecone + Chroma re-indexed against post-R1 currency, vector counts match is_current=1 section counts; 4 stale xpassed search markers unxfailed in the same pass (30-May fix-list item 15).
+- **Notes:** Overlaps but is narrower and more urgent than B6 (full Voyage re-embedding, still Blocked on B4/B2/B5) — M28 is the now-mandatory post-remediation consistency bundle and must not wait for B-cluster unblocking. Until M28 lands, GEN search quality on production is KNOWN-degraded for current-version content: this is a "knowingly broken reaches a tester" violation of the register's Principle if shipped.
+
+---
+
+### M29 — Cross-entity bare-ref citation collision (DFSA GEN 3.3 vs FSRA GEN 3.3)
+
+- **Status:** Open
+- **Size:** Half-day (audit + scoping); fix sized after audit
+- **Dependencies:** None; natural home is the Wave D / citation-graph wave (M21/M22 sibling)
+- **Source:** R1 remediation session, 10 June 2026 — `audits/R1_REMEDIATION_20260610.md` R1-4 §3 note (b) (pre-existing condition, surfaced by the resolution spot-checks)
+- **Description:** DFSA and FSRA both publish GEN and AML rulebooks, so bare section-ref strings like `GEN 3.3` / `AML 4.1` are ambiguous across entities: unscoped `sections.section_ref` lookups return 2 rows even with the corpus fully single-current per entity. Entity-scoped resolution is correct (verified in R1-4 spot-checks). The 30-May audit saw the same shape at the API surface (LC14: `get_rule("GEN 3.3.1")` returning DFSA-GEN plus an FSRA-text entry) — that instance conflated this collision with the since-fixed LC1 duplicates; the cross-entity ambiguity is the part that survives R1. Any resolver, citation-graph edge builder, or MCP tool that matches on bare `target_ref` without a source_entity/jurisdiction scope will silently cross-wire DFSA and FSRA citations.
+- **Acceptance:** Audit enumerates all code paths resolving `target_ref`/section_ref without entity scope (MCP `get_rule` — cross-reference M6 — citation extractor target resolution, FTS joins); each path either entity-scoped or documented as intentionally global; regression test: `GEN 3.3` resolved under FSRA context and DFSA context returns the respective single entity-correct row.
+- **Notes:** M6 (get_rule source_entity filter) is the MCP-surface subset of this item; M29 covers the citation-graph/resolver surface. Flagged for the citation-graph wave alongside M21/M22.
+
+---
+
+**M-category total: 29 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
