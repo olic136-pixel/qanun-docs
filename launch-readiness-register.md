@@ -1,9 +1,24 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.6
-**Date:** 10 June 2026 (MAX-2 outcomes addendum — MAX-1+MAX-2 execution sessions of 10 June 2026 recorded; same-day successor to the v1.5 MAX-1 reconciliation)
+**Version:** 1.7
+**Date:** 10 June 2026 (MAX-3 outcomes addendum + launch verdict — same-day successor to v1.6; cross-reference `audits/LAUNCH_VERDICT_20260610.md`: **CONDITIONAL-GO**, 6 conditions)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.7 changes from v1.6 (10 June 2026 — MAX-3 outcomes addendum; launch verdict `audits/LAUNCH_VERDICT_20260610.md`: CONDITIONAL-GO, 6 conditions):**
+
+Same-day successor to v1.6: records the MAX-3 execution session of 2026-06-10 (session brief dated 2026-06-11; artifact dates follow the system clock per the established convention — cf. the O1 date note). MAX-3 closes the citation-integrity wave (Wave D), the FSRA empty-code bulk mapping, and the VARA parse regression, then runs the second frozen reconcile-and-swap to production. The launch decision moves from the 30-May NO-GO to **CONDITIONAL-GO** — full 15-LC re-score and the 6 attached conditions in `audits/LAUNCH_VERDICT_20260610.md`; evidence log `audits/MAX3_MASTER_LOG_20260610.md`.
+
+- **M21 Stage 1+2 LANDED + APPLIED + DEPLOYED → M21 family Done.** Stage-1 partition: **227 inline citations re-routed to doc-level validation** (13 genuine inline breaks found); the **7,560 orphan-FK** population confirmed as the separate finding (M22 — unaffected by this closure). Stage-2 passes **P1–P5 applied**: DFSA prefix migration **9,198**; OTHER→code re-pointing **37,360**; chapter re-anchoring **954**; VARA names **282**; re-points **671**. **P6 PERMANENTLY EXCLUDED per client decision 2026-06-10.** Genuine dangling citations **12,008 → 1,900** — the register's **<2,000 target met** (the M21 entry projected "<2,000 after Stages 1+2" on 15 May; landed at 1,900).
+- **FSRA empty-code 637 → 2.** Bulk mapping applied: CONSULT **438**, CIRC **103**, GUID **65**, **ADGM_RA|GUID 8** (new acknowledged bucket), FEDERAL-LAW **+6 = 11**, ADGM-RA-RULES **16**, courts **+2**; **8 duplicate pairs retired**. The last pair (**2082/2090**) HELD with recommendation on file (2082 → FSRA|GUID, retire 2090) — new item **M33**; verdict condition 4. **UNKNOWN||46 confirmed dissolved** — A7.I.2 (34 FSRA-form duplicates) + A7.I.3 (12 VARA shells) closed; A7.I.1 (COMP-LAW 11) unchanged, so family A7 and the A row are unchanged in the table.
+- **Parser recoveries, both deployed:** AELR (doc 2848) re-parsed **4 → 9** sections via a new bare-statute profile — the v1.6 park-list parse-quality follow-up closed. **VARA recovered 555 → 2,112 sections** — the parser regression root-caused and the March benchmark reproduced; closes the M28 carve-out ("parse gap, not embed gap") and the 30-May VARA under-vectoring tail.
+- **Vectors:** Pinecone **76,472 → 66,018** (purge **12,242** incl. CORPUS retirees; VARA namespace re-keyed at **2,112**; AELR re-chunked; SV-MISC **+35**; BVI-BCA fine **211**). **DFSA-PRU hold-back recorded** (stub vectors held pending re-scrape — new item **M30**). **Hetzner Chroma is now an exact local mirror** (id-set sha proven, **73,776** entries; backup `chroma_pre_max3`) — retires the v1.6 "Hetzner-Chroma targeted sync (80,207; do-NOT-blind-ship)" park item.
+- **LC14 drift detection landed:** `check_corpus_drift.py` + unit tests; **first production run IN SYNC**. **Announcements dedup APPLIED** (`qanun-corpus-announcements.timer` disabled — the scheduler's 6h job is the single authority); the dedup never had a register ID (v1.6 park-list narrative) — recorded as closed here. Scheduler SIGTERM fix (C13) confirmed deployed and exercised in production.
+- **Production: second frozen reconcile-and-swap.** Zero Hetzner-side writes to reconcile; corpus sha `5e28177a…`; code parity **0 including `scripts/`**; server-side audit **exit 0**; drift checker **IN SYNC**.
+- **Item status flips recorded in this addendum:** **M21** → **Done**; **M29** (DFSA bare-ref collision) → **Done** (P1 prefix migration 9,198 + entity-scoped lookups deployed); **A7.I.2 / A7.I.3** → **Done** (UNKNOWN||46 dissolved; absorbed within family A7 — no A-row change); **Wave D** (citation-graph wave — a wave label spanning M21/M22/M25/M29, not itself a register family) → **substantially Done** (M21 + M29 closed; M22 and M25 remain Open); **B6** / embedding family stays Blocked but now carries a note that the MAX-2 + MAX-3 re-embed waves materially shrank its remaining scope.
+- **7 new items added (register conventions, next free IDs):** **M30** (DFSA-PRU re-scrape + held-back vector purge), **M31** (section_ref vector-metadata refresh, **46,558** vectors), **M32** (VARA-ISS citation re-extraction, **40** NULLed rows), **M33** (2082/2090 adjudication), **E12** (branch sweep — 11 pre-MAX unmerged sprint heads, LC12), **J21** (compliance_manual stale structural-spec section-ids, **21**), **J22** (template dangling refs, **42** unique, DFSA-GEN 5.3 class; total template dangling refs 452→208 this session).
+- **Status-at-a-Glance refreshed (per-family methodology):** E 8→9 Open / 11→12 Total; J 20→22 Open / 20→22 Total; M 23→25 Open / 6→8 Done / 29→33 Total. **Total 109→114 Open / 7 Blocked / 66→68 Done / 182→189 Total.** Open rises despite the closures because MAX-3 surfaced 7 newly-enumerated items; the M21/M29 closures land in the M row and the A7.I.2/.3 closures are absorbed inside family A7.
+- **Items not locatable as register entries (recorded narratively, consistent with the v1.6 park-list convention):** FSRA||637 bulk mapping (closed here, 637→2 — never carried an ID); announcements dedup apply (closed here — never carried an ID); LC14 (a 30-May audit criterion, not a register item — drift detection is its mitigation; its register-side surfaces remain M6 and M29, the latter now Done); Wave D (wave label, see flips above).
 
 **v1.6 changes from v1.5 (10 June 2026 — MAX-2 outcomes addendum, sessions MAX-1+MAX-2):**
 
@@ -128,17 +143,17 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | B — Content Coverage | 4 | 3 | 2 | 9 |
 | C — Code Quality | 5 | 0 | 9 | 14 |
 | D — Feature Completion | 9 | 2 | 1 | 12 |
-| E — Operational Hygiene | 8 | 0 | 3 | 11 |
+| E — Operational Hygiene | 9 | 0 | 3 | 12 |
 | F — Test Coverage | 2 | 2 | 2 | 6 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | **4** | **0** | **11** | **15** |
 | **H — Per-Jurisdiction Corpus & Case Law** | **13** | **0** | **9** | **22** |
 | **I — Governance Suite Mode** | **0** | **0** | **17** | **17** |
-| **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **0** | **20** |
+| **J — Per-Jurisdiction Templates & Suites** | **22** | **0** | **0** | **22** |
 | **K — Commercial Readiness** | **10** | **0** | **0** | **10** |
 | **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
-| **M — Corpus Integrity & Completeness** | **23** | **0** | **6** | **29** |
+| **M — Corpus Integrity & Completeness** | **25** | **0** | **8** | **33** |
 | **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
-| **Total** | **109** | **7** | **66** | **182** |
+| **Total** | **114** | **7** | **68** | **189** |
 
 ### Methodology — per-family aggregation
 
@@ -622,7 +637,7 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 - **Status:** Superseded — split into 3 discrete sub-bundles per Sprint 1 follow-up overnight (14 May 2026). See `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`.
 - **Size:** Originally Day (scoped to 11 rows); actual scope is **57 rows** across 3 distinct sub-patterns.
 - **Original Description:** "11 docs in source_entity='UNKNOWN' share truncated rulebook_code values." This was correct for the COMP-LAW subset (now A7.I.1) but missed the larger 46-row population: 34 FSRA-form duplicates of content already in the corpus (now A7.I.2) and 12 VARA rulebook 77-byte shell rows from failed VARA ingestion (now A7.I.3).
-- **Superseded by:** A7.I.1 (COMP-LAW, 11 rows), A7.I.2 (FSRA-form duplicates, 34 rows), A7.I.3 (VARA shells, 12 rows). All three are Open; sub-bundle apply order TBD per Bundle 3.
+- **Superseded by:** A7.I.1 (COMP-LAW, 11 rows), A7.I.2 (FSRA-form duplicates, 34 rows), A7.I.3 (VARA shells, 12 rows). ~~All three are Open; sub-bundle apply order TBD per Bundle 3.~~ **[2026-06-10 MAX-3: UNKNOWN||46 confirmed dissolved — A7.I.2 + A7.I.3 (the 46-row population) are Done; A7.I.1 remains Open (its 11-row COMP-LAW subset survives only as the 5 truncation false positives noted at M5/R1).]**
 
 ---
 
@@ -637,9 +652,9 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.I.2 — UNKNOWN FSRA-form duplicates (34 rows)
+### A7.I.2 — UNKNOWN FSRA-form duplicates (34 rows) — **DONE [2026-06-10]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-10, MAX-3 — UNKNOWN||46 confirmed dissolved during the FSRA empty-code close-out (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC2 row): zero rows remain in the UNKNOWN FSRA-form bucket. Note: A7.I.2's 34 rows had earlier been reclassified into Bucket 2 (ADGM FSRA/ADGM-FSRA-F — see A7.B23 lineage); the MAX-3 verification confirms no UNKNOWN-source residue.]
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`
@@ -648,9 +663,9 @@ Corpus-correctness items. Without these, every downstream feature is built on sh
 
 ---
 
-### A7.I.3 — UNKNOWN VARA 77-byte shells (12 rows)
+### A7.I.3 — UNKNOWN VARA 77-byte shells (12 rows) — **DONE [2026-06-10]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-10, MAX-3 — UNKNOWN||46 confirmed dissolved (`audits/MAX3_MASTER_LOG_20260610.md`): zero UNKNOWN-source VARA shell rows remain. The genuine VARA content path is now healthy independently — the MAX-3 VARA parser-regression fix recovered 555→2,112 sections, the very H1-style re-acquisition this entry anticipated would overwrite the shells.]
 - **Size:** Half-day
 - **Dependencies:** May be naturally resolved by VARA Phase 2 H1 (VARA canonical re-scrape) — if H1 lands first the shells get overwritten with proper VARA content
 - **Source:** Sprint 1 follow-up overnight, 14 May 2026 — `/tmp/qanun-overnight/sprint-1/bundle-3-prep-A7-I-UNKNOWN.md`
@@ -938,7 +953,7 @@ What the corpus actually contains.
 - **Source:** SOW Section A3
 - **Description:** Re-embed all docs in Pinecone using Voyage Law-2. Must run locally (Voyage IP-blocks Hetzner — see E9.PROXY for the proxy-mode alternative). Critical: K16 FSRA→ADGM_RA metadata migration on 18 docs / 248 vectors must NOT be re-flipped.
 - **Acceptance:** All is_current=1 docs have current vectors in Pinecone. K16 metadata preserved. Vector count matches sections count.
-- **Notes:** E9.PROXY (the Cloudflare proxy mode recovered from the lowercase clone) may unblock running this from Hetzner directly, which would simplify the runtime.
+- **Notes:** E9.PROXY (the Cloudflare proxy mode recovered from the lowercase clone) may unblock running this from Hetzner directly, which would simplify the runtime. **[2026-06-10 MAX-3 note: the MAX-2 re-embed (8 FSRA keepers, 2,822 chunks; 13,069 stale purged) and the MAX-3 vector phase (12,242 purged; VARA namespace re-keyed at 2,112; AELR re-chunk; SV-MISC +35; BVI-BCA fine 211; Pinecone 76,472→66,018 with every namespace matching prediction) have materially shrunk B6's remaining scope. B6 stays Blocked on B4/B2/B5 as the full Voyage re-embedding pass; see also new M31 (section_ref vector-metadata refresh, 46,558) which would naturally fold into the same pass.]**
 
 ---
 
@@ -1408,6 +1423,18 @@ Sprint sections not yet landed.
 - **Description:** Standard deploys scp the `adgm_corpus/` package only — the repo's `scripts/` directory (operational tooling: `audit_multi_current.py`, `fix_version_metadata.py`, citation reextract, backfills, `run_scheduler.py` siblings) has no deploy path and drifts indefinitely behind the repo on Hetzner. First observed in Wave C Session 1 (A5.C.1 note, 17 May: "Hetzner's `scripts/` directory drifted behind the repo"); S1 (10 June) deployed the full `adgm_corpus/` tree to sha-identity but again did not ship `scripts/`; R1 had to scp its audit + reextract tooling to `/tmp` on the server ad hoc, twice. Note the production scheduler unit itself runs `scripts/run_scheduler.py` — so part of `scripts/` IS production runtime, deployed at some unrecorded point and not covered by the standard procedure.
 - **Acceptance:** Deploy procedure (per `hetzner-deploy-plan.md` / CLAUDE.md deploy steps) extended to include `scripts/` with sha-verification, or an explicit documented decision that `scripts/` is local-only tooling plus a carve-out list for the members that ARE production runtime (`run_scheduler.py` at minimum). Post-fix: a tree-diff of `scripts/` local↔Hetzner is clean (or matches the documented carve-out exactly).
 - **Notes:** Until closed, every remediation session must ship its server-side tooling to `/tmp` manually and record the sha — the R1 pattern.
+
+---
+
+### E12 — Branch sweep (11 pre-MAX unmerged sprint heads)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None — cleanup-only; artifacts enumerated
+- **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC12 row — git hygiene 🟡)
+- **Description:** All MAX-1/2/3 sprint branches are merged and retained per convention, but **11 pre-MAX unmerged sprint heads (10-May era)** remain on origin across the repos. Per-branch triage: merged-content-elsewhere → delete; unique work → either merge or record under E2-style wip-triage; plus a branch-count sweep so future audits start from a clean enumeration.
+- **Acceptance:** Each of the 11 heads dispositioned (deleted / merged / documented-retained with reason); branch listing per repo matches the documented retention policy; LC12 flips green at the next audit.
+- **Notes:** Cross-reference E2 (Tier 0 wip-branch triage) — same shape, older population. The history scrub stays separately parked as the E1/LC13 rotation companion.
 
 ---
 
@@ -2373,6 +2400,28 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ---
 
+### J21 — compliance_manual stale structural-spec section-ids (21)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None (corpus side is now stable post-MAX-3 — re-pointing against a moving corpus was the prior risk)
+- **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC7 row — template integrity 🟡)
+- **Description:** The compliance_manual structural spec carries **21 stale section-ids** that no longer resolve against the post-M21/M28/MAX-3 corpus (re-parses and re-pointing moved the targets). Update the spec ids to the current section_ref set.
+- **Acceptance:** All 21 spec section-ids resolve against is_current=1 sections; structural-spec-match test green for compliance_manual; zero stale ids on re-audit.
+
+---
+
+### J22 — Template dangling references (42 unique, DFSA-GEN 5.3 class)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** None; sibling of J21 — same LC7 surface
+- **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC7 row)
+- **Description:** Template-side dangling refs reduced **452 → 208** total during MAX-3; the residue decomposes to **42 unique dangling references** of the DFSA-GEN 5.3 class — template text citing section refs that don't resolve in the current corpus (granularity or naming drift, not missing law). Per-ref triage: re-point to the correct current ref, or flag the template text for redraft.
+- **Acceptance:** All 42 unique refs dispositioned (re-pointed or redraft-flagged with reason); template dangling-ref audit returns 0 unexplained rows; VARA part-ref verification (25/25, MAX-3) stays green.
+
+---
+
 # Category K — Commercial Readiness
 
 The commercial layer: billing, onboarding, accounts, pricing, terms. Required for a first paying customer flow. Most of these are gaps not previously tracked in the register.
@@ -3084,7 +3133,7 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 - **M20** — Manifest schema expansion + per-jurisdiction migration. Block C (15 May 2026) at `~/qanun-docs/audit/manifest-schema-expansion.md`. MANIFEST_SCHEMA.json v1.1 (additive, back-compat) adds optional `material` field with 8 categories (primary_legislation / implementing_regulations / rulebooks / guidance / circulars / enforcement_decisions / faqs / forms); doc_type_values 5→8 (+regulation/form/faq). VARA migrated (12 rulebooks → 12 rulebooks + 1 implementing_regulation = VARA-MR2024 with _pending_verification flag; secondary_sources populated; 6 honest empty placeholders for non-rulebook categories). 5 remaining migrations (ADGM, DFSA, BVI, EL_SALVADOR, PANAMA) sized ~3.5h total. After migrations land, M10-M15 re-run picks up newly-enumerated gaps. **Status:** **In Progress** (1 of 6 migrations complete — count as Open in Status-at-a-Glance until all 6 land). **Depends on:** none for VARA; ADGM gap material informs M10 directly.
 
-- **M21** — Dangling citations remediation. Block B diagnosis (15 May 2026) at `~/qanun-docs/audit/dangling-citations-investigation.md`. The 13,040 dangling-citation count materially over-states the integrity gap: 98.3% legacy_intra_rulebook (many target document-level labels like "FSMR Schedule 1" or cross-jurisdiction refs in non-canonical formats), 1.7% inline_anchor + inline_shorthand (sweep over-flags 100% of these by design — their target_ref is a rulebook name, never a section_ref). Truncation cross-correlation: 0.6% (independent problems). 7,560 citations have orphan source_doc FK — separate carry, more severe than dangling, deserves its own register entry post-investigation. **Stage 1** sweep refinement (exclude inline_* types + surface orphan FK separately) ~30 min, unblocked; **Stage 2** legacy_intra_rulebook decomposition (half-day). Genuine dangling count likely <2,000 after Stages 1+2. **Status:** Open (Stage 1 ready). **Depends on:** M3 (provides input).
+- **M21** — Dangling citations remediation. Block B diagnosis (15 May 2026) at `~/qanun-docs/audit/dangling-citations-investigation.md`. The 13,040 dangling-citation count materially over-states the integrity gap: 98.3% legacy_intra_rulebook (many target document-level labels like "FSMR Schedule 1" or cross-jurisdiction refs in non-canonical formats), 1.7% inline_anchor + inline_shorthand (sweep over-flags 100% of these by design — their target_ref is a rulebook name, never a section_ref). Truncation cross-correlation: 0.6% (independent problems). 7,560 citations have orphan source_doc FK — separate carry, more severe than dangling, deserves its own register entry post-investigation. **Stage 1** sweep refinement (exclude inline_* types + surface orphan FK separately) ~30 min, unblocked; **Stage 2** legacy_intra_rulebook decomposition (half-day). Genuine dangling count likely <2,000 after Stages 1+2. **Status:** **Done [2026-06-10, MAX-3 — Stage 1+2 landed, applied AND deployed.** Stage-1 partition: 227 inline citations re-routed to doc-level validation (13 genuine inline breaks found); the 7,560 orphan-FK population surfaced as the separate finding it always deserved — that is M22, which is UNAFFECTED by this closure. Stage-2 passes P1–P5 applied: DFSA prefix migration 9,198 / OTHER→code re-pointing 37,360 / chapter re-anchoring 954 / VARA names 282 / re-points 671; **P6 PERMANENTLY EXCLUDED per client decision 2026-06-10**. Genuine dangling 12,008 → **1,900** — this entry's <2,000 projection met. The residual ~1,900 is decomposed on the launch-verdict park list (≈500 chapter-row parser gaps led by IFR 6/7/8, 237 case-law-namespace refs, ~117 external IOSCO/DIFC, remainder granularity gaps) — quality tail, not integrity debt (`audits/LAUNCH_VERDICT_20260610.md` condition 5). Deployed to production in the MAX-3 second frozen reconcile-and-swap (sha `5e28177a…`).**]** **Depends on:** M3 (provides input).
 
 ### M22 — Orphan citation source_doc FK remediation
 
@@ -3094,7 +3143,7 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 - **Source:** Dangling citations investigation memo, 15 May 2026 (`~/qanun-docs/audit/dangling-citations-investigation.md` §Real decomposition)
 - **Description:** 7,560 citations have `source_doc` FK pointing to documents not in the documents table. Of these, 6,238 also have non-resolving `target_ref` (appeared in `citation_integrity.csv`); 1,322 have resolving `target_ref` but orphaned `source_doc`. Root cause hypotheses: (a) re-ingestion residue (documents superseded with new IDs, old IDs deleted but citations not cascade-cleaned), (b) partial migration leaving stale references, (c) other. Investigation session determines root cause and sizes remediation.
 - **Acceptance:** Root cause identified. Remediation plan sized in follow-up. Apply produces zero orphan `source_doc` FK rows in citations table (either re-anchored to current docs or cascade-deleted per per-row decision).
-- **Notes:** More severe than the 13,040 dangling-target-ref headline because broken `source_doc` FK means the citation table can't reliably answer "which document made this citation". Surfaced as separate finding from M21 sweep refinement per Memory #28 (decompose parametrically against pre-flight state).
+- **Notes:** More severe than the 13,040 dangling-target-ref headline because broken `source_doc` FK means the citation table can't reliably answer "which document made this citation". Surfaced as separate finding from M21 sweep refinement per Memory #28 (decompose parametrically against pre-flight state). **[2026-06-10 MAX-3: UNAFFECTED by M21's closure — the Stage-1 partition re-confirmed the 7,560 orphan-FK rows as this separate finding; investigation still pending.]**
 
 ### M23 — Canonical-source manifest verification per jurisdiction
 
@@ -3212,9 +3261,9 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-### M29 — Cross-entity bare-ref citation collision (DFSA GEN 3.3 vs FSRA GEN 3.3)
+### M29 — Cross-entity bare-ref citation collision (DFSA GEN 3.3 vs FSRA GEN 3.3) — **DONE [2026-06-10]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-10, MAX-3 — closed by the M21 P1 **DFSA prefix migration (9,198 citation rows)** plus **entity-scoped lookups**: bare DFSA refs now carry entity-disambiguated prefixes and resolver paths are entity-scoped, so `GEN 3.3` no longer cross-wires DFSA and FSRA (DFSA bare refs **0** post-migration per the launch-verdict LC3 row). Deployed to production in the second frozen reconcile-and-swap. Residual at the API surface: qanun-api entity-threading for `get_rule` scoping stays on the verdict park list — that is the M6 (MCP-surface) subset, which remains Open.]
 - **Size:** Half-day (audit + scoping); fix sized after audit
 - **Dependencies:** None; natural home is the Wave D / citation-graph wave (M21/M22 sibling)
 - **Source:** R1 remediation session, 10 June 2026 — `audits/R1_REMEDIATION_20260610.md` R1-4 §3 note (b) (pre-existing condition, surfaced by the resolution spot-checks)
@@ -3224,7 +3273,51 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-**M-category total: 29 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence)
+### M30 — DFSA-PRU sourcebook re-scrape + held-back vector purge
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** MAX-3 vector phase, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC6 named residual + park list) — successor to the Sprint 6 Block K finding that PRU content was never scraped (scraper gap, not parser gap)
+- **Description:** The DFSA-PRU document (doc 2828) is a stub — its sourcebook content was never scraped. During the MAX-3 Pinecone purge the corresponding stub vectors were deliberately HELD BACK (recorded hold-back) rather than purged blind, so DFSA-PRU retains degraded-but-nonzero semantic coverage until real content lands. Re-scrape the PRU sourcebook (the CMC strategy-parser from Sprint 6 Block K is the sibling precedent), parse, embed, then purge the held-back stub vectors.
+- **Acceptance:** PRU content scraped, parsed and embedded on both stores; held-back stub vectors purged and replaced; DFSA-PRU section count comparable to sibling DFSA sourcebooks; semantic probe against PRU content serves the new vectors.
+
+---
+
+### M31 — section_ref vector-metadata refresh (46,558 vectors)
+
+- **Status:** Open
+- **Size:** Day
+- **Dependencies:** None (K16-pattern metadata-only update); folds naturally into B6 if the full Voyage re-embed runs first
+- **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict park list)
+- **Description:** 46,558 vectors carry stale `section_ref` metadata relative to the post-M21/M28 corpus state (re-pointed and re-prefixed refs). Metadata-only refresh in place — the K16 FSRA→ADGM_RA migration (18 docs / 248 vectors) is the established pattern; no re-embedding required.
+- **Acceptance:** Vector metadata `section_ref` values match current `sections.section_ref` for all affected vectors; spot-check sample across namespaces returns zero stale refs; K16-migrated metadata not re-flipped.
+
+---
+
+### M32 — VARA-ISS citation re-extraction (40 NULLed citations)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None (VARA parse recovery 555→2,112 already deployed — the prerequisite content now exists)
+- **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict park list)
+- **Description:** 40 VARA-ISS citations were NULLed during the MAX-3 citation passes (their targets could not be resolved against the pre-recovery VARA section set). With VARA now at 2,112 sections, re-run citation extraction for VARA-ISS so the 40 rows re-anchor to real targets.
+- **Acceptance:** VARA-ISS citation re-extraction run; the 40 NULLed rows either resolve to current VARA sections or are individually documented as genuinely external/unresolvable.
+
+---
+
+### M33 — FSRA empty-code final pair adjudication (docs 2082/2090)
+
+- **Status:** Open — client micro-decision pending; recommendation on file
+- **Size:** Half-day (decision + 2-row apply)
+- **Dependencies:** None — launch-verdict condition 4
+- **Source:** MAX-3 FSRA||637 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; `audits/LAUNCH_VERDICT_20260610.md` condition 4)
+- **Description:** The FSRA empty-rulebook_code population went 637 → 2 in MAX-3; the surviving pair (2082/2090) was HELD rather than force-mapped. Recommendation on file: **2082 → FSRA|GUID, retire 2090.** Awaiting client adjudication before apply.
+- **Acceptance:** Decision recorded; pair applied per decision (or documented divergence); `FSRA` empty-rulebook_code is_current=1 count = 0 on both machines.
+
+---
+
+**M-category total: 33 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence + M30/M31/M32/M33 added by the 10 June 2026 MAX-3 close-out)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
