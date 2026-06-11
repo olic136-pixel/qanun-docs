@@ -1,0 +1,28 @@
+# decisions.log — Qanun binding product/legal decisions
+# Convention: adjacent to the K-decision files in docs/k-decisions/.
+# Append-only. Each entry: date | source | ruling VERBATIM.
+
+================================================================================
+2026-06-11 | Oliver Cook KC — chat rulings (MAX-5 Tier-0 activation gate)
+Source: chat, recorded by MAX5-TIER0-ACTIVATE; executed in qanun-api
+sprint/max5-tier0-activation; gate artifact
+qanun-api/.claude/gates/tier0_template_review.md (Status: APPROVED).
+================================================================================
+
+- D1: adgm_private_maa (form_completion) is the product path; adgm_private_maa_composition remains is_active=False as retained fallback. Rationale: statutory Model Articles are the structural authority; output cannot contain invented provisions by construction.
+
+- D4: 'completing' approved with three sub-classes: (1) true form-completion (corpus form text, blanks filled); (2) register-completion (statute prescribes content; instruction-defined table is a CLOSED structure — engine may not invent columns or row-classes); (3) curated clause library — clause text frozen verbatim in template code; AI only includes/excludes per ClauseResolver; Oliver's gate signature is the textual authority for the six clause texts.
+
+- SV batch approved as "El Salvador Formation Pack v1" (DASP-formation set). MAX-6 ticket: true SV Tier-0 corporate-foundation docs (escritura social per SV-CC Art.22–35, share register Art.130, UBO register).
+
+- Coverage honesty: Tier 0 spans 2 of 6 launch jurisdictions; BVI (BCA Sch.1)/Panama (Ley 32)/DIFC (DIFC-CR Appendix-2, doc 2852)/VARA → MAX-6. State plainly in the activation table + register ticket note.
+
+- STEP-1a FINDING (HALT resolved by conversion): prescribed RA resolution forms EXIST — docs 2610 (single individual shareholder), 2611 (multiple individual), 2612 (corporate shareholder), 2615 (body corporate), 2616 (individual incorporator). adgm_ibr CONVERTS to form_completion.
+
+- OBSERVATION FIXES (verified by orchestrator): (1) regulatory_change_of_control regulatory_basis 'ADGM GEN 8.10' is WRONG (8.10 = Notifications) → swap to 'ADGM GEN 8.8; FSMR s.105' (GEN 8.8 'Changes relating to control' verified + FSMR 105 'Provisions governing Controllers' verified — clause TEXT unchanged). (2) multi_shareholder clause token '[DATE]' is outside the recognized placeholder family ([[Token]] / [TO BE …], see _is_placeholder_value drafting_service.py:1820) → change token to '[[SHADate]]' in the clause text; review pack notes the signature covers the amended text.
+
+Execution record (2026-06-11): activation flips applied — 14 tier-0
+templates active (8 ADGM + 6 El Salvador Formation Pack v1);
+adgm_private_maa_composition inactive (retained fallback per D1).
+Active set pinned exactly by
+qanun-api tests/test_tier0_registry.py::test_active_set_pinned_exactly.
