@@ -61,3 +61,15 @@ Indicative coverage vs the logical 5-tier map: tiers 1–3 partially covered (~6
 ## 7. RECOMMENDATION
 
 **HOLD** — tiers 4–5 have zero templates (a firm cannot get an operating-state document set), no per-licence matrix (J5 not run), no tailoring/questionnaires, VASP track unreachable from the wizard, and the BCA fine re-parse is pending; tiers 1–3 single-track content is a useful seed for the J5 discovery run, not an activatable suite.
+
+---
+
+## 8. MAX-5 K2 ADDENDUM (2026-06-11, sprint/max5-jx-packs)
+
+Supersedes §§1–2 and revises §7:
+
+- **J5 matrix now exists:** `docs/matrices/BVI_J5_matrix.md` — 6 licence-type rows × 5 tiers; both launch-priority rows (BVI-APPROVED-MGR, BVI-VASP-CUST per the E2E cells) are 100% filled-or-N/A.
+- **Registry 12 → 20 templates** (qanun-api sprint/max5-jx-templates): Tier 4 = 4 (client onboarding, registers maintenance on the BVI-BCA fine re-parse — Sec.41/91/96/98/118/162/163, transaction monitoring + SAR, incident response/BCP) and Tier 5 = 4 (periodic returns incl. BVI-REGS Reg.16 31-Jan annual return, AML independent audit, FSC notification filings on RC Schedule 3 time limits, compliance monitoring). Tiers 4–5 were 0/0 at V5.
+- **Corpus caveat §5 cleared:** the BVI-BCA fine re-parse landed (265 sections); BVI corpus now 1,040 vectors. All 27 new required_provisions LIKE-verified; grounding floor test-pinned.
+- **Still open before activation:** J18 questionnaire content (punch-list B1–B5 in `docs/tickets/MAX5_UI_punchlist_K6.md`), J19 tailoring, suite-emit + the suite endpoint doc_type derivation defect (X1), and E2E L2 sample-draft evidence (BVI cells now pass the fixed pipeline per MAX-5 E2E baseline).
+- **Revised recommendation:** HOLD narrows from "structural" to **UI-reachability + questionnaire only** for the two launch-priority licence types.
