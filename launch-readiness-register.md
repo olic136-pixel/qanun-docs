@@ -1,9 +1,25 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.7
-**Date:** 10 June 2026 (MAX-3 outcomes addendum + launch verdict — same-day successor to v1.6; cross-reference `audits/LAUNCH_VERDICT_20260610.md`: **CONDITIONAL-GO**, 6 conditions)
+**Version:** 1.8
+**Date:** 11 June 2026 (MAX-4 outcomes addendum — successor to v1.7; cross-reference `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`: **CONDITIONAL-GO — STRENGTHENED**, conditions 6 → 4)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.8 changes from v1.7 (11 June 2026 — MAX-4 outcomes addendum; launch checklist `audits/LAUNCH_CHECKLIST_20260611.md`; verdict addendum `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`: CONDITIONAL-GO — STRENGTHENED, conditions 6 → 4):**
+
+Successor to v1.7: records the MAX-4 execution session of 2026-06-10/11 (E2E validation, activation prep, commercial readiness, quality tail). Evidence log `audits/MAX4_MASTER_LOG_20260610.md`; launch checklist `audits/LAUNCH_CHECKLIST_20260611.md`; verdict addendum `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md` (checklist score: **13 🟢 · LC14 🟡 mitigated · LC13 accepted-risk**; condition set reduced 6 → 4).
+
+- **E2E validation — the zero-hallucination promise broken, fixed, and proven, told straight.** The first 40-cell live matrix (sonnet-4-6) **broke the promise**: citation-verification **88.75%** (284/320) and **24 SEV-1 scrubber survivors** reached final DOCX exports across 10 cells (VARA 0/8 passing). Root causes predominantly pipeline-side. **5 punch-list fixes landed (44 tests):** **PL-01** VARA scrub-shape completion + bounded rescue-normalizer, **PL-02** BVI Sec.↔Reg. designator-swap rescue, **PL-04** RULE-8 invented-rulebook-code allow-list, **PL-05** exporter citation-register-pollution guards, **PL-06** mandatory-provision prompt blocks. **Full-matrix re-run: CLEAN — 0 survivors, 94.4% verification (289/306), 36/40 all-pass, VARA 8/8, ADGM 8/8.** Production smoke across 5 jurisdictions on live api.qanun.io: **17/17 citations verified, 0 phantoms, 5/5 fictional drafts clean, K3 auth proven live** (register → draft → export). The 4 residual local cells are the scrubber working as designed on PL-03 corpus gaps (3) + one Panama coverage miss — quality tail, not integrity risk. The promise now holds **by construction (scrub-or-verify) and empirically across 45 live drafts on two environments**.
+- **Model A/B (bottom-5 cells: sonnet-4-6 / opus-4-8 / fable-5):** opus materially better pre-fix (survivors 18→4, cite 0.667 vs 0.300, 2.0× cost; fable 0.529 at 4.3× cost) — but the punch-list fixes captured the gain pipeline-side, so **claude-sonnet-4-6 stays default (evidence-based)**; per-cell opus escalation path documented; config-driven, changeable without deploy. **Validation spend: $25.32 client-side + ~$1.20 server-side of the $40 cap.**
+- **LC7 → Done/🟢:** structural specs **851/851** (8 renames + 2 merges + 1 removal + 13 new; generator hardened to hard-fail on stale ids) + template refs **1,069 entries / 0 dangling** (25 already resolved post-MAX-3, 17 substituted with VER14-consolidation evidence) + permanent all-jurisdiction guard (11,529-ref fixture). Register items **J21 → Done** and **J22 → Done**.
+- **LC12 → 🟢:** branch sweep executed — **142 local + 125 origin refs deleted, 11 archive tags, ≤1 unmerged branch per repo** (sole retained unmerged head `wip/tier0-incorporation-templates`, 2,742 lines of Tier-0 templates — kept by product-decision ticket). Register item **E12 → Done**.
+- **Wave E B1 → CLOSED:** **GLO v2 profile APPLIED** — doc 2845 re-parsed **75 → 728** sections (722 defined-term + 6 structural), **dominance proven** (167% integrity); **AML PARKED with benchmark** — **97.82% integrity fails the 98% floor**, profile registered inert. LC8 closes honestly either way (🟢 per the verdict addendum). Register item **B1 → Done** — with DEDUPE / PARAGRAPHS / GEN-ROLLOUT already closed, family B1 is fully Done.
+- **M-family:** **DFSA-PRU revived** — doc 2828 revived from 2431's text (byte-identical; hash-chained provenance in audit_log) → **73 sections**, embedded, hold-back released → **M30 Done**. **BVI-BCA 2756 → 265** sections via parse_legislation (9 M21-anchored citations remapped 9/9; 2573's fine parse was 135 not 357). **VARA-ISS re-extraction → 62 rows / 0 NULL anchors** → **M32 Done**. **GLO 728** (Wave E above). **FSRA empty-code 637 → 0 COMPLETE** — **2082 → FSRA|GUID applied, 2090 retired** (GUID 66; verdict condition 4 of the 10-Jun set discharged; LC2 🟢 clean) → **M33 Done**. **K16 metadata refresh DONE at true scale 9,781 vectors** (V6 census: dfsa namespace 9,198 + default 580 — the M31 entry's 46,558 conflated DB rows with vectors), idempotent-0 on re-run → **M31 Done**. The **section-count benchmark suite (77 pins)** with version-flip tolerance semantics is now **standing acceptance infrastructure** (exactly 3 keys re-pinned post-CORPUS, micro-branch merged). Dangling citations 1,900 → **1,890**; FTS 103,838 reconciled; audit exit 0; Pinecone 66,055 with all namespaces exactly on prediction.
+- **K-family flips:** **K3 → Done-deployed** (the register endpoint was a stub creating nothing — now real: verification tokens, password reset, soft-delete; **proven live in production** by the E2E-PROD smoke). **K10 → Done-deployed** (backend audit log live; customer-visible dashboard = fast-follow). **K2 verified incidentally via prod smoke** (signup → draft → export worked live) — stays Open on its full-onboarding scope. **K1/K6/K7/K8/K9 decision memos delivered** (`docs/k-decisions/`), await client — **K8 flagged as the only day-1 product blocker** (users contractually accept a ToS that does not exist; checklist criterion 7 ❌); K1 staged-Stripe payment-links day-1 path = zero code; K7 mailbox ≈ 1 hour; K9 rides inside ToS. **K4/K5 deferred-by-decision** (firm features, post-day-1).
+- **Model-ID retirement averted (recorded narratively — resolved in-session, no ID assigned per conventions):** the hardcoded drafting model `claude-sonnet-4-20250514` was **4 days from its 2026-06-15 retirement cutoff**; the pipeline is now config-driven (`ANTHROPIC_MODEL`, call-time resolution; default **claude-sonnet-4-6**) and the deprecated ID is retired from code. Checklist criterion 10 ✅.
+- **7 new items added (register conventions, next free IDs):** **D13** (drafting/status `unique_citations` always-0 display defect), **D14** (5 orphaned fictional e2eprod entities — no entity-delete endpoint exists), **E13** (qanun main committed worktree-gitlinks cleanup — owner sign-off), **E14** (stale lucid-gould worktree directory), **M34** (quicklookup ranking nit — GLO consultation doc surfaced above the keeper), **M35** (Chroma doc 2756: 18 stale entries + missing fulltext chunks for 2845/2590), **M36** (PL-03 corpus gaps — BVI-RC sparse, NRP-29 granularity, PAN-AML Art.32 — next CORPUS window, artifacts ready).
+- **Status-at-a-Glance refreshed (per-family methodology):** B 4→3 Open / 2→3 Done (9 Total); D 9→11 Open / 12→14 Total; E 9→10 Open / 3→4 Done / 12→14 Total; J 22→20 Open / 0→2 Done (22 Total); K 10→8 Open / 0→2 Done (10 Total); M 25→24 Open / 8→12 Done / 33→36 Total. **Total 114→111 Open / 7 Blocked / 68→78 Done / 189→196 Total.** Ten Done flips against seven newly-enumerated items — the first version since v1.4 in which the Done count rises faster than the Total.
+- **Items not locatable as register entries (recorded narratively, per the v1.6/v1.7 convention):** **LC7 / LC8 / LC12** (launch-checklist criteria, not register items — their register surfaces J21/J22, B1, E12 all flip Done above); **Wave E** (wave label spanning the parser-profile work, not a register family); **K16 metadata refresh** (never carried its own ID — its register surface is M31, Done above); **BVI-BCA 265 fine re-parse** (corpus apply with no standing ID — the A7.G family was already Done); **FSRA empty-code 637→0** (the population never carried an ID — its register surface is M33); **section-count benchmark suite** (acceptance infrastructure, no ID); **the launch-checklist L-row scoring** (L1/L2/L4/L5/L6 → 🟢 in the verdict addendum) is checklist-level evidence — the register's L-category items keep their stricter acceptance (deliberate-injection variant, ~15 full-suite drafts with Oliver eyeball review, tester kits) and **stay Open** pending that; **prod-smoke artifacts** (the 5 prod exports deleted post-smoke by design; goldens at `qanun-api/e2e_results_rerun/`).
 
 **v1.7 changes from v1.6 (10 June 2026 — MAX-3 outcomes addendum; launch verdict `audits/LAUNCH_VERDICT_20260610.md`: CONDITIONAL-GO, 6 conditions):**
 
@@ -140,20 +156,20 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 | Category | Open | Blocked | Done | Total |
 |---|---|---|---|---|
 | A — Data Integrity | 3 | 0 | 5 | 8 |
-| B — Content Coverage | 4 | 3 | 2 | 9 |
+| B — Content Coverage | 3 | 3 | 3 | 9 |
 | C — Code Quality | 5 | 0 | 9 | 14 |
-| D — Feature Completion | 9 | 2 | 1 | 12 |
-| E — Operational Hygiene | 9 | 0 | 3 | 12 |
+| D — Feature Completion | 11 | 2 | 1 | 14 |
+| E — Operational Hygiene | 10 | 0 | 4 | 14 |
 | F — Test Coverage | 2 | 2 | 2 | 6 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | **4** | **0** | **11** | **15** |
 | **H — Per-Jurisdiction Corpus & Case Law** | **13** | **0** | **9** | **22** |
 | **I — Governance Suite Mode** | **0** | **0** | **17** | **17** |
-| **J — Per-Jurisdiction Templates & Suites** | **22** | **0** | **0** | **22** |
-| **K — Commercial Readiness** | **10** | **0** | **0** | **10** |
+| **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **2** | **22** |
+| **K — Commercial Readiness** | **8** | **0** | **2** | **10** |
 | **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
-| **M — Corpus Integrity & Completeness** | **25** | **0** | **8** | **33** |
+| **M — Corpus Integrity & Completeness** | **24** | **0** | **12** | **36** |
 | **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
-| **Total** | **114** | **7** | **68** | **189** |
+| **Total** | **111** | **7** | **78** | **196** |
 
 ### Methodology — per-family aggregation
 
@@ -860,9 +876,9 @@ What the corpus actually contains.
 
 ---
 
-### B1 — Structure parser rule-level extraction redesign (Problem 2) — **REFRAMED**
+### B1 — Structure parser rule-level extraction redesign (Problem 2) — **DONE [2026-06-11, MAX-4 Wave E close]**
 
-- **Status:** Open — superseded sizing from "Multi-day depending on hypothesis verification" to "Week"
+- **Status:** Done [2026-06-11, MAX-4 Wave E] — the parser redesign (parser_v2 + per-rulebook profiles) is complete and the wave closes honestly on evidence: **GLO v2 profile APPLIED** — doc 2845 re-parsed **75 → 728 sections** (722 defined-term + 6 structural), **dominance proven** (167% integrity vs v1); **AML PARKED with benchmark** — **97.82% integrity fails the 98% floor**, profile registered but inert (parked-by-evidence, not a blocker). GEN landed Sprint 1; PRU/COBS/MIR via B1.PARAGRAPHS; GEN rollout via B1.GEN-ROLLOUT. Remaining v1-parsed rulebooks (FUNDS/MKT/PIN/CIB/FEES) carry no integrity findings and their section counts are pinned by the 77-entry benchmark suite — any future regression fails loudly. LC8 🟢 per `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`; evidence `audits/MAX4_MASTER_LOG_20260610.md` (V3 + CORPUS phases).
 - **Size:** Week (revised from v1.0 Multi-day)
 - **Dependencies:** None
 - **Source:** Quick Lookup screenshots, morning of 11 May 2026; B1 PDF inspection memo at `~/qanun-docs/B1_parser_hypothesis_verification.md` (12 May)
@@ -1291,6 +1307,28 @@ Sprint sections not yet landed.
 
 ---
 
+### D13 — `/drafting/status` `unique_citations` display defect (always 0)
+
+- **Status:** Open
+- **Size:** Sub-hour
+- **Dependencies:** None — display-only
+- **Source:** MAX-4 production smoke, 11 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`; `audits/LAUNCH_CHECKLIST_20260611.md` §E.3)
+- **Description:** The `/drafting/status` response reports `unique_citations: 0` on every job — including jobs whose exports carry verified citations (prod smoke: 17/17 citations verified while status showed 0). Display-only: the citation register and the exports themselves are correct; the status aggregation never populates the field.
+- **Acceptance:** `unique_citations` reflects the job's actual verified-citation count; regression test against a drafted fixture asserts a non-zero count.
+
+---
+
+### D14 — Entity-delete endpoint + e2eprod orphan cleanup (5 fictional entities)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None (K3's soft-delete covers accounts, not entities)
+- **Source:** MAX-4 E2E-PROD smoke, 11 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`; `audits/LAUNCH_CHECKLIST_20260611.md` §D)
+- **Description:** The production smoke created 5 fictional entities (the `e2eprod-*` shapes) via the live API. Their exports were deleted post-smoke by design, but the entity rows persist because **no entity-delete endpoint exists**. Build the endpoint (auth-scoped, soft-delete consistent with K3's account-deletion semantics), then remove the 5 orphans. Also a prerequisite for self-cleaning tester kits (L7 uses the same `e2eprod-*` precedent).
+- **Acceptance:** Entity-delete endpoint live with permission scoping; the 5 e2eprod orphans removed from production; tester-kit walkthroughs can clean up after themselves.
+
+---
+
 # Category E — Operational Hygiene
 
 ---
@@ -1426,15 +1464,37 @@ Sprint sections not yet landed.
 
 ---
 
-### E12 — Branch sweep (11 pre-MAX unmerged sprint heads)
+### E12 — Branch sweep (11 pre-MAX unmerged sprint heads) — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 V6 census + SWEEP] — full branch census then sweep executed: **142 local + 125 origin refs deleted, 11 archive tags laid, ≤1 unmerged branch per repo** post-sweep. Sole retained unmerged head: `wip/tier0-incorporation-templates` (2,742 lines of Tier-0 templates — the only valuable unlanded code; kept under a product-decision ticket). **LC12 🟢** per `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`; evidence `audits/MAX4_MASTER_LOG_20260610.md`.
 - **Size:** Half-day
 - **Dependencies:** None — cleanup-only; artifacts enumerated
 - **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC12 row — git hygiene 🟡)
 - **Description:** All MAX-1/2/3 sprint branches are merged and retained per convention, but **11 pre-MAX unmerged sprint heads (10-May era)** remain on origin across the repos. Per-branch triage: merged-content-elsewhere → delete; unique work → either merge or record under E2-style wip-triage; plus a branch-count sweep so future audits start from a clean enumeration.
 - **Acceptance:** Each of the 11 heads dispositioned (deleted / merged / documented-retained with reason); branch listing per repo matches the documented retention policy; LC12 flips green at the next audit.
 - **Notes:** Cross-reference E2 (Tier 0 wip-branch triage) — same shape, older population. The history scrub stays separately parked as the E1/LC13 rotation companion.
+
+---
+
+### E13 — qanun main committed worktree-gitlinks cleanup
+
+- **Status:** Open — owner sign-off required before touching main's tracked tree
+- **Size:** Sub-hour
+- **Dependencies:** None
+- **Source:** MAX-4 V6 hygiene census, 10 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`)
+- **Description:** The qanun repo's main has worktree gitlinks committed into the tracked tree (worktree directories recorded as gitlink entries). The cleanup is a one-commit removal but rewrites main's tracked content, so it was deliberately excluded from the LC12 sweep and held for owner sign-off.
+- **Acceptance:** Gitlink entries removed from qanun main with the sign-off recorded; a fresh clone shows no phantom submodule/worktree entries; suite stays green (28/28).
+
+---
+
+### E14 — Stale lucid-gould worktree directory
+
+- **Status:** Open
+- **Size:** Sub-hour
+- **Dependencies:** None
+- **Source:** MAX-4 V6 hygiene census, 10 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`)
+- **Description:** A stale `lucid-gould` worktree directory survives from an earlier session; its branch was dispositioned in the LC12 sweep but the working directory remains on disk. `git worktree prune` + directory removal.
+- **Acceptance:** Stale worktree pruned and directory removed; `git worktree list` on the affected repo matches reality; no orphan `.git/worktrees/` entries remain.
 
 ---
 
@@ -2400,9 +2460,9 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ---
 
-### J21 — compliance_manual stale structural-spec section-ids (21)
+### J21 — compliance_manual stale structural-spec section-ids (21) — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 V2 (sprint/max4-lc7)] — compliance_manual structural spec now resolves **851/851** section-ids (8 renames + 2 merges + 1 removal + 13 new entries); the spec generator is hardened to **hard-fail on stale ids** (permanent guard, not a one-off fix). **LC7 🟢** per `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`.
 - **Size:** Half-day
 - **Dependencies:** None (corpus side is now stable post-MAX-3 — re-pointing against a moving corpus was the prior risk)
 - **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC7 row — template integrity 🟡)
@@ -2411,9 +2471,9 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ---
 
-### J22 — Template dangling references (42 unique, DFSA-GEN 5.3 class)
+### J22 — Template dangling references (42 unique, DFSA-GEN 5.3 class) — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 V2 (sprint/max4-lc7)] — of the 42 unique dangling refs, **25 already resolved post-MAX-3** and **17 substituted with VER14-consolidation evidence** → **0 dangling across 1,069 template-ref entries**; a **permanent all-jurisdiction guard** (11,529-ref fixture) now keeps the audit at zero. **LC7 🟢** per `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`.
 - **Size:** Day
 - **Dependencies:** None; sibling of J21 — same LC7 surface
 - **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC7 row)
@@ -2430,7 +2490,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K1 — Billing integration (payment provider selection + integration)
 
-- **Status:** Open
+- **Status:** Open — **decision memo delivered [2026-06-11, MAX-4]** (`docs/k-decisions/`): staged Stripe; the **payment-links day-1 path is zero code**. Awaiting client decision (launch-checklist criterion 8 ⚠).
 - **Size:** Week
 - **Dependencies:** K2, K3
 - **Source:** v1 scope expansion — first paying customer requirement
@@ -2441,7 +2501,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K2 — User onboarding flow
 
-- **Status:** Open
+- **Status:** Open — **verified incidentally via the MAX-4 production smoke [2026-06-11]**: signup → entity → draft → export worked live end-to-end against K3's now-real register endpoint (5/5 fictional drafts clean). Stays Open on its full scope — email-verification walkthrough UX, entity-profile wizard, first-document walkthrough, demo-user replacement.
 - **Size:** Week
 - **Dependencies:** K3
 - **Source:** v1 scope expansion (currently hardcoded demo user per memory)
@@ -2450,9 +2510,9 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ---
 
-### K3 — Account creation flow with verification
+### K3 — Account creation flow with verification — **DONE-DEPLOYED [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done-deployed [2026-06-11, MAX-4 V4 (sprint/max4-k-api)] — the register endpoint was a **stub creating nothing**; now real: verification tokens (expiry + resend), password reset, account-deletion soft-delete with retention. Deployed to production and **proven live by the E2E-PROD smoke** (K3 auth → draft → export, 5/5 fictional drafts; launch-checklist C-table: "BUILT + DEPLOYED ... proven by E2E-PROD").
 - **Size:** Day
 - **Dependencies:** None (JWT auth already exists)
 - **Source:** v1 scope expansion
@@ -2463,7 +2523,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K4 — Law firm account type (FIRM_ADMIN) activation
 
-- **Status:** Open
+- **Status:** Open — **deferred-by-decision [2026-06-11, MAX-4]**: firm features named post-day-1 in the launch checklist (`audits/LAUNCH_CHECKLIST_20260611.md` §C).
 - **Size:** Week
 - **Dependencies:** K2, K3
 - **Source:** Memory: "Law firm account type with elevated FIRM_ADMIN permissions (designed, partially scaffolded)"
@@ -2474,7 +2534,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K5 — Firm tenancy: Firm → FirmEntity → ExaminerAccess workflow
 
-- **Status:** Open
+- **Status:** Open — **deferred-by-decision [2026-06-11, MAX-4]**: rides with K4 (post-day-1).
 - **Size:** Day
 - **Dependencies:** K4
 - **Source:** Memory: existing scaffolding
@@ -2485,7 +2545,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K6 — Pricing tiers definition + UI
 
-- **Status:** Open
+- **Status:** Open — **decision memo delivered [2026-06-11, MAX-4]** (`docs/k-decisions/`, pricing options); numbers can follow day-1. Awaiting client decision.
 - **Size:** Day
 - **Dependencies:** K1
 - **Source:** v1 scope expansion
@@ -2496,7 +2556,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K7 — Customer support flow
 
-- **Status:** Open
+- **Status:** Open — **decision memo delivered [2026-06-11, MAX-4]** (`docs/k-decisions/`, mailbox + auto-ack; ~1 hour to live once decided). Awaiting client decision; the K7 mailbox is also the L7 tester defect-report route.
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** v1 scope expansion
@@ -2507,7 +2567,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K8 — Terms of service + privacy policy + acceptable use
 
-- **Status:** Open
+- **Status:** Open — **DAY-1 BLOCKER [2026-06-11, MAX-4]**: the signup flow has users **contractually accepting a ToS that does not exist**. Decision memo delivered (`docs/k-decisions/`); launch-checklist criterion 7 ❌ — **the only day-1 product blocker** in the strengthened verdict (`audits/LAUNCH_VERDICT_ADDENDUM_20260611.md` condition 1). Awaiting client decision.
 - **Size:** Half-day (drafting time + legal review)
 - **Dependencies:** None
 - **Source:** v1 scope expansion
@@ -2518,7 +2578,7 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ### K9 — Refund policy + cancellation flow
 
-- **Status:** Open
+- **Status:** Open — **decision memo delivered [2026-06-11, MAX-4]** (`docs/k-decisions/`, Option A; rides inside the K8 ToS). Awaiting client decision.
 - **Size:** Half-day
 - **Dependencies:** K1
 - **Source:** v1 scope expansion
@@ -2527,9 +2587,9 @@ The commercial layer: billing, onboarding, accounts, pricing, terms. Required fo
 
 ---
 
-### K10 — Audit log / compliance event log
+### K10 — Audit log / compliance event log — **DONE-DEPLOYED [2026-06-11] (backend)**
 
-- **Status:** Open
+- **Status:** Done-deployed [2026-06-11, MAX-4 V4 (sprint/max4-k-api)] — backend audit log built and live in production (`audit_events` capture; idempotent migration applied at merge). **Customer-visible dashboard/export = fast-follow** per the launch checklist (`audits/LAUNCH_CHECKLIST_20260611.md` §C: "BUILT + DEPLOYED (backend; dashboard = fast-follow)") — the fast-follow rides as a noted residual, not a reopened item.
 - **Size:** Day
 - **Dependencies:** K2, K4
 - **Source:** v1 scope expansion + regulatory product context (customers may need to demonstrate what changed when)
@@ -3273,9 +3333,9 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-### M30 — DFSA-PRU sourcebook re-scrape + held-back vector purge
+### M30 — DFSA-PRU sourcebook re-scrape + held-back vector purge — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 V3 verdict + CORPUS/EMBED] — resolved by **REVIVE rather than re-scrape**: doc 2828 revived from doc 2431's text (**byte-identical**; hash-chained provenance recorded in audit_log) → **73 sections** (same VER10/12-25), parsed and embedded on both stores; **hold-back released** (the brief's "334 vectors" was actually retired DFSA-MKT 2450 — reconciled at EMBED; 2431's hold-back metadata was already correct per the V6 census). LC6 🟢: all Pinecone namespaces exactly on prediction (66,055); Hetzner Chroma mirrored **+ 2828 added**. One of the two DFSA corpus blockers named in the J-activation gates hereby removed.
 - **Size:** Half-day
 - **Dependencies:** None
 - **Source:** MAX-3 vector phase, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict LC6 named residual + park list) — successor to the Sprint 6 Block K finding that PRU content was never scraped (scraper gap, not parser gap)
@@ -3284,9 +3344,9 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-### M31 — section_ref vector-metadata refresh (46,558 vectors)
+### M31 — section_ref vector-metadata refresh (46,558 vectors) — **DONE [2026-06-11, at true scale 9,781]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 V6 census + EMBED] — the K16-pattern refresh executed at **true scale 9,781 vectors** (V6 census: dfsa namespace 9,198 with 5/5-stale sampling + default 580 — **this entry's 46,558 figure conflated DB rows with vectors**); **idempotent re-run returns 0**; K16-migrated FSRA→ADGM_RA metadata not re-flipped. LC6 row: "K16 done (9,781, idempotent-0)" (`audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`).
 - **Size:** Day
 - **Dependencies:** None (K16-pattern metadata-only update); folds naturally into B6 if the full Voyage re-embed runs first
 - **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict park list)
@@ -3295,9 +3355,9 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-### M32 — VARA-ISS citation re-extraction (40 NULLed citations)
+### M32 — VARA-ISS citation re-extraction (40 NULLed citations) — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-4 CORPUS] — re-extraction run against the recovered VARA section set (the document is **2810, not 2806** as the spec assumed): 80 legacy rows → **62 rows, 0 NULL anchors** (the V3 dry-run's 73 was the raw extraction count pre-UNIQUE collapse — explained; goal met). LC3 row: "VARA-ISS anchors restored (62/0-NULL)" (`audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`).
 - **Size:** Half-day
 - **Dependencies:** None (VARA parse recovery 555→2,112 already deployed — the prerequisite content now exists)
 - **Source:** MAX-3 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; launch-verdict park list)
@@ -3306,9 +3366,9 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-### M33 — FSRA empty-code final pair adjudication (docs 2082/2090)
+### M33 — FSRA empty-code final pair adjudication (docs 2082/2090) — **DONE [2026-06-11]**
 
-- **Status:** Open — client micro-decision pending; recommendation on file
+- **Status:** Done [2026-06-11, MAX-4 CORPUS — client-authorised apply per the recommendation on file] — **2082 → FSRA|GUID (GUID now 66), 2090 retired**; FSRA empty-rulebook_code is_current=1 count **0 on both machines**. The FSRA||637 population is **COMPLETE at 637 → 0**. 10-Jun verdict condition 4 discharged; **LC2 🟢 clean** (`audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`).
 - **Size:** Half-day (decision + 2-row apply)
 - **Dependencies:** None — launch-verdict condition 4
 - **Source:** MAX-3 FSRA||637 close-out, 10 June 2026 (`audits/MAX3_MASTER_LOG_20260610.md`; `audits/LAUNCH_VERDICT_20260610.md` condition 4)
@@ -3317,7 +3377,40 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-**M-category total: 33 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence + M30/M31/M32/M33 added by the 10 June 2026 MAX-3 close-out)
+### M34 — Quick Lookup ranking nit: GLO consultation doc surfaced above the keeper
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None (surfaced post-GLO-v2 apply — the content is correct; the ranking is not)
+- **Source:** MAX-4 production smoke, 11 June 2026 (`audits/LAUNCH_CHECKLIST_20260611.md` §E.3)
+- **Description:** Quick Lookup ranking surfaced a **GLO consultation document above the GLO keeper** for at least one probe during the production smoke. Keeper-vs-consultation ranking should prefer the current keeper (doc-class weighting or is_current boost). Quality nit, not an integrity defect — the keeper content itself is correct and current (728 sections post-Wave-E).
+- **Acceptance:** The affected probe returns the keeper first; ranking regression pinned in the search-quality suite; no degradation on existing search-quality params.
+
+---
+
+### M35 — Chroma doc 2756: 18 stale entries + missing fulltext chunks for 2845/2590
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** MAX-4 EMBED phase, 11 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`)
+- **Description:** Chroma carries **18 stale entries for doc 2756** (BVI-BCA pre-re-parse residue from the 265-section fine re-parse) and is **missing fulltext chunks for docs 2845** (GLO post-v2, 728 sections) **and 2590**. Targeted delete + re-chunk against the post-MAX-4 corpus state; verify the Hetzner mirror stays exact afterwards.
+- **Acceptance:** 2756 stale entries removed; 2845/2590 fulltext chunks present; Chroma↔corpus.db reconciliation clean for all three docs on both machines (mirror id-set proof preserved).
+
+---
+
+### M36 — PL-03 corpus gaps: BVI-RC sparse, NRP-29 granularity, PAN-AML Art.32
+
+- **Status:** Open
+- **Size:** Half-day (next CORPUS window — artifacts ready)
+- **Dependencies:** None — verdict-addendum condition 4 (residual set)
+- **Source:** MAX-4 E2E punch-list PL-03, 11 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`; `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md` condition 4)
+- **Description:** The 5 PL-03 E2E survivors were **genuine corpus gaps, not pipeline defects**: BVI-RC sparse coverage, NRP-29 (El Salvador) granularity, PAN-AML Art. 32 absent. The 3 residual non-passing local E2E cells (BVI×2, SV×1) are the scrubber **correctly** stripping citations rooted in these gaps — integrity holds; content is missing. Ingest/granularity fixes at the next CORPUS window; the courts-coverage trigger rides along per condition 4.
+- **Acceptance:** The three gaps closed in corpus on both machines; the 3 residual E2E cells (plus the Panama coverage cell) re-run clean; 77-pin benchmark updated for any section-count changes.
+
+---
+
+**M-category total: 36 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence + M30/M31/M32/M33 added by the 10 June 2026 MAX-3 close-out + M34/M35/M36 added by the 11 June 2026 MAX-4 close-out)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
