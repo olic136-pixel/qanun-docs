@@ -1,9 +1,28 @@
 # Qanun — Launch-Readiness Register
 
-**Version:** 1.8
-**Date:** 11 June 2026 (MAX-4 outcomes addendum — successor to v1.7; cross-reference `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`: **CONDITIONAL-GO — STRENGTHENED**, conditions 6 → 4)
+**Version:** 1.9
+**Date:** 11 June 2026 (MAX-5 outcomes addendum — successor to v1.8; charter fold per `~/Documents/Claude/Projects/Qanun/LAUNCH_PROGRAMME_20260611.md` §Register-impact; evidence log `audits/MAX5_MASTER_LOG_20260611.md`)
 **Owner:** Oliver Cook KC (CLO)
 **Status:** Living document — updated as items land or new items surface
+
+**v1.9 changes from v1.8 (11 June 2026 — MAX-5 outcomes addendum + Launch Programme Charter fold; evidence log `audits/MAX5_MASTER_LOG_20260611.md`):**
+
+Successor to v1.8 (MAX-4 close-out — authored on `sprint/max4-register-close`, PR #7; this addendum chains its counts from v1.8's end-state — at the merge gate, header/table/insertion-point conflicts with PR #7 resolved to **this version's** numbers, keeping both versions' item bodies). Records the MAX-5 execution session of 2026-06-11 (DIFC enablement + Tier 0 / IPE build + suite orchestration = charter workstreams W3+W4+W5) and folds the **Launch Programme Charter** (`LAUNCH_PROGRAMME_20260611.md`, Oliver's scope rulings of 2026-06-11) into the register per its §Register-impact directive. Note: the charter's governing-spec source documents (Qanun_IPE_SOW_v1_0_1 / QANUN_Studio_Addendum_v1.1 / UCIE v2.0) were **not locatable anywhere reachable**; per the master log's mitigation, the MAX-5 embedded-requirements baseline was effectively blessed through the Oliver-approved Tier-0 review gate.
+
+- **CHARTER FOLDING — DIFC: reference → LAUNCH across H/J/L.** Launch jurisdictions are now **six** (ADGM · DIFC · VARA · El Salvador · BVI · Panama); every H/J/L acceptance reading "5 jurisdictions" is to be read as six including DIFC/DFSA. Landed this session: **DFSA per-licence tier matrices now exist** (Cat 2-MP/3A corrected naming, 3C, 4 — none existed before; **Oliver approval pending**, see J4) and **DFSA E2E 8/8 cells clean** (cite 1.00 / coverage 100% / 0 survivors / 0 defects per cell). DFSA-PRU re-ingest landed earlier (M30, Done in v1.8). **DIFC corpus spine in:** DIFC-CL present (154 sections) + **DIFC-CR NEW (125 sections incl. Appendix 2 Standard Articles — the DIFC model form, one 39,437-char block)** — recorded as substantial progress under B5.
+- **CHARTER FOLDING — NEW Tier-0 category (Category N, ~12 items per IPE phases; 13 as enumerated).** The Incorporation Pack Engine is **UNIFIED + ACTIVE**: three divergent April streams (PN spec-conformant engine / ZS templates+wiring / `wip/tier0-incorporation-templates` 2,742 lines) unified provenance-verbatim; **14 templates ACTIVE (ADGM 8 + El Salvador Formation Pack v1 6)**; the human review gate **APPROVED + signed by Oliver 2026-06-11** — D1 form-completion path, D4 three mode-class sub-classes, and **adgm_ibr converted to FormCompletionTemplate as a 5-variant map on the RA prescribed resolution forms** (docs 2610/2611/2612/2615/2616, honest caveats documented); composition MAA retained as inactive fallback per D1. Tier-0 E2E acceptance (IPE §10.2) **7/7 PASS, 33/33 assertions**. Category N: 11 Done / 2 Open (N7 remaining-jurisdiction packs, N13 SV true corporate-foundation docs — both MAX-6).
+- **CHARTER FOLDING — Panama J-item CREATED (J23, the existing register omission):** first-ever Panama tier matrix + 4 templates built (K2); Oliver approval pending.
+- **CHARTER FOLDING — L2 REDEFINED as L2-SUITE** (the vision-gate operationalisation: one full Tier 0–5 suite per jurisdiction, cross-tier consistent, zero export survivors). **The first vision-gate datapoint: ADGM Tier 0–5 L2-SUITE PASS — 27 docs, 0 surviving defects, all 7 assertion classes green, cross-tier consistency proven (share splits 1,200/900/900 and UBO 40/30/30 identical across register/MAA/SHA; 12 settled facts written back at the tier-0 boundary; ZIP+MANIFEST 27/27 sha-verified), $10.35.** L2 stays Open on the remaining five jurisdictions (MAX-6 six-jurisdiction L2-SUITE matrix).
+- **CHARTER FOLDING — LC5 functional criterion codified: zero export survivors** replaces the structural pass. Evidence: E2E P1 7/7 (33/33 assertions), P2 DFSA 8/8 (0 survivors), L2-SUITE 27 docs 0 survivors, production tier-0 probe clean.
+- **Suite orchestration (the nominally-Done I-family audited and repaired in-session):** K5 found the suite layer ~70% real; the gaps are now closed — **derivation FIXED (the 162-doc explosion is dead**, May-28 class; 3 proof tests), **write-back + cross-tier context are real** (the promised `[CONTEXT FROM PRIOR TIERS]` block was absent from the prompt builder — now present in 23/23 tier>0 docs' every section prompt; redraft context restored), **validate_suite wired** (was built-unwired), **registry synced** (+`/suite/registry` endpoint), and **suite discovery LIVE in production (1 suite registered;** the loader had never been deployed and carried a hardcoded Mac path — fixed via settings). I-family stays 17/17 Done — the defects were found and fixed within the session.
+- **Corpus (MAX5-CORPUS + MAX5-EMBED, namespace math exact):** ADGM-CR **952→1,145** sections (new DOM parser — ground truth 1,099 numbered; K4's 145-fold was an undercount of 191); **DIFC-CR NEW 125** (Appendix-2 gate ✓); **BVI-RC 23→221** (corruption fixed — schedule ¶ numbering had displaced body sections under dedupe); **NRP-29 current 20** sections (code corrected SV-DASP→NRP-29); **PAN-AML full Ley 23 NEW 93** sections (Art.32 gate ✓; 2582 retired); **BVI-BCR NEW 35**; benchmarks **77→81 pins**; Pinecone **66,055→66,532 exact** (1,568 embedded / 1,091 purged, every namespace on prediction); Chroma **74,162→74,330**. This closes **M36 → Done** (PL-03 corpus gaps: BVI-RC sparse / NRP-29 granularity / PAN-AML Art.32 — exactly the three).
+- **UI (charter W6 start, all 9 launch-blocking K6 items + K2 extras):** jurisdiction-first onboarding (step-1 six-way select) + persistent gold jurisdiction badge/switcher + **six-everywhere** (single constants source — three surfaces had three different jurisdiction lists) + six-jurisdiction landing with grounding ProofBar + **generation transparency both sides** (live rulebook named per generation step — the launch-definition clause (d) surface) + DFSA/ES routes (DFSA wizard + structured questionnaire + both backend blockers fixed, create_profile proof 18/17 docs). **LATENT LAUNCH BUG FIXED: the onboarding POST 422'd for every user** (required jurisdictions field never sent). `/product` middleware 307 fixed; qanun.vercel.app doc error corrected.
+- **E2E defect harvest: 15 found / 12 fixed-in-branch with tests.** All four HIGH defects fixed+tested: **D-6** (MAA silently truncated at 8192 tokens pre-clauses → 16k), **D-7** (the gate-signed clause text was architecturally unreachable in the form prompt — now rides it), **D-12** (validate_suite newline-bridging auto-rejected every suite — false phantoms), **D-13** (derivation ignored `applicable_entity_types` — icaap wrongly drafted for Cat 3C; the model's refusal to fabricate was vindicated). Survivors: D-9 → new item **M37**; D-11 benign (48k cap). Validation spend $14.13 of the ~$15–25 budget; one API-socket death survived with zero loss (resumable design held).
+- **7 new items added (register conventions, next free IDs respecting v1.8/PR #7's allocations):** **C15** (DFSA quicklookup FSRA-fallback — retrieval routing + hardcoded fallback at `quicklookup.py:658`), **D15** (`source_form` double-prefix cosmetic in tier-0 form output), **D16** (Stream B command box P1a/P1b — blocked on Oliver's B-D3 accuracy bar), **E15** (migration PYTHONPATH deploy-procedure note — the 6 queued migrations need it at the HETZNER gate), **J23** (Panama template discovery + activation gate — the register omission), **M37** (version-metadata gap: tier-0 statutory docs + GEN 2844 — version-verification impossible at export; E2E D-9), **M38** (8 stale FSRA rulebooks flagged by the version-check — portal shows 2026-04/05 — refresh-run candidate). Plus **Category N** (13 items, enumerated below).
+- **Item status flips recorded in this addendum:** **E2** (Tier 0 wip-branch triage) → **Done** (the wip estate is triaged, unified by SHA into the active engine — the v1.8 product-decision ticket is discharged); **M36** → **Done** (corpus bullet above; entry body kept from PR #7 and annotated Done at this merge). J4/J5/J23 stay Open on Oliver's matrix approvals (DFSA/BVI/Panama — MAX-6 human gates).
+- **MAX-6 tickets recorded:** SV true corporate-foundation docs (escritura social SV-CC Art.22–35, share register Art.130, UBO register → **N13**); BVI/Panama/DIFC/VARA Tier-0 packs (→ **N7**); six-jurisdiction L2-SUITE matrix (→ inside **L2-SUITE**); DFSA/BVI/Panama matrix approvals (Oliver → **J4/J5/J23**); Stream-B B-D3 bar (Oliver → **D16**).
+- **Status-at-a-Glance refreshed (per-family methodology; old numbers are v1.8's/PR #7's):** C 5→6 Open / 14→15 Total; D 11→13 Open / 14→16 Total; E 10→10 Open / 4→5 Done / 14→15 Total (E2 flips Done, E15 added); J 20→21 Open / 22→23 Total; M 24→25 Open / 12→13 Done / 36→38 Total (M36 flips Done, M37/M38 added); **N NEW: 2 Open / 11 Done / 13 Total**. **Total 111→118 Open / 7 Blocked / 78→91 Done / 196→216 Total.** Twelve Done flips/arrivals against nine newly-enumerated Open items — the Done share rises 39.8%→42.1% even as the charter grows the Total by 20.
+- **Items not locatable as register entries (recorded narratively, per the v1.6–v1.8 convention):** **LC5** (launch-checklist criterion, not a register item — its functional redefinition is codified here; register surfaces are L1/L2); **the K5 suite-gap IDs G1–G11 and K6 UI conformance letters A–J** (session audit IDs, not register IDs — all build items closed in-session inside the Done I-family and the W6 UI lane); **the E2E defect IDs D-1…D-15** (session harvest IDs — 12 fixed-in-branch; D-9 promoted to M37, D-11 benign); **onboarding 422 fix** (its register surface K2 stays Open on full-onboarding scope — body edit deferred to avoid a PR #7 overlap); **the governing-spec source documents** (IPE SOW v1.0.1 / Studio Addendum v1.1 / UCIE v2.0 — found nowhere reachable; embedded-requirements baseline blessed via the approved Tier-0 gate; supply-the-files remains a standing client ask); **suite cost/spend figures** (evidence, not items). **Deploy note:** `sprint/max5-e2e-results` contains production fixes and folds into the HETZNER gate so the deploy ships the tested code; the session HOLDS for `Authorise MAX5-HETZNER` at this writing.
 
 **v1.8 changes from v1.7 (11 June 2026 — MAX-4 outcomes addendum; launch checklist `audits/LAUNCH_CHECKLIST_20260611.md`; verdict addendum `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md`: CONDITIONAL-GO — STRENGTHENED, conditions 6 → 4):**
 
@@ -20,7 +39,6 @@ Successor to v1.7: records the MAX-4 execution session of 2026-06-10/11 (E2E val
 - **7 new items added (register conventions, next free IDs):** **D13** (drafting/status `unique_citations` always-0 display defect), **D14** (5 orphaned fictional e2eprod entities — no entity-delete endpoint exists), **E13** (qanun main committed worktree-gitlinks cleanup — owner sign-off), **E14** (stale lucid-gould worktree directory), **M34** (quicklookup ranking nit — GLO consultation doc surfaced above the keeper), **M35** (Chroma doc 2756: 18 stale entries + missing fulltext chunks for 2845/2590), **M36** (PL-03 corpus gaps — BVI-RC sparse, NRP-29 granularity, PAN-AML Art.32 — next CORPUS window, artifacts ready).
 - **Status-at-a-Glance refreshed (per-family methodology):** B 4→3 Open / 2→3 Done (9 Total); D 9→11 Open / 12→14 Total; E 9→10 Open / 3→4 Done / 12→14 Total; J 22→20 Open / 0→2 Done (22 Total); K 10→8 Open / 0→2 Done (10 Total); M 25→24 Open / 8→12 Done / 33→36 Total. **Total 114→111 Open / 7 Blocked / 68→78 Done / 189→196 Total.** Ten Done flips against seven newly-enumerated items — the first version since v1.4 in which the Done count rises faster than the Total.
 - **Items not locatable as register entries (recorded narratively, per the v1.6/v1.7 convention):** **LC7 / LC8 / LC12** (launch-checklist criteria, not register items — their register surfaces J21/J22, B1, E12 all flip Done above); **Wave E** (wave label spanning the parser-profile work, not a register family); **K16 metadata refresh** (never carried its own ID — its register surface is M31, Done above); **BVI-BCA 265 fine re-parse** (corpus apply with no standing ID — the A7.G family was already Done); **FSRA empty-code 637→0** (the population never carried an ID — its register surface is M33); **section-count benchmark suite** (acceptance infrastructure, no ID); **the launch-checklist L-row scoring** (L1/L2/L4/L5/L6 → 🟢 in the verdict addendum) is checklist-level evidence — the register's L-category items keep their stricter acceptance (deliberate-injection variant, ~15 full-suite drafts with Oliver eyeball review, tester kits) and **stay Open** pending that; **prod-smoke artifacts** (the 5 prod exports deleted post-smoke by design; goldens at `qanun-api/e2e_results_rerun/`).
-
 **v1.7 changes from v1.6 (10 June 2026 — MAX-3 outcomes addendum; launch verdict `audits/LAUNCH_VERDICT_20260610.md`: CONDITIONAL-GO, 6 conditions):**
 
 Same-day successor to v1.6: records the MAX-3 execution session of 2026-06-10 (session brief dated 2026-06-11; artifact dates follow the system clock per the established convention — cf. the O1 date note). MAX-3 closes the citation-integrity wave (Wave D), the FSRA empty-code bulk mapping, and the VARA parse regression, then runs the second frozen reconcile-and-swap to production. The launch decision moves from the 30-May NO-GO to **CONDITIONAL-GO** — full 15-LC re-score and the 6 attached conditions in `audits/LAUNCH_VERDICT_20260610.md`; evidence log `audits/MAX3_MASTER_LOG_20260610.md`.
@@ -157,19 +175,22 @@ This principle applies regardless of tester-visibility. Items invisible to a cas
 |---|---|---|---|---|
 | A — Data Integrity | 3 | 0 | 5 | 8 |
 | B — Content Coverage | 3 | 3 | 3 | 9 |
-| C — Code Quality | 5 | 0 | 9 | 14 |
-| D — Feature Completion | 11 | 2 | 1 | 14 |
-| E — Operational Hygiene | 10 | 0 | 4 | 14 |
+| C — Code Quality | 6 | 0 | 9 | 15 |
+| D — Feature Completion | 13 | 2 | 1 | 16 |
+| E — Operational Hygiene | 10 | 0 | 5 | 15 |
 | F — Test Coverage | 2 | 2 | 2 | 6 |
 | **G — UCIE Framework & Cross-Jurisdiction Infrastructure** | **4** | **0** | **11** | **15** |
 | **H — Per-Jurisdiction Corpus & Case Law** | **13** | **0** | **9** | **22** |
 | **I — Governance Suite Mode** | **0** | **0** | **17** | **17** |
-| **J — Per-Jurisdiction Templates & Suites** | **20** | **0** | **2** | **22** |
+| **J — Per-Jurisdiction Templates & Suites** | **21** | **0** | **2** | **23** |
 | **K — Commercial Readiness** | **8** | **0** | **2** | **10** |
 | **L — End-to-End Validation** | **8** | **0** | **0** | **8** |
-| **M — Corpus Integrity & Completeness** | **24** | **0** | **12** | **36** |
+| **M — Corpus Integrity & Completeness** | **25** | **0** | **13** | **38** |
+| **N — Tier 0 / Incorporation Pack Engine** | **2** | **0** | **11** | **13** |
 | **O — Overnight Orchestration** | **0** | **0** | **1** | **1** |
-| **Total** | **111** | **7** | **78** | **196** |
+| **Total** | **118** | **7** | **91** | **216** |
+
+*(Table state is the v1.9 end-state and incorporates v1.8's flips from PR #7 — B/J/K/M rows carry v1.8's B1/J21/J22/K3/K10/M30–M33 closures plus this session's changes.)*
 
 ### Methodology — per-family aggregation
 
@@ -952,10 +973,10 @@ What the corpus actually contains.
 
 ### B5 — A2: DIFC primary legislation ingestion
 
-- **Status:** Open
+- **Status:** Open — **substantial progress [2026-06-11, MAX-5]: the companies-law spine is in.** DIFC-CL present (154 sections) + **DIFC-CR NEW (doc 2852, 125 sections incl. Appendix 2 Standard Articles — the DIFC model form — preserved as one 39,437-char block; rule 2.1.1 gate ✓)**; embedded (83 chunks, default namespace per the DIFC-CL precedent). DIFC is now a LAUNCH jurisdiction per `LAUNCH_PROGRAMME_20260611.md`, which raises this item's priority. Stays Open on the remaining laws (Personal Property, Insolvency, etc.). Evidence `audits/MAX5_MASTER_LOG_20260611.md`.
 - **Size:** Week
 - **Dependencies:** None
-- **Source:** SOW Section A2, 11 May 2026 sprint state
+- **Source:** SOW Section A2, 11 May 2026 sprint state; DIFC reference → LAUNCH per `LAUNCH_PROGRAMME_20260611.md`
 - **Description:** Unchanged from v1.0. Ingest DIFC Companies Law, Personal Property Law, Insolvency Law, etc. Requires scraper design, parser handling for legislation-shaped content, embedding, MCP registration.
 - **Acceptance:** DIFC primary legislation queryable via search_corpus and get_rule with Tier 1 classification.
 
@@ -1185,6 +1206,17 @@ Known-to-be-wrong code.
 
 ---
 
+### C15 — DFSA quicklookup FSRA-fallback (retrieval routing + hardcoded fallback)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None
+- **Source:** MAX-5 E2E DFSA cells, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md`)
+- **Description:** Quick-lookup retrieval routing can fall through to a **hardcoded FSRA fallback** for DFSA-scoped queries (`quicklookup.py:658`) — a DFSA question that misses its routing target silently answers from the FSRA corpus instead of failing honestly or retrying within the DFSA scope. Did not surface as an export defect in the 8/8 DFSA E2E cells (the drafting path verifies citations independently), but it is exactly the cross-entity collision class M29 closed at the citation layer, alive at the retrieval layer.
+- **Acceptance:** Jurisdiction-scoped lookups never fall back across entities; hardcoded fallback removed or made scope-aware; regression test: a DFSA-scoped quicklookup that cannot resolve returns a scoped miss, not an FSRA answer.
+
+---
+
 # Category D — Feature Completion
 
 Sprint sections not yet landed.
@@ -1329,6 +1361,28 @@ Sprint sections not yet landed.
 
 ---
 
+### D15 — `source_form` double-prefix cosmetic in tier-0 form output
+
+- **Status:** Open
+- **Size:** Sub-hour
+- **Dependencies:** None — display-only
+- **Source:** MAX-5 E2E defect harvest, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md`)
+- **Description:** Tier-0 form-completion output can render the `source_form` label with a doubled prefix (e.g. the form-family prefix repeated in the displayed title). Cosmetic only — citation anchoring, clause resolution, and export verification are unaffected (E2E P1 7/7 with this present). Recorded per conventions rather than fixed in-branch because it is presentation-layer polish, not integrity.
+- **Acceptance:** `source_form` renders once-prefixed in drafts and exports; snapshot test added on a tier-0 form fixture.
+
+---
+
+### D16 — Stream B command box (P1a/P1b) — blocked on B-D3 accuracy bar
+
+- **Status:** Open — **Oliver gate** (B-D3 accuracy bar must be set before build per charter W6)
+- **Size:** Multi-day
+- **Dependencies:** Oliver's B-D3 decision; W6 Studio UI doctrine surface
+- **Source:** Launch Programme Charter W6 (`LAUNCH_PROGRAMME_20260611.md`); MAX-5 K6 UI audit row J (`audits/MAX5_MASTER_LOG_20260611.md`); MAX-6 ticket
+- **Description:** The Stream B command box (P1a/P1b) is the remaining absent surface from the K6 doctrine audit (row J). Deliberately not built in MAX-5: the accuracy bar that governs what the command box may claim/do (B-D3) is a client decision and the build must follow the bar, not precede it.
+- **Acceptance:** B-D3 bar recorded in decisions.log; command box implemented to that bar; conformance re-audit flips K6 row J.
+
+---
+
 # Category E — Operational Hygiene
 
 ---
@@ -1348,9 +1402,9 @@ Sprint sections not yet landed.
 
 ---
 
-### E2 — Tier 0 wip-branch triage
+### E2 — Tier 0 wip-branch triage — **DONE [2026-06-11]**
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX-5 K3 + BUILD-1] — the triage this item always wanted, executed at full depth: K3 mapped the Tier-0 estate as **three divergent streams** (PN spec-conformant engine d3eedca / ZS templates+wiring 553eaae / `wip/tier0-incorporation-templates` 2,742 lines — the sole unmerged head the v1.8 LC12 sweep retained under a product-decision ticket) and found the April "deployed" engine **live nowhere** (orphan files + live DB columns on Hetzner — the entity_setup pattern recurred at the DB layer; April PASS evidence unreproducible, all re-proven). BUILD-1 unified all three streams provenance-verbatim into the active engine (`sprint/max5-tier0` @ 45948eb, 380/0, +105 tests); the wip branch's content is landed by SHA. The product-decision ticket is discharged — see Category N for the engine's go-forward items. Evidence `audits/MAX5_MASTER_LOG_20260611.md`.
 - **Size:** Day
 - **Description:** Unchanged from v1.0.
 
@@ -1495,6 +1549,17 @@ Sprint sections not yet landed.
 - **Source:** MAX-4 V6 hygiene census, 10 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`)
 - **Description:** A stale `lucid-gould` worktree directory survives from an earlier session; its branch was dispositioned in the LC12 sweep but the working directory remains on disk. `git worktree prune` + directory removal.
 - **Acceptance:** Stale worktree pruned and directory removed; `git worktree list` on the affected repo matches reality; no orphan `.git/worktrees/` entries remain.
+
+---
+
+### E15 — Migration PYTHONPATH deploy-procedure note (6 queued migrations)
+
+- **Status:** Open — discharges at the MAX5-HETZNER gate
+- **Size:** Sub-hour (procedure note + verification step)
+- **Dependencies:** `Authorise MAX5-HETZNER`
+- **Source:** MAX-5 merge phase, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md`)
+- **Description:** The 6 MAX-5 migrations (incl. `add_tier0_entity_fields`) were applied to the LOCAL demo DB during the merge; the server needs the same set at deploy, and the migration runner requires the correct **PYTHONPATH** on Hetzner (the production venv/layout differs from local — the same class of operational fact as the v1.5 `.venv/` note). Recording it as an item rather than tribal knowledge so the HETZNER gate's checklist carries it.
+- **Acceptance:** All 6 migrations applied on Hetzner with the documented PYTHONPATH invocation; post-deploy schema check green; the invocation recorded in the deploy procedure doc.
 
 ---
 
@@ -2236,7 +2301,7 @@ The 5-tier governance suite as an additive product mode alongside single-documen
 
 # Category J — Per-Jurisdiction Templates & Suites
 
-Template content per jurisdiction × licence type × tier. The largest single category by item count because of the 5-jurisdiction × per-licence × 5-tier matrix.
+Template content per jurisdiction × licence type × tier. The largest single category by item count because of the jurisdiction × per-licence × 5-tier matrix — **six jurisdictions from v1.9** (DIFC reference → LAUNCH per the Launch Programme Charter; Panama's J-item omission corrected via J23).
 
 ---
 
@@ -2275,10 +2340,10 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ### J4 — DFSA template discovery + activation gate
 
-- **Status:** Open
+- **Status:** Open — **matrices built, GO-PENDING-MATRIX-APPROVAL [2026-06-11, MAX-5 K1]**: DFSA per-licence tier matrices now exist (Cat 2-MP/3A with corrected naming, 3C, 4 — none existed before this session); J18-DFSA questionnaire spec ~250 lines; refs 17/17 resolve; the two backend blockers MAX-4 missed are FIXED (per-jurisdiction VALID category sets + 18-row document_register seed, create_profile proof 18/17); **DFSA E2E 8/8 cells clean** (cite 1.00 / coverage 100% / 0 survivors). Remaining: **Oliver's matrix approval** (MAX-6 human gate), then activation. Pack at `docs/activation-packs/`; evidence `audits/MAX5_MASTER_LOG_20260611.md`.
 - **Size:** Day
 - **Dependencies:** G10, H11
-- **Source:** v1 scope expansion
+- **Source:** v1 scope expansion; DIFC reference → LAUNCH per `LAUNCH_PROGRAMME_20260611.md`
 - **Description:** TemplateDiscoveryAgent for DFSA. DFSA licence categories (Cat 1-5 per DFSA framework). 5-tier suite per category. Oliver gate review.
 - **Acceptance:** DFSA template set per licence type per tier; Oliver-approved; activated.
 
@@ -2286,7 +2351,7 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ### J5 — BVI template discovery + activation gate
 
-- **Status:** Open
+- **Status:** Open — **matrix built + 8 new T4/T5 templates [2026-06-11, MAX-5 K2]**: BVI template set 12→**20** (27 provisions, 100% resolving against the post-CORPUS BVI-RC 221 / BVI-BCA 265 / BVI-BCR 35 state). Remaining: **Oliver's matrix approval** (MAX-6 human gate), then activation. Note from K4: the BVI model-form gate as originally conceived was **misconceived — BVI has no statutory model M&A**; the Tier-0 surface for BVI is re-specified under N7. Evidence `audits/MAX5_MASTER_LOG_20260611.md`.
 - **Size:** Day
 - **Dependencies:** G10, H13
 - **Source:** v1 scope expansion
@@ -2482,6 +2547,17 @@ Template content per jurisdiction × licence type × tier. The largest single ca
 
 ---
 
+### J23 — Panama template discovery + activation gate — **CREATED [2026-06-11] (register omission corrected)**
+
+- **Status:** Open — **matrix built [2026-06-11, MAX-5 K2]**: the register never carried a Panama J-item despite Panama being a v1.4 launch jurisdiction (omission flagged by K2 and corrected here). **First-ever Panama tier matrix** + **4 templates** built against the post-CORPUS Panama state (PAN-LEY32 96/96 complete; **PAN-AML full Ley 23, 93 sections, Art.32 verified**). Remaining: **Oliver's matrix approval** (MAX-6 human gate), then activation.
+- **Size:** Day
+- **Dependencies:** G10; Panama corpus (PAN-LEY32 + PAN-AML — both current post-MAX5-CORPUS)
+- **Source:** MAX-5 K2 register-omission flag, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md`); sibling of J1–J5
+- **Description:** TemplateDiscoveryAgent run for Panama. Panama licence categories per the K2 matrix. 5-tier suite per category. Oliver gate review.
+- **Acceptance:** Panama template set per licence type per tier; Oliver-approved; activated.
+
+---
+
 # Category K — Commercial Readiness
 
 The commercial layer: billing, onboarding, accounts, pricing, terms. Required for a first paying customer flow. Most of these are gaps not previously tracked in the register.
@@ -2615,14 +2691,14 @@ Pre-launch validation that all five jurisdictions produce regulator-credible out
 
 ---
 
-### L2 — Full draft test per licence type per jurisdiction (representative sample)
+### L2 — Full suite test per jurisdiction — **REDEFINED as L2-SUITE [2026-06-11, charter fold]**
 
-- **Status:** Open
+- **Status:** Open — **1 of 6 vision-gate datapoints landed.** **REDEFINED as L2-SUITE per `LAUNCH_PROGRAMME_20260611.md` W5**: the acceptance is now *one full Tier 0–5 suite per jurisdiction (six), cross-tier consistent, zero export survivors* — the test that operationalises the launch-definition sentence. **First datapoint: ADGM Tier 0–5 L2-SUITE PASS (run 42aff0925fa2) — 27 docs, 0 surviving defects, all 7 assertion classes green** (tier presence 27/27 with the honest no-active-ADGM-T1 note; cross-tier consistency 0 contradictions — share splits 1,200/900/900 and UBO 40/30/30 identical across register/MAA/SHA; ZIP+MANIFEST 27/27 sha-verified; write-back 12 settled facts merged at the tier-0 boundary; `[CONTEXT FROM PRIOR TIERS]` + literal fact values in 23/23 tier>0 docs' every section prompt); **$10.35**, 160.9 min drafting wall. Remaining: the six-jurisdiction L2-SUITE matrix (MAX-6). Evidence `audits/MAX5_MASTER_LOG_20260611.md` §3.6 Phase 3.
 - **Size:** Week
-- **Dependencies:** L1
-- **Source:** v1 readiness criterion
-- **Description:** For each jurisdiction × representative licence types (not all combinations — pick the most-common 2-3 per jurisdiction): full governance suite draft (all 5 tiers) for a fictional but realistic entity. Verify regulator-credibility: every section drafted, every citation verified, every appendix rendered, cross-tier context consistent.
-- **Acceptance:** ~15 full-suite drafts produced (ADGM Cat 3A/3B/3C; VARA EX/CUST/BD; SV DASP-EX/CUST/PLAT; DFSA Cat 3/4; BVI Approved Manager/Restricted Manager). Each passes Oliver's eyeball review for regulator-credibility.
+- **Dependencies:** L1; N (Tier-0 packs per jurisdiction — the suite now starts at Tier 0); J4/J5/J23 matrix approvals for the non-ADGM datapoints
+- **Source:** v1 readiness criterion; redefined by `LAUNCH_PROGRAMME_20260611.md` §Register-impact ("L2 redefined as L2-SUITE")
+- **Description:** Per jurisdiction (six): full governance suite draft — **Tier 0 Corporate Foundation through Tier 5** — for a fictional but realistic entity, from a single questionnaire. Verify regulator-credibility: every section drafted, every citation verified, every appendix rendered, cross-tier context consistent, **zero export survivors** (the LC5 functional criterion).
+- **Acceptance:** Six L2-SUITE passes (one per launch jurisdiction), each: 0 surviving defects across the full suite, all 7 assertion classes green, cross-tier consistency proven, manifested ZIP download. Oliver's eyeball review for regulator-credibility stands on top. (The prior "~15 full-suite drafts across licence types" sample remains MAX-6+ stretch scope once the six gates pass.)
 
 ---
 
@@ -2689,6 +2765,131 @@ Pre-launch validation that all five jurisdictions produce regulator-credible out
 - **Source:** v1 readiness criterion
 - **Description:** Explicit go/no-go criteria for launch: register status (all v1 items Done, no Open or Blocked), test suite green, corpus health green across 5 jurisdictions, billing flow tested, support flow ready, ToS/privacy published, customer-shape acceptance passed. Final checklist before public availability.
 - **Acceptance:** Checklist documented; all items pass before any external customer is invited.
+
+---
+
+# Category N — Tier 0 / Incorporation Pack Engine
+
+**NEW in v1.9** per `LAUNCH_PROGRAMME_20260611.md` §Register-impact ("New Tier-0 category, IPE Phases 2–7, ~12 items"). The Incorporation Pack Engine: Tier 0 Corporate Foundation generated from authoritative model forms, feeding the Tier 1–5 governance suite through write-back. Governing requirements: the IPE SOW's hard requirements as embedded in the MAX-5 brief (the SOW source file itself was not locatable — baseline blessed via the Oliver-approved review gate, N11). Evidence for all Done items: `audits/MAX5_MASTER_LOG_20260611.md`.
+
+---
+
+### N1 — Company-law corpus foundation (IPE Phases 0–1) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 K4 + CORPUS/EMBED] — six jurisdictions' company-law spines current and embedded: **ADGM-CR 1,145** sections (DOM parser; s.23/28/74/186 gates green), **DIFC-CL 154 + DIFC-CR 125** (incl. Appendix 2 Standard Articles — the DIFC model form), **SV-CC 1,566**, **PAN-LEY32 96/96** complete (gate recalibrated), **BVI-BCA 265 + BVI-RC 221 + BVI-BCR 35**. RA blockers resolved (32 forms; consents re-anchored sha-identical). Finding of record: **BVI has no statutory model M&A** — the BVI model-form gate was misconceived; BVI's Tier-0 pack (N7) is specified accordingly.
+- **Size:** (landed)
+- **Dependencies:** None
+- **Source:** IPE Phases 0–1; charter W4
+
+---
+
+### N2 — FormCompletionTemplate engine (D1 form-completion path) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 BUILD-1 + Tier-0 gate] — the spec-conformant engine (FormField / OptionalClause / ClauseResolver / draft_form_completion with citation-map) is the active path per Oliver's **D1 ruling: form-completion**, with the composition MAA retained as the inactive fallback. `FormCompletionTemplate` routes to `_run_form_completion()`; mode_class annotations per **D4's three sub-classes** (registers = CLOSED-structure class 2).
+- **Size:** (landed)
+- **Dependencies:** None
+- **Source:** IPE Phase 2; decisions.log D1/D4 rulings (qanun-docs `8d1acaf`)
+
+---
+
+### N3 — Tier-0 estate unification (PN / ZS / wip three-stream resurrection) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 K3 + BUILD-1] — K3 found the engine **live nowhere** (April deploy clobbered by May-4/MAX-4; orphan files + live DB columns on Hetzner; April PASS evidence unreproducible — all re-proven). BUILD-1 unified the three divergent streams **provenance-verbatim** (PN d3eedca / ZS 553eaae / wip by SHA) on `sprint/max5-tier0` @ 45948eb (380/0, +105 tests). Corpus drift forced full ref re-derivation (April refs dead — ADGM-CR-MAR Schedule 1 → 85 Art.N rows, all re-anchored + annotated); fixture +1,037 refs; structural_specs 177. Closes E2.
+- **Size:** (landed)
+- **Dependencies:** None
+- **Source:** IPE Phases 2–3; charter W4 ("resurrect + verify wip/tier0")
+
+---
+
+### N4 — Entity migration + 8 preflight fields + CEE write-back — **DONE [2026-06-11] (server apply at HETZNER gate)**
+
+- **Status:** Done [2026-06-11, MAX-5] — `add_tier0_entity_fields` migration applied (local demo DB; server apply rides the HETZNER gate, see E15); CEE preflight **8/8 fields** (E2E P1); CEE write-back round-trip green; `completing` state per the R4 default.
+- **Size:** (landed)
+- **Dependencies:** E15 (server-side apply)
+- **Source:** IPE Phase 4; charter W4
+
+---
+
+### N5 — ADGM Tier-0 pack (8 templates ACTIVE) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, Tier-0 gate Step 2] — 8 ADGM templates ACTIVE, including **adgm_ibr converted from composition to FormCompletionTemplate as a 5-variant map** on the RA prescribed resolution forms (docs 2610 single-individual / 2611 multiple-individual / 2612 corporate-shareholder / 2615 by-body-corporate / 2616 by-individual; honest caveats documented: 2610 'PLC' title vs private-company text, 2611 'public' recital). Observation fixes applied: GEN 8.10 → **GEN 8.8; FSMR s.105** (verified anchors); `[DATE]` → `[[SHADate]]` (family test added). Six OptionalClause texts gate-approved verbatim (regulatory bases ADGM-CR s.503/s.521/s.117 + GEN 8.8/FSMR s.105).
+- **Size:** (landed)
+- **Dependencies:** N2, N11
+- **Source:** IPE Phase 5; Tier-0 gate Steps 1a/1b/2
+
+---
+
+### N6 — El Salvador Formation Pack v1 (6 templates ACTIVE) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, Tier-0 gate Step 2] — 6 SV templates ACTIVE under Oliver's naming ruling **"El Salvador Formation Pack v1"** (the 2-of-6 coverage honesty table accompanies it). The pack's successor scope — SV *true* corporate-foundation documents — is N13.
+- **Size:** (landed)
+- **Dependencies:** N2, N11
+- **Source:** IPE Phase 5; decisions.log SV ruling
+
+---
+
+### N7 — Remaining-jurisdiction Tier-0 packs (BVI / Panama / DIFC / VARA)
+
+- **Status:** Open — **MAX-6 ticket.** Coverage today is honestly **2 of 6** (ADGM + SV active). Raw material exists: the wip estate carried 44 April-era composition templates incl. BVI 12 + PAN 6 (extraction-only; predate the MAX-4 fixes — re-prove, don't trust); DIFC-CR Appendix 2 Standard Articles is the DIFC model form in corpus; BVI pack must follow the no-statutory-model-M&A finding (N1).
+- **Size:** Day per jurisdiction
+- **Dependencies:** N2 (engine), J4/J5/J23 matrix approvals where the pack feeds suites; per-jurisdiction review gates (the N11 pattern)
+- **Source:** IPE Phase 5 ×6 jurisdictions; charter W4; MAX-6 ticket list
+
+---
+
+### N8 — Suite integration: Tiers 0–5 single-questionnaire flow — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 BUILD-2 + E2E] — `incorporation_pack` mode + `completing_tier0` + **write-back** (placeholder-safe; 12 settled facts merged at the tier-0 boundary in the L2-SUITE run) + tier/jurisdiction metadata on all 162 templates + derivation fix (162-doc explosion dead) + reconciliation + validate_suite wired + enriched MANIFEST. Proven end-to-end by the ADGM L2-SUITE PASS (L2).
+- **Size:** (landed)
+- **Dependencies:** N2, N5
+- **Source:** IPE Phase 6; charter W4/W5
+
+---
+
+### N9 — Incorporation flow UI (Tier-0 gold) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 BUILD-2/BUILD-3] — Tier-0 gold UI + live doc-counts; 'Incorporation Pack' tier copy; merged with the jurisdiction-first onboarding work (59/59, tsc clean). Browser-level K12 pass is a post-deploy step at the HETZNER gate.
+- **Size:** (landed)
+- **Dependencies:** N8
+- **Source:** IPE Phase 6; charter W4 ("incorporation flow UI")
+
+---
+
+### N10 — Spanish-ley parser (PAN/SV) — **DONE-BY-REFUTATION [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 K4] — **parse_spanish_ley NOT NEEDED**: the existing es-path was proven against the live population (SV-CC 1,566 ✓; PAN-LEY32 96/96 ✓; PAN-AML 93 with Art.32 ✓ landed through it in MAX5-CORPUS). The charter's W4 line item closes by refutation rather than construction.
+- **Size:** (refuted)
+- **Dependencies:** None
+- **Source:** charter W4 ("Spanish-ley parser (PAN/SV)")
+
+---
+
+### N11 — Human review gate: tier0_template_review — **DONE [2026-06-11] — APPROVED + SIGNED (Oliver)**
+
+- **Status:** Done [2026-06-11, Tier-0 gate] — review pack regenerated with the R1 fork, the **April approval RESCINDED**, and a signature block; Step 1 read-only (1a halt-trigger fired and resolved → the IBR→FCT conversion; 1b six clause texts printed verbatim and OK'd with 2 observations, both fixed); Step 2 executed on `Authorise MAX5-TIER0-ACTIVATE`. **Review pack APPROVED + signed by Oliver 2026-06-11**; coverage CSV regenerated (15/15 found, 14 active); rulings of record in decisions.log (qanun-docs `8d1acaf`). This gate also stands as the blessing of the embedded-requirements baseline (the SOW source files being unlocatable).
+- **Size:** (landed)
+- **Dependencies:** None
+- **Source:** IPE Phase 7 human gate; charter W4 owner-gate column
+
+---
+
+### N12 — Tier-0 E2E acceptance (IPE §10.2) — **DONE [2026-06-11]**
+
+- **Status:** Done [2026-06-11, MAX-5 E2E Phase 1] — **7/7 PASS, 33/33 assertions**: MAA form-path 59 articles / 0 invented / 49/49 statutory headings map to doc 2607; six clauses verbatim-in per resolver; `[[SHADate]]` flagged ×2; the no-flags draft contains NONE of the six (hallucination check); SHA omission honoured at both levels; BVI firewall 0 ADGM/FSRA refs; CEE preflight 8/8; registers CLOSED-structure exact columns + placeholder discipline. Production tier-0 probe clean. Defects D-6/D-7 (HIGH) found here and fixed-in-branch with tests.
+- **Size:** (landed)
+- **Dependencies:** N5, N6, N8
+- **Source:** IPE §10.2 acceptance; `audits/MAX5_MASTER_LOG_20260611.md` §3.6 Phase 1
+
+---
+
+### N13 — SV true corporate-foundation documents
+
+- **Status:** Open — **MAX-6 ticket** (per Oliver's SV ruling: Formation Pack v1 ships as named; the true corporate-foundation set follows)
+- **Size:** Day
+- **Dependencies:** N2; SV-CC corpus (in, 1,566 sections)
+- **Source:** decisions.log SV ruling; MAX-6 ticket list (`audits/MAX5_MASTER_LOG_20260611.md`)
+- **Description:** Build the SV documents the Formation Pack v1 honestly does not yet cover: **escritura social (SV-CC Art.22–35)**, **share register (Art.130)**, **UBO register** — grounded form-completion/CLOSED-structure templates per the D4 sub-classes, through the N11-pattern review gate.
+- **Acceptance:** Three SV corporate-foundation templates active post-gate; citation-anchored to SV-CC articles; E2E cell green with zero export survivors.
 
 ---
 
@@ -3401,7 +3602,7 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ### M36 — PL-03 corpus gaps: BVI-RC sparse, NRP-29 granularity, PAN-AML Art.32
 
-- **Status:** Open
+- **Status:** Done [2026-06-11, MAX5-CORPUS/EMBED] — the three gaps closed this session (BVI-RC 23→221, NRP-29 current 20, PAN-AML full Ley 23 NEW 93); flip recorded in the v1.9 addendum's MAX5-CORPUS/EMBED bullet and annotated at the PR #7 / PR #10 merge.
 - **Size:** Half-day (next CORPUS window — artifacts ready)
 - **Dependencies:** None — verdict-addendum condition 4 (residual set)
 - **Source:** MAX-4 E2E punch-list PL-03, 11 June 2026 (`audits/MAX4_MASTER_LOG_20260610.md`; `audits/LAUNCH_VERDICT_ADDENDUM_20260611.md` condition 4)
@@ -3410,7 +3611,33 @@ Drop-in format for `~/qanun-docs/launch-readiness-register.md`. Originally draft
 
 ---
 
-**M-category total: 36 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence + M30/M31/M32/M33 added by the 10 June 2026 MAX-3 close-out + M34/M35/M36 added by the 11 June 2026 MAX-4 close-out)
+*(M34–M36 added by the 11 June 2026 MAX-4 close-out [PR #7, entry bodies retained above]; M36 flips **Done** per the v1.9 addendum's MAX5-CORPUS/EMBED bullet.)*
+
+---
+
+### M37 — Version-metadata gap: tier-0 statutory docs + GEN 2844 (version-verification impossible at export)
+
+- **Status:** Open
+- **Size:** Half-day
+- **Dependencies:** None — adgm-corpus ticket
+- **Source:** MAX-5 E2E defect harvest **D-9**, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md` §3.6)
+- **Description:** The tier-0 statutory documents (the ADGM-CR/model-form family the Incorporation Pack Engine drafts from) and **GEN doc 2844** carry no version metadata — so the export layer **cannot verify which version of the law a draft was grounded on**. Every other integrity axis passed (citations verify, content anchors); this is the one assertion class the L2-SUITE/E2E harness had to mark not-verifiable rather than green. One of the 3 E2E defects deliberately not fixed in-branch (corpus-side, not pipeline-side).
+- **Acceptance:** version_str (A5.E-canonical) populated on the tier-0 statutory docs + 2844; exports surface the grounding version; the E2E version-verification assertion flips from not-verifiable to green.
+
+---
+
+### M38 — 8 stale FSRA rulebooks flagged by version-check (portal 2026-04/05) — refresh-run candidate
+
+- **Status:** Open
+- **Size:** Half-day (scoped refresh run + benchmark re-pin)
+- **Dependencies:** Ingestion freeze discipline (FREEZE_SET incl. the scheduler service per S1-0); section-count benchmark suite (81 pins) as the acceptance harness
+- **Source:** MAX-5 version-check, 11 June 2026 (`audits/MAX5_MASTER_LOG_20260611.md`)
+- **Description:** The version-check run flagged **8 FSRA rulebooks** whose portal versions show **2026-04/05** dates newer than the corpus keepers. Candidate for a scoped refresh run (scrape → parse → single-current flip → re-embed) under the frozen-window procedure. Not an integrity defect — the corpus is internally consistent; this is currency.
+- **Acceptance:** The 8 rulebooks refreshed to portal-current (or individually documented as false-positives of the portal's date display); single-current invariant green; benchmark pins re-set with version-flip tolerance semantics; drift checker IN SYNC post-deploy.
+
+---
+
+**M-category total: 38 register items** (8 internal + 9 external + 1 acceptance + 4 remediation post-overnight + M23/M24 deferred + M25 added by Wave A Session 1 backfill dry-run + M26 added by Wave C Session 1 drift discovery + M27/M28/M29 added by the 10 June 2026 MAX-1 reconciliation from PF-1/S1/R1 evidence + M30/M31/M32/M33 added by the 10 June 2026 MAX-3 close-out + M34/M35/M36 added by the 11 June 2026 MAX-4 close-out [PR #7] + M37/M38 added by the 11 June 2026 MAX-5 close-out)
 
 **Status-at-a-Glance impact (this commit):**
 - Before this session: 89 Open / 6 Blocked / 76 Done / 171 Total (44.4% Done)
